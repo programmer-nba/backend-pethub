@@ -1,0 +1,11 @@
+const router = require("express").Router();
+const admins = require("../../controllers/admin/admin.controller.js");
+const authAdmin = require("../../lib/auth.admin.js");
+
+router.post("/create",authAdmin, admins.create);
+router.get("/",authAdmin, admins.getAdminAll);
+router.get("/:id",authAdmin, admins.getAdminById);
+router.put("/:id",authAdmin, admins.updateAdmin);
+router.delete("/:id",authAdmin, admins.deleteAdmin);
+
+module.exports = router; 
