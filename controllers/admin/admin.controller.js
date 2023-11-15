@@ -13,7 +13,7 @@ exports.create = async (req, res) => {
       admin_username: req.body.admin_username,
     });
     if (user)
-      return res.status(409).send({
+      return res.status(400).send({
         status: false,
         message: "มีชื่อผู้ใช้งานนี้ในระบบเเล้ว",
       });
@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
       ...req.body,
       admin_password: hashPassword,
     }).save();
-    res.status(201).send({message: "สร้างข้อมูลสำเร็จ", status: true});
+    res.status(200).send({message: "สร้างข้อมูลสำเร็จ", status: true});
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
