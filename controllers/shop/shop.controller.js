@@ -74,7 +74,7 @@ exports.updateShop = async (req, res) => {
     if (new_shop) {
       return res.send({
         status: true,
-        message: "แก้ไขข้อมูลช็อปเรียบร้อย"
+        message: "แก้ไขข้อมูลช็อปเรียบร้อย",
       });
     } else {
       return res.status(400).send({

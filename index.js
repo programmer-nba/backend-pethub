@@ -22,6 +22,7 @@ app.use("/pethub/product-shop", require("./router/product/product-shop"));
 app.use("/pethub/supplier", require("./router/supplier/index"));
 
 app.use("/pethub/shop", require("./router/shop/index"));
+app.use("/pethub/employee", require("./router/employee"));
 
 const port = process.env.PORT || 4003;
 app.listen(port, console.log(`Listening on port ${port}`));
