@@ -25,7 +25,7 @@ exports.fildAll = async (req, res) => {
 exports.findByShopId = async (req, res) => {
   try {
     const id = req.params.id;
-    const employee = await Employees.findOne({employee_shop_id: id});
+    const employee = await Employees.find({employee_shop_id: id});
     if (employee) {
       return res.status(200).send({
         status: true,
@@ -140,7 +140,7 @@ exports.update = async (req, res) => {
         ...req.body,
         employee_password: hashPassword,
       });
-      if (product) {
+      if (employee) {
         return res
           .status(200)
           .send({message: "แก้ไขผู้ใช้งานนี้เรียบร้อยเเล้ว", status: true});
