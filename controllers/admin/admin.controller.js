@@ -12,18 +12,20 @@ exports.create = async (req, res) => {
     const user = await Admins.findOne({
       admin_username: req.body.admin_username,
     });
-    if (user)
+    if (user) {
       return res.status(400).send({
         status: false,
         message: "มีชื่อผู้ใช้งานนี้ในระบบเเล้ว",
       });
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
-    const hashPassword = await bcrypt.hash(req.body.admin_password, salt);
-    await new Admins({
-      ...req.body,
-      admin_password: hashPassword,
-    }).save();
-    res.status(200).send({message: "สร้างข้อมูลสำเร็จ", status: true});
+    } else {
+      const salt = await bcrypt.genSalt(Number(process.env.SALT));
+      const hashPassword = await bcrypt.hash(req.body.admin_password, salt);
+      await new Admins({
+        ...req.body,
+        admin_password: hashPassword,
+      }).save();
+      return res.status(200).send({message: "สร้างข้อมูลสำเร็จ", status: true});
+    }
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
@@ -75,21 +77,32 @@ exports.updateAdmin = async (req, res) => {
     if (!req.body.admin_password) {
       const admin_new = await Admins.findByIdAndUpdate(id, req.body);
       if (!admin_new) {
-        return res.status(400).send({status: false, message: "ไม่สามารถแก้ไขผู้ใช้งานนี้ได้"})
+        return res
+          .status(400)
+          .send({status: false, message: "ไม่สามารถแก้ไขผู้ใช้งานนี้ได้"});
       } else {
-        return res.send({status: true, message: "แก้ไขข้อมูลผู้ใช้งานเรียบร้อย"})
+        return res.send({
+          status: true,
+          message: "แก้ไขข้อมูลผู้ใช้งานเรียบร้อย",
+        });
       }
     } else {
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
       const hashPassword = await bcrypt.hash(req.body.admin_password, salt);
-      const new_password = await Admins.findByIdAndUpdate(
-        id,
-        { ...req.body, admin_password: hashPassword}
-      )
+      const new_password = await Admins.findByIdAndUpdate(id, {
+        ...req.body,
+        admin_password: hashPassword,
+      });
       if (!new_password) {
-        return res.status(400).send({status: false, message: "ไม่สามารถแก้ไขรหัสผ่านผู้ใช้งานนี้ได้"})
+        return res.status(400).send({
+          status: false,
+          message: "ไม่สามารถแก้ไขรหัสผ่านผู้ใช้งานนี้ได้",
+        });
       } else {
-        return res.send({status: true, message: "แก้ไขข้อมูลผู้ใช้งานเรียบร้อย"})
+        return res.send({
+          status: true,
+          message: "แก้ไขข้อมูลผู้ใช้งานเรียบร้อย",
+        });
       }
     }
   } catch (err) {
