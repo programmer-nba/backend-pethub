@@ -7,15 +7,16 @@ const dayjs = require("dayjs");
 
 exports.fildAll = async (req, res) => {
   try {
-    Employees.find()
-      .then(async (data) => {
-        res.send({data, message: "success", status: true});
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: err.message || "มีบางอย่างผิดพลาด",
-        });
+    const employee = await Employees.find();
+    if (employee) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลพนักงานสำเร็จ",
+        data: employee,
       });
+    } else {
+      return res.status(404).send({message: "ไม่พบพนักงาน", status: false});
+    }
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
@@ -24,20 +25,16 @@ exports.fildAll = async (req, res) => {
 exports.findByShopId = async (req, res) => {
   try {
     const id = req.params.id;
-    Employees.findOne({employee_shop_id: id})
-      .then((data) => {
-        if (!data)
-          res
-            .status(404)
-            .send({message: "ไม่สามารถหาผู้ใช้งานนี้ได้", status: false});
-        else res.send({data, status: true});
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "มีบางอย่างผิดพลาด",
-          status: false,
-        });
+    const employee = await Employees.findOne({employee_shop_id: id});
+    if (employee) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลพนักงานสำเร็จ",
+        data: employee,
       });
+    } else {
+      return res.status(404).send({message: "ไม่พบพนักงาน", status: false});
+    }
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
@@ -46,20 +43,16 @@ exports.findByShopId = async (req, res) => {
 exports.findOne = async (req, res) => {
   try {
     const id = req.params.id;
-    Employees.findById(id)
-      .then((data) => {
-        if (!data)
-          res
-            .status(404)
-            .send({message: "ไม่สามารถหาผู้ใช้งานนี้ได้", status: false});
-        else res.send({data, status: true});
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: "มีบางอย่างผิดพลาด",
-          status: false,
-        });
+    const employee = await Employees.findById(id);
+    if (employee) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลพนักงานสำเร็จ",
+        data: employee,
       });
+    } else {
+      return res.status(404).send({message: "ไม่พบพนักงาน", status: false});
+    }
   } catch (error) {
     res.status(500).send({
       message: "มีบางอย่างผิดพลาด",
