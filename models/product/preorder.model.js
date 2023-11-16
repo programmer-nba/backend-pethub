@@ -10,7 +10,7 @@ const PreOrderSchema = new mongoose.Schema({
       {
         product_id: {type: String, required: true},
         product_name: {type: String, required: true},
-        quantity: {type: Number, required: true},
+        product_amount: {type: Number, required: true},
       },
     ],
   },
