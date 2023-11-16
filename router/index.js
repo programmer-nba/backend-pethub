@@ -77,12 +77,13 @@ router.get("/me", auth, async (req, res) => {
         return res.status(400).send({message: "มีบางอย่างผิดพลาด", status: false})
       } else {
         return res.status(200).send({
+          shop_id: employee.employee_shop_id,
           name: employee.employee_name,
           username: employee.employee_username,
           position: employee.employee_position,
           level: employee.employee_role,
         });
-      }
+      }employee
     }
   } catch (error) {
     res.status(500).send({message: "Internal Server Error", status: false});
