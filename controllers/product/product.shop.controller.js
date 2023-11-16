@@ -7,6 +7,9 @@ const {
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const dayjs = require("dayjs");
 const {google} = require("googleapis");
+const {Employees} = require("../../models/user/employee.model");
+const {Shops} = require("../../models/shop/shop.model");
+const jwt = require("jsonwebtoken");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_DRIVE_REDIRECT_URI;
@@ -131,8 +134,10 @@ exports.preorderProduct = async (req, res) => {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
+    const invoice = await invoiceNumber();
     const order_product = await new PreOrderProducts({
       ...req.body,
+      invoice: invoice,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -214,3 +219,28 @@ exports.getPreorderByShopId = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+
+//ค้นหาและสร้างเลข invoice
+async function invoiceNumber(date) {
+  const order = await PreOrderProducts.find();
+  let invoice_number = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await PreOrderProducts.find({invoice: data});
+      console.log(check);
+      if (check.length === 0) {
+        invoice_number =
+          `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    invoice_number = `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+  }
+  console.log(invoice_number);
+  return invoice_number;
+}
