@@ -19,7 +19,8 @@ const EmployeeSchema = new mongoose.Schema({
   employee_username: {type: String, required: true},
   employee_password: {type: String, required: true},
   employee_phone: {type: String, required: true},
-  employee_position: {type: String, required: false, default: "general"},
+  employee_position: {type: String, required: false, default: "employee"},
+  employee_role: {type: String, required: false},
   employee_date_start: {type: Date, required: false, default: Date.now()},
 });
 
