@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const auth = require("../../lib/auth");
 const authAdmin = require("../../lib/auth.admin");
-const Product = require("../../controllers/product/product.controller")
+const Product = require("../../controllers/product/product.controller");
+const Category = require("../../controllers/product/category.controller")
 const ProductShops = require("../../controllers/product/product.shop.controller");
 
 router.post("/", auth, ProductShops.create);
 router.get("/", auth, Product.getProductAll);
+router.get("/category", auth, Category.getCategoryAll);
 // router.get("/", auth, ProductShops.getProductAll);
 router.get("/shop-id/:id", ProductShops.findByShopId);
 
