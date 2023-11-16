@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 
 const PreOrderSchema = new mongoose.Schema({
   shop_id: {type: String, required: true},
-  shop_name: {type: String, required: true},
   invoice : {type: String, required: false, default: ''},
   employee_name: {type: String, required: true},
   product_detail: {
