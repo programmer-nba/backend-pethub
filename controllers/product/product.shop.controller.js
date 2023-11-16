@@ -4,6 +4,8 @@ const {
   ProductShops,
   validateProduct,
 } = require("../../models/product/product.shop.model");
+const {PreOrderProducts} = require("../../models/product/preorder.model");
+const dayjs = require("dayjs");
 const {google} = require("googleapis");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
@@ -120,5 +122,74 @@ exports.findByShopId = async (req, res) => {
       message: "มีบางอย่างผิดพลาด",
       status: false,
     });
+  }
+};
+
+exports.preorderProduct = async (req, res) => {
+  try {
+    const status = {
+      name: "รอตรวจสอบ",
+      timestamps: dayjs(Date.now()).format(""),
+    };
+    const order_product = await new PreOrderProducts({
+      ...req.body,
+      status: status,
+      timestamps: dayjs(Date.now()).format(""),
+    }).save();
+    if (order_product) {
+      return res.status(200).send({
+        status: true,
+        message: "สั่งซื้อสินค้าทำเสร็จ",
+        data: order_product,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.getPreorderAll = async (req, res) => {
+  try {
+    const preorder_list = await PreOrderProducts.find();
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.getPreorderById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const preorder_list = await PreOrderProducts.findOne({_id: id});
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
