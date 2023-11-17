@@ -220,6 +220,60 @@ exports.getPreorderByShopId = async (req, res) => {
   }
 };
 
+exports.confirmPreorder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยืนยันการสั่งซื้อ",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยืนยันการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.cancelPreorder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยกเลิกการสั่งซื้อ",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยกเลิกการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
 //ค้นหาและสร้างเลข invoice
 async function invoiceNumber(date) {
   const order = await PreOrderProducts.find();
@@ -239,7 +293,8 @@ async function invoiceNumber(date) {
       }
     } while (check.length !== 0);
   } else {
-    invoice_number = `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+    invoice_number =
+      `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   console.log(invoice_number);
   return invoice_number;
