@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
-const auth = require("../lib/auth.js");
+const authMe = require("../lib/auth.me.js");
 require("dotenv").config();
 
 const {Admins} = require("../models/user/admin.model.js");
@@ -53,14 +53,16 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/me", auth, async (req, res) => {
+router.get("/me", authMe, async (req, res) => {
   try {
     const {decoded} = req;
     if (decoded && decoded.row === "admin") {
       const id = decoded._id;
       const admin = await Admins.findOne({_id: id});
       if (!admin) {
-        return res.status(400).send({message: "มีบางอย่างผิดพลาด", status: false})
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
       } else {
         return res.status(200).send({
           name: admin.admin_name,
@@ -74,7 +76,9 @@ router.get("/me", auth, async (req, res) => {
       const id = decoded._id;
       const employee = await Employees.findOne({_id: id});
       if (!employee) {
-        return res.status(400).send({message: "มีบางอย่างผิดพลาด", status: false})
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
       } else {
         return res.status(200).send({
           shop_id: employee.employee_shop_id,
@@ -83,7 +87,8 @@ router.get("/me", auth, async (req, res) => {
           position: employee.employee_position,
           level: employee.employee_role,
         });
-      }employee
+      }
+      employee;
     }
   } catch (error) {
     res.status(500).send({message: "Internal Server Error", status: false});
@@ -102,7 +107,6 @@ const checkEmployee = async (req, res) => {
         req.body.password,
         employee.employee_password
       );
-      console.log(employee)
       if (!validPasswordAdmin) {
         // รหัสไม่ตรง
         return res.status(401).send({
