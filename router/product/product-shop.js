@@ -17,7 +17,9 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 //preorder
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
+
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
+
 router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 
@@ -25,5 +27,6 @@ router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 router.put("/preorder/admin/confirm/:id", authAdmin, ProductShops.confirmPreorder);
 //cancel
 router.put("/preorder/admin/cancel/:id", authAdmin, ProductShops.cancelPreorder);
+
 
 module.exports = router;

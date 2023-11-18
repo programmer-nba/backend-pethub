@@ -274,6 +274,7 @@ exports.cancelPreorder = async (req, res) => {
   }
 };
 
+
 //ค้นหาและสร้างเลข invoice
 async function invoiceNumber(date) {
   const order = await PreOrderProducts.find();
@@ -286,7 +287,6 @@ async function invoiceNumber(date) {
       num = num + 1;
       data = `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       check = await PreOrderProducts.find({invoice: data});
-      console.log(check);
       if (check.length === 0) {
         invoice_number =
           `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
@@ -296,6 +296,5 @@ async function invoiceNumber(date) {
     invoice_number =
       `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
-  console.log(invoice_number);
   return invoice_number;
 }
