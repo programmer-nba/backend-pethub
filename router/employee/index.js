@@ -12,5 +12,8 @@ router.get("/:id", authAdmin, employee.findOne);
 
 router.delete("/:id", authAdmin, employee.deleteEmployee);
 router.put("/:id", auth, employee.update);
+router.put("/cancel/:id", auth, employee.calcelEmployee);
+router.put("/confirm/:id", auth, employee.confirmEmployee);
+
 
 module.exports = router;

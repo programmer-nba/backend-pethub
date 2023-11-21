@@ -28,5 +28,7 @@ router.put("/preorder/admin/confirm/:id", authAdmin, ProductShops.confirmPreorde
 //cancel
 router.put("/preorder/admin/cancel/:id", authAdmin, ProductShops.cancelPreorder);
 
+//สถาณะการสั่งชื้อสินค้า
+router.put("/preorder/admin/addStatus/:id", authAdmin, ProductShops.statusPreorder);
 
 module.exports = router;

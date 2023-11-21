@@ -220,6 +220,7 @@ exports.getPreorderByShopId = async (req, res) => {
   }
 };
 
+
 exports.confirmPreorder = async (req, res) => {
   try {
     const id = req.params.id;
@@ -261,6 +262,33 @@ exports.cancelPreorder = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "ยกเลิกการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.statusPreorder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "สถาณะการจัดส่งสินค้า",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยืนยันการจัดส่งสินค้า",
         data: updateStatus,
       });
     } else {

@@ -4,6 +4,8 @@ const {
 } = require("../../models/user/employee.model");
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
+const {PreOrderProducts} = require("../../models/product/preorder.model");
+
 
 exports.fildAll = async (req, res) => {
   try {
@@ -109,6 +111,59 @@ exports.deleteEmployee = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+
+exports.calcelEmployee = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยกเลิกการสั่งซื้อ",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยกเลิกการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+exports.confirmEmployee = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยืนยันการสั่งซื้อ",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยืนยันการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
 
