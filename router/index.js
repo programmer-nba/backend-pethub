@@ -2,7 +2,6 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const authMe = require("../lib/auth.me.js");
 require("dotenv").config();
-
 const {Admins} = require("../models/user/admin.model.js");
 const {Employees} = require("../models/user/employee.model.js");
 const {Shops} = require("../models/shop/shop.model.js");
