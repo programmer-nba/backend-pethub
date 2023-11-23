@@ -4,7 +4,13 @@ const authAdmin = require("../../lib/auth.admin.js");
 
 
 
-router.post("/order",authAdmin,Order.getOrder);
+
+router.post("/order", Order.postPreorder);
+
+router.post("/addproducts", Order.addProducts)
+
+
+
 
 
 module.exports = router; 

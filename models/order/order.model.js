@@ -4,34 +4,29 @@ const {ObjectId} = mongoose.Schema
 
 
 const OrderSchema = new mongoose.Schema({
- order_id :{
-    type : String,
+    id:{
+        type:Number
     },
-  name :{
-    type : String,
-    ref:'Product'
+    shop_id:{
+        type:Number
     },
-  category: {
-    type : String,
-    require:true
+    invoice:{
+        type:String
     },
-  quantity: {
-    type : Number,
-    require:true
- },
- productdetails : {
-    type : String,
-    require:true
- },
+    employee_name:{
+        type : String,
+    },
+    product_name:{
+        type : String,
+    },
    status:{
     type :String,
-    require :true,
-    default :''
-},
+    
+    },
     timestamps:{
         type :Date,
         default :Date.now,
-    }
+    },
   
 })
 

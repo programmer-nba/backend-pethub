@@ -16,9 +16,11 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
 //preorder
 router.post("/preorder", auth, ProductShops.preorderProduct);
+//พรีออเดอร์ไปที่ shop 
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
+router.get("preorder/admin", authAdmin, ProductShops.addProducts)
 
 router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
@@ -30,5 +32,6 @@ router.put("/preorder/admin/cancel/:id", authAdmin, ProductShops.cancelPreorder)
 
 //สถาณะการสั่งชื้อสินค้า
 router.put("/preorder/admin/addStatus/:id", authAdmin, ProductShops.statusPreorder);
+
 
 module.exports = router;

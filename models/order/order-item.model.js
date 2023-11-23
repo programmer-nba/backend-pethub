@@ -11,10 +11,16 @@ const ProductItemSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:'Product'
     },
-    name :{
-        type : String,
-        ref:'warunyoo'
+    employee_name :{
+        type : Number,
+        ref:'1111'
         },
+    status:{
+    type :String,
+    default :true,
+
+},
+   
 
     
 })
