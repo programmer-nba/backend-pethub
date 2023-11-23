@@ -14,12 +14,13 @@ router.get("/shop-id/:id", auth, ProductShops.findByShopId);
 //admin
 router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
-//preorder
+//
 router.post("/preorder", auth, ProductShops.preorderProduct);
-//พรีออเดอร์ไปที่ shop 
+//
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
+//preorder พรีออเดอร์ไปที่ shop 
 router.get("preorder/admin", authAdmin, ProductShops.addProducts)
 
 router.get("/preorder/:id", auth, ProductShops.getPreorderById);

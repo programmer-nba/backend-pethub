@@ -161,25 +161,14 @@ exports.preorderProduct = async (req, res) => {
 exports.addProducts = async(req,res) =>{
   var chkOrderID = await order.find()
       try{
-          
-          // console.log(test)
-          // let data = {
-          //     id :chkOrderID.length+1, 
-          //     shop_id:req.body.shop_id,
-          //     invoice:req.body.invoice,
-          //     employee_name:req.body.employee_name,
-          //     product_name:req.body.product_name,
-          // }
-          // console.log(data)
-          //     var getID = req.body.data_id;
-  var getPreproduct = await PreOrderProducts.find({_id:req.body._id});
+  var getPreproduct = await PreOrderProducts.find({_id:req.body._id});//ส่งค่ามาจากด้าน front end โดยใช้id
    
      console.log("Status : ", getPreproduct[0].status)
   //  console.log("Status : ", getPreproduct[0].status.length)
    var indexLast = getPreproduct[0].status.length - 1;
    var chk_status = getPreproduct[0].status[indexLast].name;
     console.log(chk_status)
-  const teatid = await PreOrderProducts.find({id: req.body._id})
+  const teatid = await PreOrderProducts.find({id:req.body._id})
   // if(teatid.length > 0) {
   //     console.log("มีการสร้างไอดีนี้ไปแล้ว")
   //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
@@ -189,7 +178,7 @@ exports.addProducts = async(req,res) =>{
           if (chk_status == "ยืนยันการสั่งซื้อ") {
                       
                       let data = {
-                              shop_id: req.body._id,
+                              shop_id: req.body.shop_id,
                               invoice: req.body.invoice,
                               employee_name: req.body.employee_name,
                               product_name:req.body.product_name,
