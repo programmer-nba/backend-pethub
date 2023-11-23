@@ -2,11 +2,10 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const ProductShopSchema = new mongoose.Schema({
-  productShop_id: {type: String, required: true},
-  productShop_barcode: {type: String, required: true},
-  productShop_status: {type: String, required: true}, 
-  productShop_stock: {type: String, required: true}, 
-  productShop_pethub_id: {type: String, required: true},
+  shop_id: {type: String, required: true},
+ 
+  products: [],
+  
 });
 
 const ProductShops = mongoose.model("product_shop", ProductShopSchema);

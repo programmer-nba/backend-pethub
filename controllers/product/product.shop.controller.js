@@ -162,27 +162,41 @@ exports.preorderProduct = async (req, res) => {
 exports.PreorderStock = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
-    console.log(updateStatus);
-   
+    const preorders = await PreOrderProducts.findOne({_id: id});
+   console.log(preorders)
     
-      const productshop = await ProductShops.create({
-      preorder:updateStatus
+       
+        const productshop = await ProductShops.create({
+        shop_id:preorders.shop_id ,
+        products:[...preorders.product_detail],
+        
+       
       })
+// console.log('-----------44444444--------------')
+//       console.log(productshop)
     
     // const product_shop = await ProductShops.create(updateStatus)
    
       
-      updateStatus.save();
+     
       return res.status(200).send({
         status: true,
         message: "เพิ่มสินค้าสำเร็จ",
-        data: updateStatus,
+        data: productshop,
       });
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 }
+exports.getStockById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const mystock = await ProductShops.findOne({shop_id:id})
+    return res.send(mystock)
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
 
 exports.addProducts = async(req,res) =>{
   var chkOrderID = await order.find()
