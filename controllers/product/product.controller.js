@@ -191,3 +191,4 @@ exports.deleteProduct = async (req, res) => {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 };
+
