@@ -158,6 +158,32 @@ exports.preorderProduct = async (req, res) => {
   }
 };
 
+//เพิ่มสินค้าเข้า stock
+exports.PreorderStock = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+   
+    
+      const productshop = await ProductShops.create({
+      preorder:updateStatus
+      })
+    
+    // const product_shop = await ProductShops.create(updateStatus)
+   
+      
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "เพิ่มสินค้าสำเร็จ",
+        data: updateStatus,
+      });
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+
 exports.addProducts = async(req,res) =>{
   var chkOrderID = await order.find()
       try{
