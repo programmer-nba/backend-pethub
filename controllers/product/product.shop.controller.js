@@ -168,7 +168,12 @@ exports.PreorderStock = async (req, res) => {
   
         const productshop = await ProductShops.create({
         shop_id:id ,
-        products:[...preorders.product_detail],
+        name:"" , //ชื่อสินค้า
+        logo: "",// ภาพสินค้า
+        price_cost:"" , //ราคาต้นทุน
+        price:"",//ราคาสินค้า
+        
+       // products:[...preorders.product_detail],//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
         
        
       })

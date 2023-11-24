@@ -3,8 +3,14 @@ const mongoose = require("mongoose");
 
 const ProductShopSchema = new mongoose.Schema({
   shop_id: {type: String, required: true},
- 
-  products: [],
+  name: {type: String, required: true}, //ชื่อสินค้า
+  logo: {type: String, required: true},// ภาพสินค้า
+  price_cost: {type: Number, required: true}, //ราคาต้นทุน
+  price:{type: Number, required: true},//ราคาสินค้า
+  
+
+  
+ // products: [],
   
 });
 
