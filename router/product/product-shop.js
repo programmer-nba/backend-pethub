@@ -21,7 +21,7 @@ router.post("/admin/stock/:id", authAdmin, ProductShops.PreorderStock);
 router.get("/admin/stock/:id", authAdmin, ProductShops.getStockById );
 
 //ยกเลิก
-router.put("/preorder/employee/cancel/:id", ProductShops.candelPreorderEmyee);
+router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 
 
 
