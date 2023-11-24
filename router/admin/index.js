@@ -10,7 +10,7 @@ router.get("/:id",authAdmin, admins.getAdminById);
 router.put("/:id",authAdmin, admins.updateAdmin);
 router.delete("/:id",authAdmin, admins.deleteAdmin);
 //router.post("/stock/:id", authAdmin, productShops.PreorderStock);
-router.get("/stock//:id", authAdmin, productShops.getStockById );
+//router.get("/stock//:id", authAdmin, productShops.getStockById);
 
 
 

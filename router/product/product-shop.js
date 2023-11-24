@@ -18,7 +18,7 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
 
 router.post("/preorder/admin/stock/:id", authAdmin, ProductShops.PreorderStock);
-//router.get("/preorder/admin/stock//:id", authAdmin, ProductShops.getStockById );
+router.get("/preorder/admin/stock//:id", authAdmin, ProductShops.getStockById );
 
 
 
