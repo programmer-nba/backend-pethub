@@ -163,12 +163,11 @@ exports.preorderProduct = async (req, res) => {
 exports.PreorderStock = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorders = await PreOrderProducts.findOne({_id: id});
-   console.log(preorders)
-    
-       
+    const preorders = await PreOrderProducts.findOne({shop_id:id});
+    console.log(preorders)
+  
         const productshop = await ProductShops.create({
-        shop_id:preorders.shop_id ,
+        shop_id:id ,
         products:[...preorders.product_detail],
         
        
@@ -323,6 +322,33 @@ exports.confirmPreorder = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "ยืนยันการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.candelPreorderEmyee = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยกเลิกการสั่งซื้อ",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยกเลิกการสั่งซื้อสำเร็จ",
         data: updateStatus,
       });
     } else {

@@ -14,11 +14,14 @@ router.get("/shop-id/:id", auth, ProductShops.findByShopId);
 //admin
 router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
+
+
 //เพิ่มเข้าสต๊อกสินค้า
-
-
 router.post("/admin/stock/:id", authAdmin, ProductShops.PreorderStock);
 router.get("/admin/stock/:id", authAdmin, ProductShops.getStockById );
+
+//ยกเลิก
+router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 
 
 
