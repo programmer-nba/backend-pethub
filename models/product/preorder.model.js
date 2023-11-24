@@ -5,16 +5,17 @@ const PreOrderSchema = new mongoose.Schema({
   shop_id: {type: String, required: true},
   invoice : {type: String, required: false, default: ''},
   employee_name: {type: String, required: true},
+  product_name: {type: String, required: true},
   product_detail: {
     type: [
       {
-        product_id: {type: String, required: true},
-        product_name: {type: String, required: true},
-        product_amount: {type: Number, required: true},
+        product_id: {type: String, required: false},
+        product_name: {type: String, required: false},
+        product_amount: {type: Number, required: false},
       },
     ],
   },
-  status: {type: Array, required: true},
+  status: {type: Array, required: false, default: ''},
   timestamps: {type: Date, required: false, default: Date.now()},
 });
 

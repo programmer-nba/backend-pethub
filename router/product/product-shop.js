@@ -4,6 +4,7 @@ const authAdmin = require("../../lib/auth.admin");
 const Product = require("../../controllers/product/product.controller");
 const Category = require("../../controllers/product/category.controller")
 const ProductShops = require("../../controllers/product/product.shop.controller");
+const order = require("../../controllers/order/order.controller")
 
 router.post("/", auth, ProductShops.create);
 router.get("/", auth, Product.getProductAll);
@@ -25,8 +26,11 @@ router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmy
 
 
 
+
+router.post("/preorder", auth, order.AddPreorder);
+
 //
-router.post("/preorder", auth, ProductShops.preorderProduct);
+// router.post("/preorder", auth, ProductShops.preorderProduct);
 //
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 

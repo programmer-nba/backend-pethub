@@ -2,7 +2,8 @@ const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const order = require("../../models/order/order.model");
 const {Admins, validateAdmin} = require("../../models/user/admin.model");
-const {PreOrderProducts} = require("../../models/product/preorder.model")
+const {PreOrderProducts} = require("../../models/product/preorder.model");
+const req = require("express/lib/request");
 
 // exports.create = async(req,res) =>{
 //     try{
@@ -155,3 +156,34 @@ exports.postPreorder = async(req,res) =>{
 
             }
         }
+
+
+exports.AddPreorder = async (req,res) =>{
+
+    try{
+        const {
+            shop_id ,
+            invoice,
+            employee_name ,
+            product_name,
+            product_detail,
+            status,
+        } =req.body
+
+        const preorder = await PreOrderProducts.create({
+                shop_id:shop_id,
+                invoice:invoice,
+                employee_name:employee_name,
+                product_name:product_name,
+                product_detail: product_detail ,
+                status:status ,
+        })
+        return res.send(preorder)
+
+
+
+    }catch(error){
+        console.log(error)
+        res.send("เพิ่มพรีออเดอร์สินค้าไม่ผ่าน")
+    }
+}

@@ -171,7 +171,7 @@ exports.PreorderStock = async (req, res) => {
         name:"" , //ชื่อสินค้า
         logo: "",// ภาพสินค้า
         price_cost:"" , //ราคาต้นทุน
-        price:"",//ราคาสินค้า
+        // price:"",//ราคาสินค้า
         
        // products:[...preorders.product_detail],//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
         
