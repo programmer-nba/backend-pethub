@@ -14,10 +14,13 @@ router.get("/shop-id/:id", auth, ProductShops.findByShopId);
 //admin
 router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
-//
+//เพิ่มเข้าสต๊อกสินค้า
 
-router.post("/preorder/admin/addsticksee/:id", authAdmin, ProductShops.PreorderStock);
-router.get("/preorder/admin/addstocks/:id", authAdmin, ProductShops.getStockById );
+
+router.post("/preorder/admin/stock/:id", authAdmin, ProductShops.PreorderStock);
+//router.get("/preorder/admin/stock//:id", authAdmin, ProductShops.getStockById );
+
+
 
 //
 router.post("/preorder", auth, ProductShops.preorderProduct);
