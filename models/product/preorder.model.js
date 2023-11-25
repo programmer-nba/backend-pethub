@@ -2,7 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const PreOrderSchema = new mongoose.Schema({
-  shop_id: {type: String, required: true},
+  shop_id: {type: mongoose.Schema.Types.ObjectId,ref:'product'},
   invoice : {type: String, required: false,},
   employee_name: {type: String, required: true},
   product_detail: {
@@ -17,7 +17,7 @@ const PreOrderSchema = new mongoose.Schema({
       },
     ],
   },
-  status: {type: Array, required: true,},
+  status: {type: Array, required: false,},
   timestamps: {type: Date, required: false, default: Date.now()},
 });
 

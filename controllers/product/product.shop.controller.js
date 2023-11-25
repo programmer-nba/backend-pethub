@@ -231,9 +231,9 @@ exports.addProducts = async(req,res) =>{
                   
                             }
                              const createOrder = new order(data);
-                             const createOrderData = await createOrder.save()
+                             const createOrderData = await createOrder.save().populate('shop_id')
 
-                             return res.status(200).send({message:" สำเร็จ"})
+                             return res.status(200).send({message:" สำเร็จ",data:createOrderData})
 
                   }
           

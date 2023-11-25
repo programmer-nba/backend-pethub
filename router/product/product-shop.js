@@ -27,7 +27,7 @@ router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmy
 
 
 
-router.post("/preorder", auth, order.AddPreorder);
+router.post("/preorder", auth, order.addProducts);
 
 //
 // router.post("/preorder", auth, ProductShops.preorderProduct);
