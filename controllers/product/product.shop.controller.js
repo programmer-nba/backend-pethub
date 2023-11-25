@@ -172,19 +172,19 @@ exports.PreorderStock = async (req, res) => {
   
         const productshop = await ProductShops.create({
         shop_id:id ,
-        name:"" , //ชื่อสินค้า
-        logo: "",// ภาพสินค้า
-        price_cost:"" , //ราคาต้นทุน
+        // name:"" , //ชื่อสินค้า
+        // logo: "",// ภาพสินค้า
+        // price_cost:"" , //ราคาต้นทุน
         // price:"",//ราคาสินค้า
         
-       // products:[...preorders.product_detail],//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
+        products:[...preorders.product_detail],//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
         
        
       })
 // console.log('-----------44444444--------------')
-//       console.log(productshop)
+      console.log(productshop)
     
-    // const product_shop = await ProductShops.create(updateStatus)
+    const product_shop = await ProductShops.create(updateStatus)
    
       
      
@@ -207,6 +207,8 @@ exports.getStockById = async (req, res) => {
   }
 };
 
+
+//เพิ่มสินค้าเข้าไปในพรีออเดอร์
 exports.addProducts = async(req,res) =>{
   var chkOrderID = await order.find()
       try{
@@ -385,6 +387,35 @@ exports.cancelPreorder = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "ยกเลิกการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+
+//คำสั่งเปลี่ยนสถานะเป็น นำเข้าสต๊อกสิน
+exports.statusaddPreorder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "นำเข้าสต๊อก",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "นำเข้าสต๊อกสินค้าสำเร็จ",
         data: updateStatus,
       });
     } else {

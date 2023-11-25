@@ -46,6 +46,9 @@ router.put("/preorder/admin/confirm/:id", authAdmin, ProductShops.confirmPreorde
 //cancel
 router.put("/preorder/admin/cancel/:id", authAdmin, ProductShops.cancelPreorder);
 
+//คำสั่งเปลี่ยนสถานะเป็น นำเข้าสต๊อกสิน
+router.put("/preorder/admin/statusaddPreorder/:id", authAdmin, ProductShops.statusaddPreorder);
+
 //สถาณะการสั่งชื้อสินค้า
 router.put("/preorder/admin/addStatus/:id", authAdmin, ProductShops.statusPreorder);
 
