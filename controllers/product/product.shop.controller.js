@@ -6,6 +6,7 @@ const {
 } = require("../../models/product/product.shop.model");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const admin = require("../../models/product/product.shop.model")
+const Products = require("../../models/product/product.model")
 const dayjs = require("dayjs");
 const {google} = require("googleapis");
 const {Employees} = require("../../models/user/employee.model");
@@ -167,36 +168,65 @@ exports.preorderProduct = async (req, res) => {
 exports.PreorderStock = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorders = await PreOrderProducts.findOne({shop_id:id});
+    const preorders = await PreOrderProducts.findOne({shop_id:id})
     console.log(preorders)
+
+    // const productdetails = preorders
   
         const productshop = await ProductShops.create({
-        shop_id:req.body.shop_id,
-        // name:"" , //ชื่อสินค้า
-        // logo: "",// ภาพสินค้า
-        // price_cost:"" , //ราคาต้นทุน
-        // price:"",//ราคาสินค้า
-        
-        products:[...preorders.product_detail],//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
-        
-       
-      })
+        shop_id:id,
+        products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
+      });
 // console.log('-----------44444444--------------')
       console.log(productshop)
     
-    const product_shop = await ProductShops.create(updateStatus)
-   
-      
-     
+    // const product_shop = await ProductShops.create(updateStatus)
+
       return res.status(200).send({
         status: true,
         message: "เพิ่มสินค้าสำเร็จ",
         data: productshop,
       });
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({message: error.message, status: false});
   }
 }
+
+// //รับค่าบาร์โค๊ดจากข้อมูลมากเเสดงโดยการjoin เข้ามาเเสดง
+// exports.PreorderStock = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const preorders = await PreOrderProducts.findOne({shop_id:id})
+//     console.log(preorders)
+
+//      const productdetails =  preorders.product_detail.map(async(item)=>{ 
+//       const product = await Products.findById(item.product_id)
+//       const product_detail = {price_cost:product.price_cost,barcode:product.barcode}
+//       return product_detail
+//      })
+//       console.log(productdetails)
+//         const productshop = await ProductShops.create({
+//         shop_id:id,
+//         products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
+//       });
+// // console.log('-----------44444444--------------')
+//       console.log(productshop)
+    
+//     // const product_shop = await ProductShops.create(updateStatus)
+
+//       return res.status(200).send({
+//         status: true,
+//         message: "เพิ่มสินค้าสำเร็จ",
+//         data: productshop,
+//       });
+//   } catch (error) {
+//     return res.status(500).send({message: error.message, status: false});
+//   }
+// }
+
+
+
+
 exports.getStockById = async (req, res) => {
   try {
     const id = req.params.id;

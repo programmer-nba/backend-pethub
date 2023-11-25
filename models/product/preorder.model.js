@@ -11,8 +11,10 @@ const PreOrderSchema = new mongoose.Schema({
         product_id: {type: String, required: false},
         product_name: {type: String, required: false},
         product_amount: {type: Number, required: false},
-        product_price: {type: Number, required: true},
-        product_logo: {type: String, required: true},
+        product_price: {type: Number, required: false},
+        product_logo: {type: String, required: false},
+        barcode: {type: String, required: false, default:"1111"},
+        price_cost: {type: Number, required: false, default:"1111"}, //ราคาต้นทุน //บาร์โค๊ดสินค้า
       },
     ],
   },
