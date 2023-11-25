@@ -139,7 +139,7 @@ exports.postPreorder = async(req,res) =>{
                 //  const createOrderData = await createOrder.save()
             }catch (error){
                 console.error(error)
-             res.status(500).send("ไม่สามารถเซฟได้")
+             res.status(500).send(error.message)
 
             }
         }
