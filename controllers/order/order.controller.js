@@ -98,10 +98,24 @@ exports.postPreorder = async(req,res) =>{
 
     exports.addProducts = async(req,res) =>{
         var chkOrderID = await order.find()
-        try{
+        
+        
+
+            try{
+                
+                // console.log(test)
+                // let data = {
+                //     id :chkOrderID.length+1, 
+                //     shop_id:req.body.shop_id,
+                //     invoice:req.body.invoice,
+                //     employee_name:req.body.employee_name,
+                //     product_name:req.body.product_name,
+                // }
+                // console.log(data)
+                //     var getID = req.body.data_id;
         var getPreproduct = await PreOrderProducts.find({_id:req.body._id});
          
-           console.log("Status : ", getPreproduct)
+           console.log("Status : ", getPreproduct[0].status)
         //  console.log("Status : ", getPreproduct[0].status.length)
          var indexLast = getPreproduct[0].status.length - 1;
          var chk_status = getPreproduct[0].status[indexLast].name;
@@ -112,7 +126,6 @@ exports.postPreorder = async(req,res) =>{
         //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
         // }
         // console.log("teatid", teatid )
-
         console.log(chk_status)
                 if (chk_status == "ยืนยันการสั่งซื้อ") {
                             
@@ -120,7 +133,7 @@ exports.postPreorder = async(req,res) =>{
                                     shop_id: req.body._id,
                                     invoice: req.body.invoice,
                                     employee_name: req.body.employee_name,
-                                    product_detail:req.body.product_detail,
+                                    product_name:req.body.product_name,
                                     timestamps: Date.now()
                         
                                   }
@@ -129,7 +142,7 @@ exports.postPreorder = async(req,res) =>{
 
                                    return res.status(200).send({message:" สำเร็จ"})
 
-            }
+                        }
                 
                         return res.status(500).send({message:"รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"})
 
@@ -139,7 +152,7 @@ exports.postPreorder = async(req,res) =>{
                 //  const createOrderData = await createOrder.save()
             }catch (error){
                 console.error(error)
-             res.status(500).send(error.message)
+             res.status(500).send("ไม่สามารถเซฟได้")
 
             }
         }
@@ -148,25 +161,23 @@ exports.postPreorder = async(req,res) =>{
 exports.AddPreorder = async (req,res) =>{
 
     try{
-        // const data =  {
-        //     shop_id ,
-        //     invoice,
-        //     employee_name ,
-        //     product_name,
-        //     product_detail,
-        //     status,
-        // } 
+        const {
+            shop_id ,
+            invoice,
+            employee_name ,
+            product_name,
+            product_detail,
+            status,
+        } =req.body
 
-        const data = {
-            shop_id:req.body.shop_id,
-            invoice:req.body.invoice,
-            employee_name:req.body.employee_name,
-            product_name:req.body.product_name,
-            product_detail: req.body.product_detail ,
-            status:req.body.status ,
-    }
-
-        const preorder = await PreOrderProducts.create(data)
+        const preorder = await PreOrderProducts.create({
+                shop_id:shop_id,
+                invoice:invoice,
+                employee_name:employee_name,
+                product_name:product_name,
+                product_detail: product_detail ,
+                status:status ,
+        })
         return res.send(preorder)
 
 
