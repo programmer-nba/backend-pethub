@@ -140,7 +140,7 @@ exports.preorderProduct = async (req, res) => {
     const invoice = await invoiceNumber();
     
     const order_product = await new PreOrderProducts({
-      ...req.body,
+      product_detail:[...req.body],
       invoice: invoice,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
