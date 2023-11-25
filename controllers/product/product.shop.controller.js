@@ -140,7 +140,7 @@ exports.preorderProduct = async (req, res) => {
     const invoice = await invoiceNumber();
     
     const order_product = await new PreOrderProducts({
-      product_detail:[...req.body],
+      ...req.body,
       invoice: invoice,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
@@ -159,7 +159,7 @@ exports.preorderProduct = async (req, res) => {
     }
   } catch (error) {
     console.log(error)
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด222", status: false, error:error});
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด222", status: false, error:error.message});
   }
 };
 
