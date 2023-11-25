@@ -226,7 +226,7 @@ exports.addProducts = async(req,res) =>{
                               shop_id: req.body.shop_id,
                               invoice: req.body.invoice,
                               employee_name: req.body.employee_name,
-                              product_detail: req.body.product_detail,
+                              product_detail:req.body.product_detail,
                               timestamps: Date.now()
                   
                             }

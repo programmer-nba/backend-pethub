@@ -133,7 +133,7 @@ exports.postPreorder = async(req,res) =>{
                                     shop_id: req.body._id,
                                     invoice: req.body.invoice,
                                     employee_name: req.body.employee_name,
-                                    product_name:req.body.product_name,
+                                    product_detail:req.body.product_detail,
                                     timestamps: Date.now()
                         
                                   }
@@ -161,23 +161,25 @@ exports.postPreorder = async(req,res) =>{
 exports.AddPreorder = async (req,res) =>{
 
     try{
-        const {
-            shop_id ,
-            invoice,
-            employee_name ,
-            product_name,
-            product_detail,
-            status,
-        } =req.body
+        // const data =  {
+        //     shop_id ,
+        //     invoice,
+        //     employee_name ,
+        //     product_name,
+        //     product_detail,
+        //     status,
+        // } 
 
-        const preorder = await PreOrderProducts.create({
-                shop_id:shop_id,
-                invoice:invoice,
-                employee_name:employee_name,
-                product_name:product_name,
-                product_detail: product_detail ,
-                status:status ,
-        })
+        const data = {
+            shop_id:req.body.shop_id,
+            invoice:req.body.invoice,
+            employee_name:req.body.employee_name,
+            product_name:req.body.product_name,
+            product_detail: req.body.product_detail ,
+            status:req.body.status ,
+    }
+
+        const preorder = await PreOrderProducts.create(data)
         return res.send(preorder)
 
 
