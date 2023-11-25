@@ -129,13 +129,16 @@ exports.findByShopId = async (req, res) => {
   }
 };
 
+// ร้านค้าย่อย สั่ง preorder สินค้าส่งให้แอดมินตรวจสอบ
 exports.preorderProduct = async (req, res) => {
+  console.log(req.body)
   try {
     const status = {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
     const invoice = await invoiceNumber();
+    
     const order_product = await new PreOrderProducts({
       ...req.body,
       invoice: invoice,
@@ -150,12 +153,13 @@ exports.preorderProduct = async (req, res) => {
       });
     } else {
       return res.status(500).send({
-        message: "มีบางอย่างผิดพลาด",
+        message: order_product,
         status: false,
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    console.log(error)
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด222", status: false, error:error});
   }
 };
 
