@@ -204,16 +204,18 @@ exports.PreorderEmpStock = async (req, res) => {
 
     const id = req.params.id;
     const preorders = await PreOrderProducts.findOne({ordernumber:id})
-    console.log(preorders)
+    console.log("preorders", preorders.product_detail)
+
 
     // const productdetails = preorders
        
-  
+        
         const productshop = await ProductShops.create({
         ordernumber:id,
         products:preorders.product_detail,//เพิ่มสิ้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
       });
 // console.log('-----------44444444--------------')
+      const firstProduct = productshop.products[0];
       console.log(productshop)
 
     // const product_shop = await ProductShops.create(updateStatus)
@@ -221,7 +223,10 @@ exports.PreorderEmpStock = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "เพิ่มสินค้าสำเร็จ",
-        data: productshop,
+        data:{
+          productshop,
+          firstProduct, // Include the first product in the response
+        },
       });
   } catch (error) {
     return res.status(500).send({message: error.message, status: false});
@@ -266,8 +271,10 @@ exports.PreorderEmpStock = async (req, res) => {
 exports.getStock = async (req, res) => {
   try {
     const id = req.params.id;
+
     const mystock = await ProductShops.find()//{shop_id:id} เอาใส่ไว้ใน() findOne
-    return res.send(mystock)
+    
+    return res.send({mystock:mystock[0].products[0]})
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
