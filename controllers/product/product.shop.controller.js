@@ -209,12 +209,22 @@ exports.PreorderEmpStock = async (req, res) => {
     // สร้าง ProductShops โดยนำ product_detail จาก preorders
 
     // ดึงข้อมูล ProductShops ทั้งหมด
-    const mystock = await ProductShops.find();
+    var mystock = await ProductShops.find();
+
+    if(mystock.length <= 0){
+      const ProductShop2 = await ProductShops.create({
+        ordernumber: id,
+        products: preorders.product_detail,
+        totalProductAmount: 0,
+      });
+    }
+   
+    var mystock = await ProductShops.find();
 
     // คำนวณผลรวมของ product_amount จาก ProductShops
     let totalProductAmount = 0;
-    for (const item of mystock) {
-      for (const product of item.products) {
+    for  (const item of mystock) {
+      for  (const product of item.products) {
         totalProductAmount += product.product_amount;
         console.log(totalProductAmount);
       }
