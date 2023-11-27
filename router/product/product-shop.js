@@ -23,7 +23,8 @@ router.get("/admin/stock", authAdmin, ProductShops.getStockById );
 
 //ยกเลิก
 router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
-
+//พนักงานพรีออเดอร์สินค้า
+router.post("/employee/stock/:id", auth, ProductShops.PreorderEmpStock);
 
 
 
@@ -40,6 +41,9 @@ router.get("preorder/admin", authAdmin, ProductShops.addProducts)
 
 router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
+
+
+
 
 //confrim
 router.put("/preorder/admin/confirm/:id", authAdmin, ProductShops.confirmPreorder);

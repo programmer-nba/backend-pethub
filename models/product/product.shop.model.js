@@ -2,7 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const ProductShopSchema = new mongoose.Schema({
-  shop_id: {type: String, required: true},
+  shop_id: {type: String, required: false},
   name: {type: String, required: false}, //ชื่อสินค้า
   logo: {type: String, required: false},// ภาพสินค้า
   price_cost: {type: Number, required: false}, //ราคาต้นทุน

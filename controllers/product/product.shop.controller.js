@@ -166,25 +166,56 @@ exports.preorderProduct = async (req, res) => {
   }
 };
 
-//เพิ่มสินค้าเข้า stock
+//เพิ่มสินค้าเข้า stock เเอดมิน
 exports.PreorderStock = async (req, res) => {
   try {
 
     const id = req.params.id;
-    const preorders = await PreOrderProducts.findOne({shop_id:id})
+    const preorders = await PreOrderProducts.findOne({ordernumber:id})
     console.log(preorders)
 
     // const productdetails = preorders
        
   
         const productshop = await ProductShops.create({
-        shop_id:id,
-       
+        shop_id:req.body.shop_id,
+        ordernumber:id,
         products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
       });
 // console.log('-----------44444444--------------')
       console.log(productshop)
     
+    // const product_shop = await ProductShops.create(updateStatus)
+
+      return res.status(200).send({
+        status: true,
+        message: "เพิ่มสินค้าสำเร็จ",
+        data: productshop,
+      });
+  } catch (error) {
+    return res.status(500).send({message: error.message, status: false});
+  }
+}
+
+
+//เพิ่มสินค้าเข้า stock พนักงงาน
+exports.PreorderEmpStock = async (req, res) => {
+  try {
+
+    const id = req.params.id;
+    const preorders = await PreOrderProducts.findOne({ordernumber:id})
+    console.log(preorders)
+
+    // const productdetails = preorders
+       
+  
+        const productshop = await ProductShops.create({
+        ordernumber:id,
+        products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
+      });
+// console.log('-----------44444444--------------')
+      console.log(productshop)
+
     // const product_shop = await ProductShops.create(updateStatus)
 
       return res.status(200).send({
@@ -463,7 +494,7 @@ exports.cancelPreorder = async (req, res) => {
 exports.statusaddPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    const updateStatus = await PreOrderProducts.findOne({ordernumbe: id});
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
