@@ -202,9 +202,46 @@ exports.PreorderStock = async (req, res) => {
 exports.PreorderEmpStock = async (req, res) => {
   try {
     const id = req.params.id;
-
+    const products = [];
     // ดึงข้อมูล PreOrderProducts จาก ordernumber
     const preorders = await PreOrderProducts.findOne({ ordernumber: id });
+
+    const sumByProductId = preorders.product_detail.reduce((acc, curr) => {
+      const productId = curr.product_id;
+      const productAmount = curr.product_amount;
+    
+      // Check if there is an entry for the current product_id
+      if (!acc[productId]) {
+        acc[productId] = 0;
+        products.push({
+          "product_id": curr.product_id,
+          "product_name": curr.product_name,
+          "product_amount":curr.product_amount,
+          "barcode":curr.barcode,
+          "price_cost":curr.price_cost,
+          "product_amount": 0
+        })
+      }
+    
+      // Add the current product_amount to the total for the current product_id
+      acc[productId] += productAmount;
+    
+      return acc;
+    }, {});
+    // console.log(products);
+    // console.log(sumByProductId);
+    for  (const [index, value] of products.entries()) {
+      console.log(index)
+      products[index] = {
+        "product_id": value.product_id,
+        "product_name": value.product_name,
+        "product_amount":value.product_amount,
+        "barcode":value.barcode,
+        "price_cost":value.price_cost,
+        "product_amount": sumByProductId[value.product_id]
+      }
+    }
+
 
     // สร้าง ProductShops โดยนำ product_detail จาก preorders
 
@@ -214,7 +251,7 @@ exports.PreorderEmpStock = async (req, res) => {
     if(mystock.length <= 0){
       const ProductShop2 = await ProductShops.create({
         ordernumber: id,
-        products: preorders.product_detail,
+        products: products,
         totalProductAmount: 0,
       });
     }
@@ -232,7 +269,7 @@ exports.PreorderEmpStock = async (req, res) => {
 
     const productshop = await ProductShops.create({
       ordernumber: id,
-      products: preorders.product_detail,
+      products: products,
       totalProductAmount: totalProductAmount,
     });
 
