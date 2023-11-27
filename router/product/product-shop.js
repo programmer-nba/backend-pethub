@@ -29,10 +29,10 @@ router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmy
 
 //router.post("/preorder", auth, order.AddPreorder);//test
 
-//
+//การพรีออเดอร์มา
 router.post("/preorder", auth, ProductShops.preorderProduct);
-//
 router.get("/preorder", auth, ProductShops.getPreorderAll);
+router.get("/preorder/:id",auth, ProductShops.getPreorderEmpById)
 
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
 //preorder พรีออเดอร์ไปที่ shop 

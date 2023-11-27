@@ -139,10 +139,12 @@ exports.preorderProduct = async (req, res) => {
       timestamps: dayjs(Date.now()).format(""),
     };
     const invoice = await invoiceNumber();
+    const preordernumber  = await orderNumber();
     
     const order_product = await new PreOrderProducts({
       ...req.body,
       invoice: invoice,
+      ordernumber:preordernumber,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -167,14 +169,17 @@ exports.preorderProduct = async (req, res) => {
 //เพิ่มสินค้าเข้า stock
 exports.PreorderStock = async (req, res) => {
   try {
+
     const id = req.params.id;
     const preorders = await PreOrderProducts.findOne({shop_id:id})
     console.log(preorders)
 
     // const productdetails = preorders
+       
   
         const productshop = await ProductShops.create({
         shop_id:id,
+       
         products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
       });
 // console.log('-----------44444444--------------')
@@ -230,7 +235,7 @@ exports.PreorderStock = async (req, res) => {
 exports.getStockById = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShops.find()//{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShops.findOne({ordernumber:id})//{shop_id:id} เอาใส่ไว้ใน() findOne
     return res.send(mystock)
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
@@ -289,6 +294,29 @@ exports.addProducts = async(req,res) =>{
 exports.getPreorderAll = async (req, res) => {
   try {
     const preorder_list = await PreOrderProducts.find();
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+
+//ดึงข้อมูลแบบ id พรีออเดอร์
+exports.getPreorderEmpById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const preorder_list = await PreOrderProducts.findOne({ordernumber: id});
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -379,7 +407,7 @@ exports.confirmPreorder = async (req, res) => {
 exports.candelPreorderEmyee = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    const updateStatus = await PreOrderProducts.findOne({ordernumber: id});
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -511,6 +539,30 @@ async function invoiceNumber(date) {
   return invoice_number;
 }
 
+//ค้นหาเเละสร้างเลข ordernumber คือเลขนำเข้าสินค้า 
+async function orderNumber(date) {
+  const order = await PreOrderProducts.find();
+  let order_number = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      check = await PreOrderProducts.find({ordernumber: data});
+      if (check.length === 0) {
+        order_number =
+          `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    order_number =
+      `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+  }
+  return order_number;
+}
+
 exports.postPreorders = async(req,res) =>{
   try{
       const preorders = await PreOrderProducts.find({status:{$elemMatch:{name:'ยืนยันการสั่งซื้อ'}}})
@@ -529,3 +581,5 @@ exports.postPreorders = async(req,res) =>{
    res.status(500).send("ไม่สามารถเซฟได้")
   }
 }
+
+
