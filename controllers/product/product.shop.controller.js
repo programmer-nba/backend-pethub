@@ -211,7 +211,7 @@ exports.PreorderEmpStock = async (req, res) => {
   
         const productshop = await ProductShops.create({
         ordernumber:id,
-        products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
+        products:preorders.product_detail,//เพิ่มสิ้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
       });
 // console.log('-----------44444444--------------')
       console.log(productshop)
@@ -262,7 +262,17 @@ exports.PreorderEmpStock = async (req, res) => {
 
 
 
-
+//เเสดงสินค้าที่เพิ่มเข้าสต๊อกทั้งหมด
+exports.getStock = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const mystock = await ProductShops.find()//{shop_id:id} เอาใส่ไว้ใน() findOne
+    return res.send(mystock)
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+//เเสดงสินค้าที่เพิ่มเข้าสต๊อกแบบ id
 exports.getStockById = async (req, res) => {
   try {
     const id = req.params.id;

@@ -18,13 +18,14 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
 
 //เพิ่มเข้าสต๊อกสินค้า
-router.post("/admin/stock/:id", authAdmin, ProductShops.PreorderStock);
-router.get("/admin/stock", authAdmin, ProductShops.getStockById );
 
 //ยกเลิก
 router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 //พนักงานพรีออเดอร์สินค้า
 router.post("/employee/stock/:id", auth, ProductShops.PreorderEmpStock);
+router.get("/employee/stock", auth,  ProductShops.getStock);
+// router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
+
 
 
 
@@ -33,9 +34,10 @@ router.post("/employee/stock/:id", auth, ProductShops.PreorderEmpStock);
 //การพรีออเดอร์มา
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
-router.get("/preorder/:id",auth, ProductShops.getPreorderEmpById)
 
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
+router.get("/preorder/:id",auth, ProductShops.getPreorderEmpById)
+
 //preorder พรีออเดอร์ไปที่ shop 
 router.get("preorder/admin", authAdmin, ProductShops.addProducts)
 
