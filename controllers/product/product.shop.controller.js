@@ -201,38 +201,45 @@ exports.PreorderStock = async (req, res) => {
 //เพิ่มสินค้าเข้า stock พนักงงาน
 exports.PreorderEmpStock = async (req, res) => {
   try {
-
     const id = req.params.id;
-    const preorders = await PreOrderProducts.findOne({ordernumber:id})
-    console.log("preorders", preorders.product_detail)
 
+    // ดึงข้อมูล PreOrderProducts จาก ordernumber
+    const preorders = await PreOrderProducts.findOne({ ordernumber: id });
 
-    // const productdetails = preorders
-       
-        
-        const productshop = await ProductShops.create({
-        ordernumber:id,
-        products:preorders.product_detail,//เพิ่มสิ้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
-      });
-// console.log('-----------44444444--------------')
-      const firstProduct = productshop.products[0];
-      console.log(productshop)
+    // สร้าง ProductShops โดยนำ product_detail จาก preorders
 
-    // const product_shop = await ProductShops.create(updateStatus)
+    // ดึงข้อมูล ProductShops ทั้งหมด
+    const mystock = await ProductShops.find();
 
-      return res.status(200).send({
-        status: true,
-        message: "เพิ่มสินค้าสำเร็จ",
-        data:{
-          productshop,
-          firstProduct, // Include the first product in the response
-        },
-      });
+    // คำนวณผลรวมของ product_amount จาก ProductShops
+    let totalProductAmount = 0;
+    for (const item of mystock) {
+      for (const product of item.products) {
+        totalProductAmount += product.product_amount;
+        console.log(totalProductAmount);
+      }
+    }
+
+    const productshop = await ProductShops.create({
+      ordernumber: id,
+      products: preorders.product_detail,
+      totalProductAmount: totalProductAmount,
+    });
+
+    console.log("totalProductAmount", totalProductAmount);
+
+    return res.status(200).send({
+      status: true,
+      message: "เพิ่มสินค้าสำเร็จ",
+      data: {
+        productshop,
+        totalProductAmount,
+      },
+    });
   } catch (error) {
-    return res.status(500).send({message: error.message, status: false});
+    return res.status(500).send({ message: error.message, status: false });
   }
-}
-
+};
 // //รับค่าบาร์โค๊ดจากข้อมูลมากเเสดงโดยการjoin เข้ามาเเสดง
 // exports.PreorderStock = async (req, res) => {
 //   try {
@@ -274,7 +281,7 @@ exports.getStock = async (req, res) => {
 
     const mystock = await ProductShops.find()//{shop_id:id} เอาใส่ไว้ใน() findOne
     
-    return res.send({mystock:mystock[0].products[0]})
+    return res.send(mystock)
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
