@@ -230,7 +230,7 @@ exports.PreorderStock = async (req, res) => {
 exports.getStockById = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShops.findOne({shop_id:id})
+    const mystock = await ProductShops.find()//{shop_id:id} เอาใส่ไว้ใน() findOne
     return res.send(mystock)
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
