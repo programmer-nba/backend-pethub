@@ -220,9 +220,9 @@ exports.PreorderEmpStock = async (req, res) => {
           shop_id: preorders.shop_id,
           name: preorders.product_detail[i].product_name,
           totalProductAmount: preorders.product_detail[i].product_amount,
-          price_cost: preorders.product_detail[i].price_cost,
-          barcode:preorders.product_detail[i].barcode,
-          price_cost:preorders.product_detail[i].price_cost,
+          price_cost: product_admin.price_cost,
+          barcode: product_admin.barcode,
+        
          
         }; 
          const product = await new ProductShops(data).save();
