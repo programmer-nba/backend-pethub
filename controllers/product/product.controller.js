@@ -79,7 +79,7 @@ async function generatePublicUrl(res) {
   }
 }
 
-//เพิ่มสินค้าแบบชิ้นเดียว
+//เพิ่มสินค้าแบบชิ้น
 exports.create = async (req, res) => {
   try {
     let upload = multer({storage: storage}).array("imgCollection", 20);
@@ -130,48 +130,37 @@ exports.create = async (req, res) => {
 //เพิ่มสินค้าแบบเป็นเเพ็คสินค้า
 exports.createPack = async (req, res) => {
   try {
-    let upload = multer({storage: storage}).array("imgCollection", 20);
-    upload(req, res, async function (err) {
-      if (err) {
-        return res.status(403).send({message: "มีบางอย่างผิดพลาด", data: err});
-      }
-      const reqFiles = [];
-      if (!req.files) {
-        res.status(500).send({
-          message: "มีบางอย่างผิดพลาด",
-          data: "No Request Files",
-          status: false,
-        });
-      } else {
-        const url = req.protocol + "://" + req.get("host");
-        const productpack = await PackProducts.findOne({product_id:req.body.product_id})//เพิ่มตรงส่วนนี้มา
-        for (var i = 0; i < req.files.length; i++) {
-          await uploadFileCreate(req.files, res, {i, reqFiles});
-          
-        }
-        const data = {
-          logo: reqFiles[0],
-          name: req.body.name,
-          barcode: req.body.barcode,
-          category: req.body.category,
-          supplier_id: req.body.supplier_id,
-          quantity: req.body.quantity,
-          price_cost: req.body.price_cost,
-          status: true,
-          is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
-        };
-        const new_product = await Products.create(data);
-        if (new_product) {
-          return res.status(200).send({status: true, message: "บันทึกสำเร็จ", data: new_product});
-        } else {
-          return res
-            .status(403)
-            .send({status: false, message: "ไม่สามารถบันทึกได้"});
-        }
-      }
+    const product_id = req.body.product_id;
+    const productpack = await Products.findOne({ _id: product_id });
+
+    const testpack = {
+      product_id: product_id,
+      barcode: productpack.barcode,
+      quantity: productpack.quantity,
+      price_cost:productpack.price_cost,
+    };
+
+    const order_product = await new PackProducts(testpack).save();
+
+    if (order_product) {
+      return res.status(200).send({
+        status: true,
+        message: "สั่งซื้อสินค้าทำเสร็จ",
+        data: order_product,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาดในการบันทึกข้อมูล",
+        status: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+      error: error.message,
     });
-  } catch (err) {
-    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 };
 
