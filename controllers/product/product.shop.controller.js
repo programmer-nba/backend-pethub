@@ -206,6 +206,9 @@ exports.PreorderEmpStock = async (req, res) => {
     const orderId = req.params.id;
     // ดึงข้อมูล PreOrderProducts จาก ordernumber
     const preorders = await PreOrderProducts.findOne({ordernumber: orderId });
+    if(!preorders){
+      return res.send("ไม่พบรหัสออเดอร์นี้")
+    }
     const amount = preorders.product_detail.length;
 
     for (let i = 0; i < amount; i++) { //ใช้ loop ในการค้นหา
@@ -308,7 +311,7 @@ exports.getStock = async (req, res) => {
 exports.checkEmpStock = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShops.findOne({product_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShops.find({shop_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
     return res.send(mystock);
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
