@@ -207,7 +207,7 @@ exports.PreorderEmpStock = async (req, res) => {
     // ดึงข้อมูล PreOrderProducts จาก ordernumber
     const preorders = await PreOrderProducts.findOne({ordernumber: orderId });
     if(!preorders){
-      return res.send("ไม่พบรหัสออเดอร์นี้")
+      return res.send({ status: false, message: "ไม่พบรหัสออเดอร์นี้" })
     }
     const amount = preorders.product_detail.length;
 
