@@ -95,8 +95,10 @@ exports.create = async (req, res) => {
         });
       } else {
         const url = req.protocol + "://" + req.get("host");
+        const productpack = await PackProducts.findOne({product_id:req.body.product_id})//เพิ่มตรงส่วนนี้มา
         for (var i = 0; i < req.files.length; i++) {
           await uploadFileCreate(req.files, res, {i, reqFiles});
+          
         }
         const data = {
           logo: reqFiles[0],
@@ -107,7 +109,7 @@ exports.create = async (req, res) => {
           quantity: req.body.quantity,
           price_cost: req.body.price_cost,
           status: true,
-          is_pack:true,
+          is_pack:productpack,//เพิ่มตรงส่วนนี้มา
         };
         const new_product = await Products.create(data);
         if (new_product) {

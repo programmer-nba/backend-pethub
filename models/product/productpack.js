@@ -2,6 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const packsProducts = new mongoose.Schema( {
+  product_id :{type:Number,required:true},
   logo: {type: String, required: true},
   name: {type: String, required: true}, //ชื่อสินค้า
   barcode: {type: String, required: true}, //บาร์โค๊ดสินค้า

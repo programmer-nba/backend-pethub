@@ -5,7 +5,7 @@ const ProductShopSchema = new mongoose.Schema({
   product_id: {type: String, required: false},
   shop_id: {type: String, required: false},
   name: {type: String, required: false}, //ชื่อสินค้า
-  barcode: {type: String, required: false}, // ภาพสินค้า
+  barcode: {type: String, required: false}, // บาร์โค๊ดสินค้า
   totalProductAmount: {type: Number, required: false},
   price_cost: {type: Number, required: false}, //ราคาต้นทุน
   price: {type: Number, required: false}, //ราคาสินค้า
