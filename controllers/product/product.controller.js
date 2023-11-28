@@ -109,7 +109,7 @@ exports.create = async (req, res) => {
           quantity: req.body.quantity,
           price_cost: req.body.price_cost,
           status: true,
-          is_pack:productpack,//เพิ่มตรงส่วนนี้มา
+          is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };
         const new_product = await Products.create(data);
         if (new_product) {
