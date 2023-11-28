@@ -5,13 +5,14 @@ const {
   validateProduct,
 } = require("../../models/product/product.shop.model");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
-const admin = require("../../models/product/product.shop.model")
-const Products = require("../../models/product/product.model")
+const admin = require("../../models/product/product.shop.model");
+const {Products} = require("../../models/product/product.model");
 const dayjs = require("dayjs");
 const {google} = require("googleapis");
 const {Employees} = require("../../models/user/employee.model");
 const {Shops} = require("../../models/shop/shop.model");
 const jwt = require("jsonwebtoken");
+const {response} = require("express");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_DRIVE_REDIRECT_URI;
@@ -132,19 +133,19 @@ exports.findByShopId = async (req, res) => {
 
 // ร้านค้าย่อย สั่ง preorder สินค้าส่งให้แอดมินตรวจสอบ
 exports.preorderProduct = async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   try {
     const status = {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
     const invoice = await invoiceNumber();
-    const preordernumber  = await orderNumber();
-    
+    const preordernumber = await orderNumber();
+
     const order_product = await new PreOrderProducts({
       ...req.body,
       invoice: invoice,
-      ordernumber:preordernumber,
+      ordernumber: preordernumber,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -161,136 +162,176 @@ exports.preorderProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error)
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด222", status: false, error:error.message});
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด222",
+      status: false,
+      error: error.message,
+    });
   }
 };
 
 //เพิ่มสินค้าเข้า stock เเอดมิน
 exports.PreorderStock = async (req, res) => {
   try {
-
     const id = req.params.id;
-    const preorders = await PreOrderProducts.findOne({ordernumber:id})
-    console.log(preorders)
+    const preorders = await PreOrderProducts.findOne({ordernumber: id});
+    console.log(preorders);
 
     // const productdetails = preorders
-       
-  
-        const productshop = await ProductShops.create({
-        shop_id:req.body.shop_id,
-        ordernumber:id,
-        products:preorders.product_detail,//เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
-      });
-// console.log('-----------44444444--------------')
-      console.log(productshop)
-    
+
+    const productshop = await ProductShops.create({
+      shop_id: req.body.shop_id,
+      ordernumber: id,
+      products: preorders.product_detail, //เพิ่มส้นค้าแบบ array ให้เเสดงออกโดยการใช้ ...
+    });
+    // console.log('-----------44444444--------------')
+    console.log(productshop);
+
     // const product_shop = await ProductShops.create(updateStatus)
 
-      return res.status(200).send({
-        status: true,
-        message: "เพิ่มสินค้าสำเร็จ",
-        data: productshop,
-      });
+    return res.status(200).send({
+      status: true,
+      message: "เพิ่มสินค้าสำเร็จ",
+      data: productshop,
+    });
   } catch (error) {
     return res.status(500).send({message: error.message, status: false});
   }
-}
-
+};
 
 //เพิ่มสินค้าเข้า stock พนักงงาน
 exports.PreorderEmpStock = async (req, res) => {
   try {
     const id = req.params.id;
-    const products = [];
     // ดึงข้อมูล PreOrderProducts จาก ordernumber
-    const preorders = await PreOrderProducts.findOne({ ordernumber: id });
-
-    const sumByProductId = preorders.product_detail.reduce((acc, curr) => {
-      const productId = curr.product_id;
-      const productAmount = curr.product_amount;
-    
-      // Check if there is an entry for the current product_id
-      if (!acc[productId]) {
-        acc[productId] = 0;
-        products.push({
-          "product_id": curr.product_id,
-          "product_name": curr.product_name,
-          "product_amount":curr.product_amount,
-          "barcode":curr.barcode,
-          "price_cost":curr.price_cost,
-          "product_amount": 0
-        })
-      }
-    
-      // Add the current product_amount to the total for the current product_id
-      acc[productId] += productAmount;
-    
-      return acc;
-    }, {});
-    // console.log(products);
-    // console.log(sumByProductId);
-    for  (const [index, value] of products.entries()) {
-      console.log(index)
-      products[index] = {
-        "product_id": value.product_id,
-        "product_name": value.product_name,
-        "product_amount":value.product_amount,
-        "barcode":value.barcode,
-        "price_cost":value.price_cost,
-        "product_amount": sumByProductId[value.product_id]
-      }
-    }
-
-
-    // สร้าง ProductShops โดยนำ product_detail จาก preorders
-
-    // ดึงข้อมูล ProductShops ทั้งหมด
-    var mystock = await ProductShops.find();
-
-    if(mystock.length <= 0){
-      const ProductShop2 = await ProductShops.create({
-        ordernumber: id,
-        products: products,
-        totalProductAmount: 0,
-      });
-    }
-   
-    var mystock = await ProductShops.find();
-
-    // คำนวณผลรวมของ product_amount จาก ProductShops
-    let totalProductAmount = 0;
-    for  (const item of mystock) {
-      for  (const product of item.products) {
-        totalProductAmount += product.product_amount;
-        // console.log(totalProductAmount);code เเสดง ค่า total ออกมา
+    const preorders = await PreOrderProducts.findOne({ordernumber: id});
+    const amount = preorders.product_detail.length;
+    for (let i = 0; i < amount; i++) {
+      const product_id = preorders.product_detail[i].product_id;
+      const new_product = await ProductShops.findOne({product_id: product_id});
+      const product_admin = await Products.findOne({_id: product_id});
+      console.log(product_admin);
+      if (!new_product) {
+        const data = {
+          product_id: preorders.product_detail[i].product_id,
+          shop_id: preorders.shop_id,
+          name: preorders.product_detail[i].product_name,
+          totalProductAmount: preorders.product_detail[i].product_amount,
+          price_cost: preorders.product_detail[i].price_cost,
+        };
+        const product = await new ProductShops(data).save();
+        if (!product) {
+          return res
+            .status(403)
+            .send({status: false, message: "บันทึกไม่สำเร็จ"});
+        } else {
+          return res.status(200).send({
+            status: false,
+            message: "สร้างรายการสินค้าใหม่สำเร็จ",
+            data: product,
+          });
+        }
+      } else {
+        const id = preorders.product_detail[i].product_id;
+        const amount =
+          preorders.product_detail[i].product_amount +
+          new_product.totalProductAmount;
+        const new_amount = {
+          totalProductAmount: amount,
+        };
+        console.log(new_amount);
+        // const data = await ProductShops.findByIdAndUpdate(id, new_amount);
+        // if (!data) {
+        //   return res.status(403).send({status: false, message: "มีบางอย่างผิดพลาด"})
+        // } else {
+        //   return res.status(200).send({status: true, message: "บันทุกข้อมูลสำเร็จ", data: data});
+        // }
       }
     }
 
-    const productshop = await ProductShops.create({
-      ordernumber: id,
-      products: products,
-      //totalProductAmount: totalProductAmount,code เเสดง ค่า total ออกมา
-    });
+    // const sumByProductId = preorders.product_detail.reduce((acc, curr) => {
+    //   const productId = curr.product_id;
+    //   const productAmount = curr.product_amount;
 
-    // console.log("totalProductAmount", totalProductAmount);  code เเสดง ค่า total ออกมา
+    // Check if there is an entry for the current product_id
+    // if (!acc[productId]) {
+    //   acc[productId] = 0;
+    //   products.push({
+    //     "product_id": curr.product_id,
+    //     "product_name": curr.product_name,
+    //     "product_amount":curr.product_amount,
+    //     "barcode":curr.barcode,
+    //     "price_cost":curr.price_cost,
+    //     "product_amount": 0
+    //   })
+    // }
 
-    return res.status(200).send({
-      status: true,
-      message: "เพิ่มสินค้าสำเร็จ",
-      data: {
-        productshop,
-        // totalProductAmount,
-      },
-    });
+    //   // Add the current product_amount to the total for the current product_id
+    //   acc[productId] += productAmount;
+
+    //   return acc;
+    // }, {});
+    // // console.log(products);
+    // // console.log(sumByProductId);
+    // for  (const [index, value] of products.entries()) {
+    //   console.log(index)
+    //   products[index] = {
+    //     "product_id": value.product_id,
+    //     "product_name": value.product_name,
+    //     "product_amount":value.product_amount,
+    //     "barcode":value.barcode,
+    //     "price_cost":value.price_cost,
+    //     "product_amount": sumByProductId[value.product_id]
+    //   }
+    // }
+
+    // // สร้าง ProductShops โดยนำ product_detail จาก preorders
+
+    // // ดึงข้อมูล ProductShops ทั้งหมด
+    // var mystock = await ProductShops.find();
+
+    // if(mystock.length <= 0){
+    //   const ProductShop2 = await ProductShops.create({
+    //     ordernumber: id,
+    //     products: products,
+    //     totalProductAmount: 0,
+    //   });
+    // }
+
+    // var mystock = await ProductShops.find();
+
+    // // คำนวณผลรวมของ product_amount จาก ProductShops
+    // let totalProductAmount = 0;
+    // for  (const item of mystock) {
+    //   for  (const product of item.products) {
+    //     totalProductAmount += product.product_amount;
+    //     // console.log(totalProductAmount);code เเสดง ค่า total ออกมา
+    //   }
+    // }
+
+    // const productshop = await ProductShops.create({
+    //   ordernumber: id,
+    //   products: products,
+    //   //totalProductAmount: totalProductAmount,code เเสดง ค่า total ออกมา
+    // });
+
+    // // console.log("totalProductAmount", totalProductAmount);  code เเสดง ค่า total ออกมา
+
+    // return res.status(200).send({
+    //   status: true,
+    //   message: "เพิ่มสินค้าสำเร็จ",
+    //   data: {
+    //     productshop,
+    //     // totalProductAmount,
+    //   },
+    // });
   } catch (error) {
-    return res.status(500).send({ message: error.message, status: false });
+    return res.status(500).send({message: error.message, status: false});
   }
 };
 
 // เเสดงสินค้าก่อนเพิ่มเข้าสต๊อกสินค้า
-
-
 
 // //รับค่าบาร์โค๊ดจากข้อมูลมากเเสดงโดยการjoin เข้ามาเเสดง
 // exports.PreorderStock = async (req, res) => {
@@ -299,7 +340,7 @@ exports.PreorderEmpStock = async (req, res) => {
 //     const preorders = await PreOrderProducts.findOne({shop_id:id})
 //     console.log(preorders)
 
-//      const productdetails =  preorders.product_detail.map(async(item)=>{ 
+//      const productdetails =  preorders.product_detail.map(async(item)=>{
 //       const product = await Products.findById(item.product_id)
 //       const product_detail = {price_cost:product.price_cost,barcode:product.barcode}
 //       return product_detail
@@ -311,7 +352,7 @@ exports.PreorderEmpStock = async (req, res) => {
 //       });
 // // console.log('-----------44444444--------------')
 //       console.log(productshop)
-    
+
 //     // const product_shop = await ProductShops.create(updateStatus)
 
 //       return res.status(200).send({
@@ -324,16 +365,14 @@ exports.PreorderEmpStock = async (req, res) => {
 //   }
 // }
 
-
-
 //เเสดงสินค้าที่เพิ่มเข้าสต๊อกทั้งหมด
 exports.getStock = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const mystock = await ProductShops.find()//{shop_id:id} เอาใส่ไว้ใน() findOne
-    
-    return res.send(mystock)
+    const mystock = await ProductShops.find(); //{shop_id:id} เอาใส่ไว้ใน() findOne
+
+    return res.send(mystock);
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
@@ -342,61 +381,56 @@ exports.getStock = async (req, res) => {
 exports.getStockById = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShops.findOne({ordernumber:id})//{shop_id:id} เอาใส่ไว้ใน() findOne
-    return res.send(mystock)
+    const mystock = await ProductShops.findOne({ordernumber: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    return res.send(mystock);
   } catch (error) {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
 
-
 //เพิ่มสินค้าเข้าไปในพรีออเดอร์
-exports.addProducts = async(req,res) =>{
-  var chkOrderID = await order.find()
-      try{
-  var getPreproduct = await PreOrderProducts.find({_id:req.body._id});//ส่งค่ามาจากด้าน front end โดยใช้id
-   
-     console.log("Status : ", getPreproduct[0].status)
-  //  console.log("Status : ", getPreproduct[0].status.length)
-   var indexLast = getPreproduct[0].status.length - 1;
-   var chk_status = getPreproduct[0].status[indexLast].name;
-    console.log(chk_status)
-  const teatid = await PreOrderProducts.find({id:req.body._id})
-  // if(teatid.length > 0) {
-  //     console.log("มีการสร้างไอดีนี้ไปแล้ว")
-  //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
-  // }
-  // console.log("teatid", teatid )
-  console.log(chk_status)
-          if (chk_status == "ยืนยันการสั่งซื้อ") {
-                      
-                      let data = {
-                              shop_id: req.body.shop_id,
-                              invoice: req.body.invoice,
-                              employee_name: req.body.employee_name,
-                              product_detail:req.body.product_detail,
-                              timestamps: Date.now()
-                  
-                            }
-                             const createOrder = new order(data);
-                             const createOrderData = await createOrder.save().populate('shop_id')
+exports.addProducts = async (req, res) => {
+  var chkOrderID = await order.find();
+  try {
+    var getPreproduct = await PreOrderProducts.find({_id: req.body._id}); //ส่งค่ามาจากด้าน front end โดยใช้id
 
-                             return res.status(200).send({message:" สำเร็จ",data:createOrderData})
+    console.log("Status : ", getPreproduct[0].status);
+    //  console.log("Status : ", getPreproduct[0].status.length)
+    var indexLast = getPreproduct[0].status.length - 1;
+    var chk_status = getPreproduct[0].status[indexLast].name;
+    console.log(chk_status);
+    const teatid = await PreOrderProducts.find({id: req.body._id});
+    // if(teatid.length > 0) {
+    //     console.log("มีการสร้างไอดีนี้ไปแล้ว")
+    //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
+    // }
+    // console.log("teatid", teatid )
+    console.log(chk_status);
+    if (chk_status == "ยืนยันการสั่งซื้อ") {
+      let data = {
+        shop_id: req.body.shop_id,
+        invoice: req.body.invoice,
+        employee_name: req.body.employee_name,
+        product_detail: req.body.product_detail,
+        timestamps: Date.now(),
+      };
+      const createOrder = new order(data);
+      const createOrderData = await createOrder.save().populate("shop_id");
 
-                  }
-          
-                  return res.status(500).send({message:"รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"})
+      return res.status(200).send({message: " สำเร็จ", data: createOrderData});
+    }
 
+    return res
+      .status(500)
+      .send({message: "รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"});
 
-          
-          //  const createOrder = new order(data);
-          //  const createOrderData = await createOrder.save()
-      }catch (error){
-          console.error(error)
-       res.status(500).send("ไม่สามารถเซฟได้")
-
-      }
+    //  const createOrder = new order(data);
+    //  const createOrderData = await createOrder.save()
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("ไม่สามารถเซฟได้");
   }
+};
 
 exports.getPreorderAll = async (req, res) => {
   try {
@@ -417,7 +451,6 @@ exports.getPreorderAll = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-
 
 //ดึงข้อมูลแบบ id พรีออเดอร์
 exports.getPreorderEmpById = async (req, res) => {
@@ -482,7 +515,6 @@ exports.getPreorderByShopId = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-
 
 exports.confirmPreorder = async (req, res) => {
   try {
@@ -565,7 +597,6 @@ exports.cancelPreorder = async (req, res) => {
   }
 };
 
-
 //คำสั่งเปลี่ยนสถานะเป็น นำเข้าสต๊อกสิน
 exports.statusaddPreorder = async (req, res) => {
   try {
@@ -621,7 +652,6 @@ exports.statusPreorder = async (req, res) => {
   }
 };
 
-
 //ค้นหาและสร้างเลข invoice
 async function invoiceNumber(date) {
   const order = await PreOrderProducts.find();
@@ -646,7 +676,7 @@ async function invoiceNumber(date) {
   return invoice_number;
 }
 
-//ค้นหาเเละสร้างเลข ordernumber คือเลขนำเข้าสินค้า 
+//ค้นหาเเละสร้างเลข ordernumber คือเลขนำเข้าสินค้า
 async function orderNumber(date) {
   const order = await PreOrderProducts.find();
   let order_number = null;
@@ -670,23 +700,18 @@ async function orderNumber(date) {
   return order_number;
 }
 
-exports.postPreorders = async(req,res) =>{
-  try{
-      const preorders = await PreOrderProducts.find({status:{$elemMatch:{name:'ยืนยันการสั่งซื้อ'}}})
-      if(!preorders){
-          res.send("ไม่เจอ")
-
-      }
-      console.log(preorders)
-      res.send({
-          
-      })
-      
-  
-  }catch(error){
-      console.log(error)
-   res.status(500).send("ไม่สามารถเซฟได้")
+exports.postPreorders = async (req, res) => {
+  try {
+    const preorders = await PreOrderProducts.find({
+      status: {$elemMatch: {name: "ยืนยันการสั่งซื้อ"}},
+    });
+    if (!preorders) {
+      res.send("ไม่เจอ");
+    }
+    console.log(preorders);
+    res.send({});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("ไม่สามารถเซฟได้");
   }
-}
-
-
+};
