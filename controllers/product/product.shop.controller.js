@@ -212,8 +212,6 @@ exports.PreorderEmpStock = async (req, res) => {
       const product_id = preorders.product_detail[i].product_id;
       const existingProduct = await ProductShops.findOne({ product_id: product_id });//ค้นหาid จากProductShops เเล้วมาเก็บไว้ในตัวแปร existingProduct
       const product_admin = await Products.findOne({ _id: product_id });//ค้นาหา id Products เเล้วมาเก็บไว้ในตัวแปร product_admin
-      // console.log(product_admin)
-       
       if (!existingProduct) { //การสร้างข้อมูลเข้าไปใหม่
         const data = {
           product_id: preorders.product_detail[i].product_id,
@@ -228,27 +226,29 @@ exports.PreorderEmpStock = async (req, res) => {
          const product = await new ProductShops(data).save();
       
 
-        if (!product) {
+         if (!product) {
           res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
-        }
-      } else {
-        const updatedAmount =
+         }
+      } 
+       else {
+         const updatedAmount =
           preorders.product_detail[i].product_amount + existingProduct.totalProductAmount;
-          const new_amount = {
-          totalProductAmount: updatedAmount,
-        };
+           const new_amount = {
+           totalProductAmount: updatedAmount,
+           
+         };
   
-        console.log(new_amount);
-        const updatedProduct = await ProductShops.findByIdAndUpdate(
-          existingProduct._id,
-          new_amount,
-          { new: true }
-        );
+        //  console.log(new_amount);
+         const updatedProduct = await ProductShops.findByIdAndUpdate(
+           existingProduct._id,
+           new_amount,
+           { new: true }
+         );
 
-        if (!updatedProduct) {
-          res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
-        }
-      }
+         if (!updatedProduct) {
+           res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+         }
+       }
     }
 
     res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
