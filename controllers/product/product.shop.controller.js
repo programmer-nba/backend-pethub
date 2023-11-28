@@ -263,30 +263,35 @@ exports.PreorderEmpStock = async (req, res) => {
     for  (const item of mystock) {
       for  (const product of item.products) {
         totalProductAmount += product.product_amount;
-        console.log(totalProductAmount);
+        // console.log(totalProductAmount);code เเสดง ค่า total ออกมา
       }
     }
 
     const productshop = await ProductShops.create({
       ordernumber: id,
       products: products,
-      totalProductAmount: totalProductAmount,
+      //totalProductAmount: totalProductAmount,code เเสดง ค่า total ออกมา
     });
 
-    console.log("totalProductAmount", totalProductAmount);
+    // console.log("totalProductAmount", totalProductAmount);  code เเสดง ค่า total ออกมา
 
     return res.status(200).send({
       status: true,
       message: "เพิ่มสินค้าสำเร็จ",
       data: {
         productshop,
-        totalProductAmount,
+        // totalProductAmount,
       },
     });
   } catch (error) {
     return res.status(500).send({ message: error.message, status: false });
   }
 };
+
+// เเสดงสินค้าก่อนเพิ่มเข้าสต๊อกสินค้า
+
+
+
 // //รับค่าบาร์โค๊ดจากข้อมูลมากเเสดงโดยการjoin เข้ามาเเสดง
 // exports.PreorderStock = async (req, res) => {
 //   try {
