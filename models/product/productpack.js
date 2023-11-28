@@ -25,4 +25,4 @@ const packsProducts = new mongoose.Schema( {
     });
     return schema.validate(data);
   };
-  module.exports={PackProducts};
+  module.exports={PackProducts,validatePackProducts};
