@@ -2,6 +2,10 @@ const {
   Products,
   validateproduct,
 } = require("../../models/product/product.model.js");
+const{
+  PackProducts,
+  validatePackProducts,
+}=require("../../models/product/productpack.js");
 
 const fs = require("fs");
 const multer = require("multer");
@@ -103,6 +107,7 @@ exports.create = async (req, res) => {
           quantity: req.body.quantity,
           price_cost: req.body.price_cost,
           status: true,
+          is_pack:true,
         };
         const new_product = await Products.create(data);
         if (new_product) {

@@ -24,7 +24,7 @@ router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmy
 //พนักงานพรีออเดอร์สินค้า
 router.post("/employee/stock/:id", auth, ProductShops.PreorderEmpStock);
 router.get("/employee/stock", auth, ProductShops.getStock);
-// router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
+router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
 
 
