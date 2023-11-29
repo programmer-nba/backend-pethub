@@ -131,26 +131,35 @@ exports.create = async (req, res) => {
 exports.createPack = async (req, res) => {
   try {
     const product_id = req.body.product_id;
-    const productpack = await Products.findOne({ _id: product_id });
 
-    const testpack = {
-      product_id: product_id,
-      barcode: productpack.barcode,
-      quantity: productpack.quantity,
-      price_cost:productpack.price_cost,
-    };
+    const productpack = await Products.findOne({id:product_id});
+    console.log(productpack)
 
-    const order_product = await new PackProducts(testpack).save();
+    if (productpack) {
+      const testpack = {
+        product_id:productpack.id,
+        barcode: productpack.barcode,
+        amount: req.body.amount,
+      };
 
-    if (order_product) {
-      return res.status(200).send({
-        status: true,
-        message: "สั่งซื้อสินค้าทำเสร็จ",
-        data: order_product,
-      });
+      // บันทึกข้อมูลลงใน MongoDB
+      const order_product = await new PackProducts(testpack).save();
+
+      if (order_product) {
+        return res.status(200).send({
+          status: true,
+          message: "สั่งซื้อสินค้าทำเสร็จ",
+          data: order_product,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาดในการบันทึกข้อมูล",
+          status: false,
+        });
+      }
     } else {
-      return res.status(500).send({
-        message: "มีบางอย่างผิดพลาดในการบันทึกข้อมูล",
+      return res.status(404).send({
+        message: "ไม่พบสินค้าที่ตรงกับ product_id ที่ระบุ",
         status: false,
       });
     }
@@ -161,6 +170,24 @@ exports.createPack = async (req, res) => {
       status: false,
       error: error.message,
     });
+  }
+};
+
+//ดึงสินค้าออกมาเป็นแบบเเพ็ค
+exports.ChackPackAll = async (req, res) => {
+  try {
+    const packproduct = await PackProducts.find();
+    if (packproduct) {
+      return res
+        .status(200)
+        .send({message: "ดึงข้อมูลสินค้าสำเร็จ", status: true, data: packproduct});
+    } else {
+      return res
+        .status(500)
+        .send({message: "ดึงข้อมูลสินค้าไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 };
 
