@@ -208,7 +208,7 @@ exports.PreorderEmpStock = async (req, res) => {
   try {
     const orderId = req.params.id;
 
-    // const updateResult = await PreOrderProducts.updateOne(
+    // const updateResult = await PreOrderProducts.find(
     //   { ordernumber: orderId, processed: false },
     //   { $set: { processed: true } }
     // );
@@ -263,7 +263,7 @@ exports.PreorderEmpStock = async (req, res) => {
       }
     }
 
-    // // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
+    // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
     // await PreOrderProducts.updateOne({ ordernumber: orderId }, { processed: true });
 
     res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
