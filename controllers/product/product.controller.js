@@ -138,7 +138,7 @@ exports.createPack = async (req, res) => {
     if (productpack) {
       const amount = req.body.amount;
       const price_cost = req.body.price_cost; // เพิ่มบรรทัดนี้
-      const total_price = price_cost * amount; // ใช้ price_cost ที่ระบุจาก request body
+      const total_price = (price_cost * amount).toFixed(2);; // ใช้ price_cost ที่ระบุจาก request body
 
       const testpack = {
         product_id: productpack.id,
@@ -153,7 +153,7 @@ exports.createPack = async (req, res) => {
       if (order_product) {
         return res.status(200).send({
           status: true,
-          message: "สั่งซื้อสินค้าทำเสร็จ",
+          message: "เพิ่มสิ้นค้าสำเร็จ",
           data: order_product,
         });
       } else {
@@ -213,6 +213,8 @@ exports.ChackPackById = async (req,res) =>{
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 }
+
+
 
 //ดึงสินจากตาราง product 
 exports.getProductAll = async (req, res) => {
