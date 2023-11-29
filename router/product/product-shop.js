@@ -28,7 +28,7 @@ router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock
-router.post("/employee/PreorderEmpStockPack", auth, ProductShops.PreorderEmpStockPack);
+router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmpStockPack);
 
 
 
@@ -40,7 +40,8 @@ router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 
 
-//การพรีออเดอร์มาแบบเป็นเเพ็คสินค้า
+//การพรีออเดอร์มาแบบเป็นเเพ็คสินค้ายังไม่ได้ทำ
+
 
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
 router.get("/preorder/:id",auth, ProductShops.getPreorderEmpById)

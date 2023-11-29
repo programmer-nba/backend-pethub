@@ -132,14 +132,19 @@ exports.createPack = async (req, res) => {
   try {
     const product_id = req.body.product_id;
 
-    const productpack = await Products.findOne({id:product_id});
-    console.log(productpack)
+    const productpack = await Products.findOne({ id: product_id });
+    console.log(productpack);
 
     if (productpack) {
+      const amount = req.body.amount;
+      const price_cost = req.body.price_cost; // เพิ่มบรรทัดนี้
+      const total_price = price_cost * amount; // ใช้ price_cost ที่ระบุจาก request body
+
       const testpack = {
-        product_id:productpack.id,
+        product_id: productpack.id,
         barcode: productpack.barcode,
-        amount: req.body.amount,
+        amount: amount,
+        total_price: total_price,
       };
 
       // บันทึกข้อมูลลงใน MongoDB
@@ -194,7 +199,7 @@ exports.ChackPackAll = async (req, res) => {
 //ดึงสินค้าออกมาเป็นแบบเเพ็ค เเเค่ 1เเพ็ค
 exports.ChackPackById = async (req,res) =>{
   try {
-    const packproduct = await PackProducts.findOne({product_id: req.params.id});
+    const packproduct = await PackProducts.findOne({_id: req.params.id});
     if (packproduct) {
       return res
         .status(200)
