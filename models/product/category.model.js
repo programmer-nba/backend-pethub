@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 const CategorySchema = new mongoose.Schema({
   name: {type: String, required: true}, //ชื่อประเภทสินค้า
+  
 });
 
 const Categorys = mongoose.model("category", CategorySchema);
