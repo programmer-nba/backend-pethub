@@ -191,6 +191,25 @@ exports.ChackPackAll = async (req, res) => {
   }
 };
 
+//ดึงสินค้าออกมาเป็นแบบเเพ็ค เเเค่ 1เเพ็ค
+exports.ChackPackById = async (req,res) =>{
+  try {
+    const packproduct = await PackProducts.findOne({product_id: req.params.id});
+    if (packproduct) {
+      return res
+        .status(200)
+        .send({message: "ดึงข้อมูลสินค้าสำเร็จ", status: true, data: packproduct});
+    } else {
+      return res
+        .status(500)
+        .send({message: "ดึงข้อมูลสินค้าไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
+
+//ดึงสินจากตาราง product 
 exports.getProductAll = async (req, res) => {
   try {
     const product = await Products.find();

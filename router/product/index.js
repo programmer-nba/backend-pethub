@@ -6,6 +6,7 @@ const authAdmin = require("../../lib/auth.admin.js");
 router.post("/create",authAdmin , product.create);
 router.post("/createpack",authAdmin , product.createPack);
 router.get("/chackpack",authAdmin , product.ChackPackAll);
+router.get("/ChackPackById/:id",authAdmin , product.ChackPackById)
 
 
 
