@@ -19,7 +19,7 @@ const PreOrderSchema = new mongoose.Schema({
       },
     ],
   },
-  processed: {type: Array, required: false,},//ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
+  processed: {type: String, required: false,},//ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: {type: Array, required: false,},
   timestamps: {type: Date, required: false, default: Date.now()},
 });

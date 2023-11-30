@@ -212,7 +212,7 @@ exports.PreorderEmpStock = async (req, res) => {
     if (!preorders) {
       return res.send({ status: false, message: "ไม่พบรหัสออเดอร์นี้" });
     } else {
-      console.log(orderId)
+      console.log(preorders)
       if (preorders.ordernumber[0] === 'true') {
         console.log("รหัสนี้ทุกใช่ไปแล้ว");
       }

@@ -35,7 +35,7 @@ EmployeeSchema.methods.generateAuthToken = function () {
     },
     process.env.JWTPRIVATEKEY,
     {
-      expiresIn: "4h",
+      expiresIn: "12h",
     }
   );
   return token;
