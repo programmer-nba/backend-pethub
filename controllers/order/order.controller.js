@@ -5,23 +5,6 @@ const {Admins, validateAdmin} = require("../../models/user/admin.model");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const req = require("express/lib/request");
 
-// exports.create = async(req,res) =>{
-//     try{
-//         var getID = await order.find().sort({order_id: -1}).limit(1)
-//         console.log(getID)
-//         var genOrderID = (parseInt(chkOrderID[0].order_id))+1
-//         let dataVendor = {
-//             order_id : genOrderID,
-//             name : "warunyoooo",
-//             productdetails : "111111"
-//           }
-//           const createorder= new order(dataVendor);
-//           const createTypeData = await createorder.save();
-//           return res.status(200).send({message:"สร้างสำเร็จ",data:createTypeData})
-//      }catch(err){
-//          res.status(500).send("ไม่สามารถเซฟได้")
-//      }
-//      }
 //เรียกสินค้าจากหน้าพรีออเดอร์มาดู
 exports.postPreorder = async(req,res) =>{
     const productId = req.body.productId
@@ -96,7 +79,7 @@ exports.postPreorder = async(req,res) =>{
     // }
 
 
-    exports.addProducts = async(req,res) =>{
+exports.addProducts = async(req,res) =>{
         var chkOrderID = await order.find()
             try{
         var getPreproduct = await PreOrderProducts.find({_id:req.body._id});
@@ -134,9 +117,6 @@ exports.postPreorder = async(req,res) =>{
                         }
                 
                         return res.status(500).send({message:"รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"})
-
-
-                
                 //  const createOrder = new order(data);
                 //  const createOrderData = await createOrder.save()
             }catch (error){
@@ -144,7 +124,7 @@ exports.postPreorder = async(req,res) =>{
              res.status(500).send("ไม่สามารถเซฟได้")
 
             }
-        }
+}
 
 
 exports.AddPreorder = async (req,res) =>{
