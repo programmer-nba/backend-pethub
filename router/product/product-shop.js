@@ -28,7 +28,7 @@ router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock
-router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmpStockPack);
+// router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmpStockPack); ยังไม่ได้ใช้
 
 
 
