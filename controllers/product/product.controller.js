@@ -138,13 +138,12 @@ exports.createPack = async (req, res) => {
     if (productpack) {
       const amount = req.body.amount;
       const price_cost = req.body.price_cost; // เพิ่มบรรทัดนี้
-      const total_price = (price_cost * amount).toFixed(2);; // ใช้ price_cost ที่ระบุจาก request body
+      // const total_price = (price_cost * amount).toFixed(2);; // ใช้ price_cost ที่ระบุจาก request body
 
       const testpack = {
         product_id: productpack.id,
         barcode: productpack.barcode,
         amount: amount,
-        total_price: total_price,
       };
 
       // บันทึกข้อมูลลงใน MongoDB
