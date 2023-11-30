@@ -38,8 +38,10 @@ router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 //การพรีออเดอร์มา
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
-//การพรีออกเดอร์มาแบบเป็นแบบเเพ็คสินค้า
+//การพรีออกเดอร์มาแบบเป็นแบบเเพ็คสินค้า หน้าร้าน
 router.post("/preorder/packproduct", auth, ProductShops.preorderProductPack);
+router.get("/preorder/packproduct", auth , ProductShops.getPreorderStoreAll)
+router.get("/preorder/packproductone/:id", auth , ProductShops.getPreorderStoreAId);
 
 
 

@@ -7,6 +7,8 @@ const {
 const{
   PackProducts,
 }=require("../../models/product/productpack.js");
+
+const {PreOrderProductShell} = require("../../models/product/preordershell.model.js")
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const admin = require("../../models/product/product.shop.model");
 const {Products} = require("../../models/product/product.model");
@@ -174,7 +176,7 @@ exports.preorderProduct = async (req, res) => {
   }
 };
 
-// หน้าร้าน สั่ง preorder มาที่ร้านค้าย่อย มารอส่งให้พนักงานตรวจสอบ
+// หน้าร้าน สั่ง preorder มาที่ร้านค้า shop มารอส่งให้พนักงานตรวจสอบ
 exports.preorderProductPack = async (req, res) => {
   console.log(req.body);
   try {
@@ -182,16 +184,18 @@ exports.preorderProductPack = async (req, res) => {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
-    const invoice = await invoiceNumber();
-    const preordernumber = await orderNumber();
+    const ordernumbershell = await orderNumberShell();
 
-    const order_product = await new PreOrderProducts({
+    const invoice = await invoiceShellNumber();
+
+    const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
-      ordernumber: preordernumber,
+      ordernumbershell: ordernumbershell,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
+
     if (order_product) {
       return res.status(200).send({
         status: true,
@@ -455,6 +459,48 @@ exports.getPreorderAll = async (req, res) => {
   }
 };
 
+//เเสดงออเดอร์สินค้าทั้งหมดจาก store จาก id
+exports.getPreorderStoreAId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const preorder_list = await PreOrderProductShell.findOne({ordernumbershell:id});
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+//เเสดงออเดอร์สินค้าทั้งหมดจาก store
+exports.getPreorderStoreAll = async (req, res) => {
+  try {
+    const preorder_list = await PreOrderProductShell.find();
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
 //ดึงข้อมูลแบบ id พรีออเดอร์
 exports.getPreorderEmpById = async (req, res) => {
   try {
@@ -655,6 +701,53 @@ exports.statusPreorder = async (req, res) => {
   }
 };
 
+//ค้นหาเเละสร้างเลข ordernumberของ shell คือเลขนำเข้าสินค้า
+async function orderNumberShell(date) {
+  const order = await PreOrderProductShell.find();
+  let store_number = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(11, "0") + num;
+      check = await PreOrderProductShell.find({ordernumbershell: data});
+      if (check.length === 0) {
+        store_number =
+          `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(11, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    store_number =
+      `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+  }
+  return store_number;
+}
+//สร้างเลข invoiceorder ของ shell ใหม่
+async function invoiceShellNumber(date) {
+  const order = await PreOrderProductShell.find();
+  let invoice_shell = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(14, "0") + num;
+      check = await PreOrderProductShell.find({invoice: data});
+      if (check.length === 0) {
+        invoice_shell =
+          `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(14, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    invoice_shell =
+      `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+  }
+  return invoice_shell;
+}
+
 //ค้นหาและสร้างเลข invoice
 async function invoiceNumber(date) {
   const order = await PreOrderProducts.find();
@@ -678,7 +771,6 @@ async function invoiceNumber(date) {
   }
   return invoice_number;
 }
-
 //ค้นหาเเละสร้างเลข ordernumber คือเลขนำเข้าสินค้า
 async function orderNumber(date) {
   const order = await PreOrderProducts.find();
@@ -702,6 +794,9 @@ async function orderNumber(date) {
   }
   return order_number;
 }
+
+
+
 
 exports.postPreorders = async (req, res) => {
   try {
