@@ -207,66 +207,63 @@ exports.PreorderStock = async (req, res) => {
 exports.PreorderEmpStock = async (req, res) => {
   try {
     const orderId = req.params.id;
+    const preorders = await PreOrderProducts.findOne({ordernumber: orderId });
 
- const updateResult = await PreOrderProducts.updateMany(
-  { ordernumber: orderId, processed: false },
-  { $set: { processed: true } }
-    );
-
-    if (updateResult.nModified > 0) {
-      return res.send({ status: false, message: "รหัสออเดอร์นี้ถูกใช้แล้ว" });
-    } 
-
-    const preorders = await PreOrderProducts.findOne({ ordernumber: orderId });
     if (!preorders) {
       return res.send({ status: false, message: "ไม่พบรหัสออเดอร์นี้" });
+    } else {
+      console.log(ordernumber[0])
+      if (preorders.ordernumber[0] === 'true') {
+        console.log("รหัสนี้ทุกใช่ไปแล้ว");
+      }
+
+      const amount = preorders.product_detail.length;
+
+      for (let i = 0; i < amount; i++) {
+        const product_id = preorders.product_detail[i].product_id;
+        const existingProduct = await ProductShops.findOne({ product_id: product_id });
+        const product_admin = await Products.findOne({ _id: product_id });
+
+        if (!existingProduct) {
+          const data = {
+            product_id: preorders.product_detail[i].product_id,
+            shop_id: preorders.shop_id,
+            name: preorders.product_detail[i].product_name,
+            totalProductAmount: preorders.product_detail[i].product_amount,
+            price_cost: product_admin.price_cost,
+            barcode: product_admin.barcode,
+          };
+
+          const product = await new ProductShops(data).save();
+
+          if (!product) {
+            return res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
+          }
+        } else {
+          const updatedAmount =
+            preorders.product_detail[i].product_amount + existingProduct.totalProductAmount;
+          const new_amount = {
+            totalProductAmount: updatedAmount,
+          };
+
+          const updatedProduct = await ProductShops.findByIdAndUpdate(
+            existingProduct._id,
+            new_amount,
+            { new: true }
+          );
+
+          if (!updatedProduct) {
+            return res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+          }
+        }
+      }
+      
+    // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
+     await PreOrderProducts.updateOne({ ordernumber: orderId }, { processed: true });
+      
+      // ย้าย res.status(200).send ออกจากลูป for
+      res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
     }
-
-    // const amount = preorders.product_detail.length;
-
-    // for (let i = 0; i < amount; i++) {
-    //   const product_id = preorders.product_detail[i].product_id;
-    //   const existingProduct = await ProductShops.findOne({ product_id: product_id });
-    //   const product_admin = await Products.findOne({ _id: product_id });
-
-    //   if (!existingProduct) {
-    //     const data = {
-    //       product_id: preorders.product_detail[i].product_id,
-    //       shop_id: preorders.shop_id,
-    //       name: preorders.product_detail[i].product_name,
-    //       totalProductAmount: preorders.product_detail[i].product_amount,
-    //       price_cost: product_admin.price_cost,
-    //       barcode: product_admin.barcode,
-    //     };
-
-    //     const product = await new ProductShops(data).save();
-
-    //     if (!product) {
-    //       return res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
-    //     }
-    //   } else {
-    //     const updatedAmount =
-    //       preorders.product_detail[i].product_amount + existingProduct.totalProductAmount;
-    //     const new_amount = {
-    //       totalProductAmount: updatedAmount,
-    //     };
-
-    //     const updatedProduct = await ProductShops.findByIdAndUpdate(
-    //       existingProduct._id,
-    //       new_amount,
-    //       { new: true }
-    //     );
-
-    //     if (!updatedProduct) {
-    //       return res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
-    //     }
-    //   }
-    // }
-
-   // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
-    await PreOrderProducts.updateOne({ ordernumber: orderId }, { processed: true });
-
-    res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
   } catch (error) {
     res.status(500).send({ message: error.message, status: false });
   }
