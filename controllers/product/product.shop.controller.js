@@ -213,56 +213,53 @@ exports.PreorderEmpStock = async (req, res) => {
       return res.send({ status: false, message: "ไม่พบรหัสออเดอร์นี้" });
     } else {
       console.log(preorders)
-      if (preorders.ordernumber === 'true') {
-        console.log("รหัสนี้ทุกใช่ไปแล้ว");
-      }
+      if (preorders.processed === 'true') {
+        return res.send({status: false, message: "รหัสสินค้านี้ไม่สามารถใช้ซ้ำได้"})
+         // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
+      }else{
+        const amount = preorders.product_detail.length;
+          
+          for (let i = 0; i < amount; i++) {
+            const product_id = preorders.product_detail[i].product_id;
+            const existingProduct = await ProductShops.findOne({ product_id: product_id });
+            const product_admin = await Products.findOne({ _id: product_id });
+              
+          if (!existingProduct) {
+            const data = {
+              product_id: preorders.product_detail[i].product_id,
+              shop_id: preorders.shop_id,
+              name: preorders.product_detail[i].product_name,
+              ProductAmount: preorders.product_detail[i].product_amount,
+              price_cost: product_admin.price_cost,
+              barcode: product_admin.barcode,
+            };
 
-      const amount = preorders.product_detail.length;
-
-      for (let i = 0; i < amount; i++) {
-        const product_id = preorders.product_detail[i].product_id;
-        const existingProduct = await ProductShops.findOne({ product_id: product_id });
-        const product_admin = await Products.findOne({ _id: product_id });
-
-        if (!existingProduct) {
-          const data = {
-            product_id: preorders.product_detail[i].product_id,
-            shop_id: preorders.shop_id,
-            name: preorders.product_detail[i].product_name,
-            totalProductAmount: preorders.product_detail[i].product_amount,
-            price_cost: product_admin.price_cost,
-            barcode: product_admin.barcode,
-          };
-
-          const product = await new ProductShops(data).save();
-
-          if (!product) {
-            return res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
-          }
-        } else {
-          const updatedAmount =
-            preorders.product_detail[i].product_amount + existingProduct.totalProductAmount;
-          const new_amount = {
-            totalProductAmount: updatedAmount,
-          };
-
-          const updatedProduct = await ProductShops.findByIdAndUpdate(
-            existingProduct._id,
-            new_amount,
-            { new: true }
-          );
-
-          if (!updatedProduct) {
-            return res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+            const product = await new ProductShops(data).save();
+            if (!product) {
+              return res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
+            }
+          } else {
+            const updatedAmount =
+              preorders.product_detail[i].product_amount + existingProduct.ProductAmount;
+            const new_amount = {
+              ProductAmount: updatedAmount,
+            };
+  
+            const updatedProduct = await ProductShops.findByIdAndUpdate(
+              existingProduct._id,
+              new_amount,
+              { new: true }
+            );
+  
+            if (!updatedProduct) {
+              return res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+            }
           }
         }
+        await PreOrderProducts.updateOne({ ordernumber: orderId }, { processed: true });
+        // ย้าย res.status(200).send ออกจากลูป for
+        res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
       }
-      
-    // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
-     await PreOrderProducts.updateOne({ ordernumber: orderId }, { processed: true });
-      
-      // ย้าย res.status(200).send ออกจากลูป for
-      res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
     }
   } catch (error) {
     res.status(500).send({ message: error.message, status: false });

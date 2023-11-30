@@ -142,6 +142,7 @@ exports.createPack = async (req, res) => {
 
       const testpack = {
         product_id: productpack.id,
+        name_product:req.body.name_product,
         barcode: productpack.barcode,
         amount: amount,
       };
