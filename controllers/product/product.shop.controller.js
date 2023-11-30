@@ -326,7 +326,7 @@ exports.PreorderEmpStockPack = async (req, res) => {
           product_id: preorders.product_detail[i].product_id,
           shop_id: preorders.shop_id,
           name: preorders.product_detail[i].product_name,
-          totalProductAmount: preorders.product_detail[i].product_amount,
+          ProductAmount: preorders.product_detail[i].product_amount,
           price_cost: product_admin.price_cost,
           barcode: product_admin.barcode,
         
@@ -341,9 +341,9 @@ exports.PreorderEmpStockPack = async (req, res) => {
       } 
        else {
          const updatedAmount =
-          preorders.product_detail[i].product_amount * existingProduct.totalProductAmount;
+          preorders.product_detail[i].product_amount * existingProduct.ProductAmount;
            const new_amount = {
-           totalProductAmount: updatedAmount,
+            ProductAmount: updatedAmount,
            
          };
   
