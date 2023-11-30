@@ -38,6 +38,9 @@ router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmp
 //การพรีออเดอร์มา
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
+//การพรีออกเดอร์มาแบบเป็นแบบเเพ็คสินค้า
+router.post("/preorder/packproduct", auth, ProductShops.preorderProductPack);
+
 
 
 //การพรีออเดอร์มาแบบเป็นเเพ็คสินค้ายังไม่ได้ทำ

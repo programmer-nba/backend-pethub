@@ -174,6 +174,46 @@ exports.preorderProduct = async (req, res) => {
   }
 };
 
+// หน้าร้าน สั่ง preorder มาที่ร้านค้าย่อย มารอส่งให้พนักงานตรวจสอบ
+exports.preorderProductPack = async (req, res) => {
+  console.log(req.body);
+  try {
+    const status = {
+      name: "รอตรวจสอบ",
+      timestamps: dayjs(Date.now()).format(""),
+    };
+    const invoice = await invoiceNumber();
+    const preordernumber = await orderNumber();
+
+    const order_product = await new PreOrderProducts({
+      ...req.body,
+      invoice: invoice,
+      ordernumber: preordernumber,
+      status: status,
+      timestamps: dayjs(Date.now()).format(""),
+    }).save();
+    if (order_product) {
+      return res.status(200).send({
+        status: true,
+        message: "สั่งซื้อสินค้าทำเสร็จ",
+        data: order_product,
+      });
+    } else {
+      return res.status(500).send({
+        message: order_product,
+        status: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด222",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+
 //เพิ่มสินค้าเข้า stock เเอดมิน
 exports.PreorderStock = async (req, res) => {
   try {
