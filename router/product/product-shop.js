@@ -9,9 +9,7 @@ const order = require("../../controllers/order/order.controller")
 router.post("/", auth, ProductShops.create);
 router.get("/", auth, Product.getProductAll);
 router.get("/category", auth, Category.getCategoryAll);
-
 router.get("/shop-id/:id", auth, ProductShops.findByShopId);
-
 //admin
 router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
@@ -28,7 +26,7 @@ router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock
-// router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmpStockPack); ยังไม่ได้ใช้
+router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmpStockPack); //ยังไม่เสร็จสมบูรณ์
 
 
 

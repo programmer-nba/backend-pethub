@@ -132,7 +132,7 @@ exports.createPack = async (req, res) => {
   try {
     const product_id = req.body.product_id;
 
-    const productpack = await Products.findOne({ id: product_id });
+    const productpack = await Products.findOne({_id: product_id });
     console.log(productpack);
 
     if (productpack) {
