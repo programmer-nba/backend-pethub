@@ -42,21 +42,23 @@ router.get("/preorder", auth, ProductShops.getPreorderAll);
 router.post("/preorder/packproduct", auth, ProductShops.preorderProductPack);
 router.get("/preorder/packproduct", auth , ProductShops.getPreorderStoreAll)
 router.get("/preorder/packproductone/:id", auth , ProductShops.getPreorderStoreAId);
+//preorder พรีออเดอร์ไปที่จาก shall ไป shop
+router.get("preorder/shalltostock",auth , ProductShops.addProductsShall);
+//คำสั่งเปลี่ยนสถาณะออเดอร์ของพนักงาน shell ต่อ พนักงานสต๊อก
+router.put("/preorder/confirmstatusshall/:id", auth , ProductShops.confirmShallPreorder)
+router.put("/preorder/cancelstatusshall/:id", auth , ProductShops.cancelShallPreorder)
+router.put("/preorder/statusshall/:id", auth , ProductShops.statusshall)
 
-
-
-//การพรีออเดอร์มาแบบเป็นเเพ็คสินค้ายังไม่ได้ทำ
-
-
+//เเอดมินดึงออเดอร์สินค้ามาดู
+router.get("/preordershall/admin", authAdmin, ProductShops.getPreorderShallAll)
+router.get("/preordershall/adminById/:id", authAdmin, ProductShops.getPreorderAdminById)
 router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
 router.get("/preorder/:id",auth, ProductShops.getPreorderEmpById)
 
 //preorder พรีออเดอร์ไปที่ shop 
 router.get("preorder/admin", authAdmin, ProductShops.addProducts)
-
 router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
-
 
 
 
@@ -64,10 +66,8 @@ router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 router.put("/preorder/admin/confirm/:id", authAdmin, ProductShops.confirmPreorder);
 //cancel
 router.put("/preorder/admin/cancel/:id", authAdmin, ProductShops.cancelPreorder);
-
 //คำสั่งเปลี่ยนสถานะเป็น นำเข้าสต๊อกสิน
 router.put("/preorder/admin/statusaddPreorder/:id", authAdmin, ProductShops.statusaddPreorder);
-
 //สถาณะการสั่งชื้อสินค้า
 router.put("/preorder/admin/addStatus/:id", authAdmin, ProductShops.statusPreorder);
 
