@@ -331,13 +331,11 @@ exports.PreorderEmpStockPack = async (req, res) => {
         return res.send({status: false, message: "รหัสสินค้านี้ไม่สามารถใช้ซ้ำได้"});
         // บันทึกข้อมูลว่า ordernumber นี้ถูกใช้แล้ว
       } else {
-        if (preorders.status && preorders.status.length > 2 &&
+        if (preorders.status && preorders.status.length > 1 &&
             preorders.status[0].name === 'รอตรวจสอบ' &&
             preorders.status[1].name === 'ยืนยันการสั่งซื้อ') {
-          // ... โค้ดที่ต้องการทำ
-        } else {
-          const amount = preorders.product_detail.length;
-            
+          
+              const amount = preorders.product_detail.length;
           for (let i = 0; i < amount; i++) {
             const product_id = preorders.product_detail[i].product_id;
             const existingProduct = await ProductShops.findOne({ product_id: product_id });
@@ -369,16 +367,16 @@ exports.PreorderEmpStockPack = async (req, res) => {
                 new_amount,
                 { new: true }
               );
-    
               if (!updatedProduct) {
                 return res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
               }
+         }   
             }
           }
           await PreOrderProductShell.updateOne({ ordernumbershell: orderId }, { processed: true });
           // ย้าย res.status(200).send ออกจากลูป for
           res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
-        }
+        
       }
     }
   } catch (error) {
