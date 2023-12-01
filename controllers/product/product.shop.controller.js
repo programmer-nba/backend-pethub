@@ -336,7 +336,7 @@ exports.PreorderEmpStockPack = async (req, res) => {
               preorders.status[0].name === 'รอตรวจสอบ' &&
               preorders.status[1].name === 'ยืนยันการสั่งซื้อ'
             ) {
-              // ตรวจสอบสถานะและดำเนินการตามนั้น
+              if (!existingProduct) {// ตรวจสอบสถานะและดำเนินการตามนั้น
               const data = {
                 product_id: preorders.product_detail[i].product_id,
                 shop_id: preorders.shop_id,
@@ -344,7 +344,7 @@ exports.PreorderEmpStockPack = async (req, res) => {
                 ProductAmount: preorders.product_detail[i].product_amount,
                 barcode: product_admin.barcode,
               };
-
+            }
               const product = await new ProductShops(data).save();
               if (!product) {
                 return res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
