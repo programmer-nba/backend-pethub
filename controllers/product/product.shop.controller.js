@@ -314,8 +314,8 @@ exports.PreorderEmpStock = async (req, res) => {
 exports.PreorderEmpStockPack = async (req, res) => {
   try {
     const orderId = req.params.id;
-    // ดึงข้อมูล PreOrderProducts จาก ordernumber
-    const preorders = await PreOrderProducts.findOne({ordernumber: orderId });
+    // ดึงข้อมูล PreOrderProductShell จาก ordernumber
+    const preorders = await PreOrderProductShell.findOne({ordernumbershell: orderId });
     if(!preorders){
       return res.send({ status: false, message: "ไม่พบรหัสออเดอร์นี้" })
     }
@@ -323,8 +323,8 @@ exports.PreorderEmpStockPack = async (req, res) => {
 
     for (let i = 0; i < amount; i++) { //ใช้ loop ในการค้นหา
       const product_id = preorders.product_detail[i].product_id;
-      const existingProduct = await ProductShops.findOne({ product_id: product_id });//ค้นหาid จากProductShops เเล้วมาเก็บไว้ในตัวแปร existingProduct
-      const product_admin = await PackProducts.findOne({ _id: product_id });//ค้นาหา id Products เเล้วมาเก็บไว้ในตัวแปร product_admin
+      const existingProduct = await ProductShops.findOne({ product_id: product_id });
+      const product_admin = await PackProducts.findOne({ _id: product_id });
       if (!existingProduct) { //การสร้างข้อมูลเข้าไปใหม่
         const data = {
           product_id: preorders.product_detail[i].product_id,
@@ -333,12 +333,8 @@ exports.PreorderEmpStockPack = async (req, res) => {
           ProductAmount: preorders.product_detail[i].product_amount,
           price_cost: product_admin.price_cost,
           barcode: product_admin.barcode,
-        
-         
         }; 
          const product = await new ProductShops(data).save();
-      
-
          if (!product) {
           res.status(403).send({ status: false, message: "บันทึกไม่สำเร็จ" });
          }
@@ -347,8 +343,7 @@ exports.PreorderEmpStockPack = async (req, res) => {
          const updatedAmount =
           preorders.product_detail[i].product_amount * existingProduct.ProductAmount;
            const new_amount = {
-            ProductAmount: updatedAmount,
-           
+            ProductAmount: updatedAmount,  
          };
   
         //  console.log(new_amount);
