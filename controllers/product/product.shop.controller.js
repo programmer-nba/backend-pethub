@@ -186,13 +186,13 @@ exports.preorderProductShall = async (req, res) => {
     };
     const ordernumbershell = await orderNumberShell();
     const invoice = await invoiceShellNumber();
-    const preorders = await ProductShops.findOne({ shop_id: req.body.shop_id});
-    console.log(preorders.name)
+    const preorders = await ProductShops.findOne({shop_id: req.body.shop_id});
+    console.log(preorders)
     const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
       ordernumbershell: ordernumbershell,
-      product_name:preorders.name,
+      product_detail:[{product_name:preorders.name}] ,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
