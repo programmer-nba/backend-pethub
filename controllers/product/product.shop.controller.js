@@ -187,15 +187,15 @@ exports.preorderProductShall = async (req, res) => {
     const invoice = await invoiceShellNumber();
     //const preorders = await ProductShops.findOne({ product_id: req.body.product_id });
    
-    for (let item of preorders.product_detail) {
-      const preorder_product = await ProductShops.findOne({
-         product_id: item.product_id })
-    }
+    // for (let item of preorders.product_detail) {
+    //   const preorder_product = await ProductShops.findOne({
+    //      product_id: item.product_id })
+    // }
     const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
       ordernumbershell: ordernumbershell,
-      product_detail: item.product_id,
+      // product_detail: item.product_id,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
      
