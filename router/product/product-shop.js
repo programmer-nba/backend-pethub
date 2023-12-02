@@ -20,7 +20,7 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 //ยกเลิก
 router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 //พนักงานพรีออเดอร์สินค้า
-router.post("/employee/stock/:id", auth, ProductShops.PreorderEmpStock);
+router.post("/employee/stock/:id", auth, ProductShops.ImportStockShop);
 router.get("/employee/stock", auth, ProductShops.getStock);
 router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
