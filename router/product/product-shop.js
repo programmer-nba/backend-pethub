@@ -23,6 +23,7 @@ router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmy
 router.post("/employee/stock/:id", auth, ProductShops.ImportStockShop);
 router.get("/employee/stock", auth, ProductShops.getStock);
 router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
+router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock

@@ -178,7 +178,6 @@ exports.preorderProduct = async (req, res) => {
 
 // หน้าร้าน สั่ง preorder มาที่ร้านค้า shop มารอส่งให้พนักงานตรวจสอบ
 exports.preorderProductShall = async (req, res) => {
-  console.log(req.body);
   try {
     const status = {
       name: "รอตรวจสอบ",
@@ -186,17 +185,22 @@ exports.preorderProductShall = async (req, res) => {
     };
     const ordernumbershell = await orderNumberShell();
     const invoice = await invoiceShellNumber();
-    const preorders = await ProductShops.findOne({shop_id: req.body.shop_id});
-    console.log(preorders)
+    //const preorders = await ProductShops.findOne({ product_id: req.body.product_id });
+   
+    for (let item of preorders.product_detail) {
+      const preorder_product = await ProductShops.findOne({
+         product_id: item.product_id })
+    }
     const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
       ordernumbershell: ordernumbershell,
-      product_detail:[{product_name:preorders.name}] ,
+      product_detail: item.product_id,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
+     
     }).save();
-
+  
     if (order_product) {
       return res.status(200).send({
         status: true,
@@ -390,6 +394,17 @@ exports.getStock = async (req, res) => {
 
 //เเสดงสินค้าที่เพิ่มเข้าสต๊อกแบบ id
 exports.checkEmpStock = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const mystock = await ProductShops.find({shop_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    return res.send(mystock);
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+//เเสดงสินค้าของเเอดมิน
+exports.checkEmpStockAdmin = async (req, res) => {
   try {
     const id = req.params.id;
     const mystock = await ProductShops.find({shop_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
