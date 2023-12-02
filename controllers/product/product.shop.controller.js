@@ -248,11 +248,31 @@ exports.ImportStockShop = async (req, res) => {
             ProductAmount: item.product_amount,
             price_cost: product.price_cost
           }
+        
           await new ProductShops(new_product).save();
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)")
+          const updatedAmount =
+              item.product_amount + product_shop.ProductAmount;
+          const new_amount = {
+            ProductAmount: updatedAmount,
+          };
+          console.log(product_shop.ProductAmount)
+
+          const updatedProduct = await ProductShops.findByIdAndUpdate(
+            product._id,
+            new_amount,
+            { new: true }
+          );
+
+          if (!updatedProduct) {
+            return res.status(403).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+          }
         }
       }
+      await PreOrderProductShell.updateOne({ ordernumber: orderId }, { processed: true });
+      // ย้าย res.status(200).send ออกจากลูป for
+      return res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
     } else {
       // ถ้าไม่มีคำว่า 'ยืนยันการสั่งซื้อ' ใน status array ให้ return ค่าออกมา
       return res.send({ status: false, message: "ไม่สามารถบันทึกข้อมูลได้ เนื่องจากยังไม่ยืนยันการสั่งซื้อ" });
