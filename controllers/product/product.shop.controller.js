@@ -187,7 +187,7 @@ exports.preorderProductShall = async (req, res) => {
     const ordernumbershell = await orderNumberShell();
     const invoice = await invoiceShellNumber();
     const preorders = await ProductShops.findOne({ shop_id: req.body.shop_id});
-    console.log(preorders)
+    console.log(preorders.name)
     const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
