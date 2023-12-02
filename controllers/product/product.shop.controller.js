@@ -177,7 +177,7 @@ exports.preorderProduct = async (req, res) => {
 };
 
 // หน้าร้าน สั่ง preorder มาที่ร้านค้า shop มารอส่งให้พนักงานตรวจสอบ
-exports.preorderProductPack = async (req, res) => {
+exports.preorderProductShall = async (req, res) => {
   console.log(req.body);
   try {
     const status = {
@@ -185,13 +185,14 @@ exports.preorderProductPack = async (req, res) => {
       timestamps: dayjs(Date.now()).format(""),
     };
     const ordernumbershell = await orderNumberShell();
-
     const invoice = await invoiceShellNumber();
-
+    const preorders = await ProductShops.findOne({ shop_id: req.body.shop_id});
+    console.log(preorders)
     const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
       ordernumbershell: ordernumbershell,
+      product_name:preorders.name,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -548,7 +549,7 @@ exports.getPreorderAdminById = async (req, res) => {
 exports.getPreorderStoreAId = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProductShell.findOne({_id: id});
+    const preorder_list = await PreOrderProductShell.findOne({shop_id: id});
     if (preorder_list) {
       return res.status(200).send({
         status: true,

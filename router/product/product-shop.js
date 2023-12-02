@@ -36,8 +36,8 @@ router.post("/employee/PreorderEmpStockPack/:id", auth, ProductShops.PreorderEmp
 //การพรีออเดอร์มา
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
-//การพรีออกเดอร์มาแบบเป็นแบบเเพ็คสินค้า หน้าร้าน
-router.post("/preorder/packproduct", auth, ProductShops.preorderProductPack);
+//การพรีออกเดอร์จาก shall มาขอที่ stock
+router.post("/preorder/packproduct", auth, ProductShops.preorderProductShall);
 router.get("/preorder/packproduct", auth , ProductShops.getPreorderStoreAll)
 router.get("/preorder/packproductone/:id", auth , ProductShops.getPreorderStoreAId);
 //preorder พรีออเดอร์ไปที่จาก shall ไป shop
