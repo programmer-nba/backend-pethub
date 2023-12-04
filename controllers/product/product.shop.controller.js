@@ -313,6 +313,7 @@ exports.PreorderEmpShall = async (req, res) => {
         const product_shall = await ProductShall.findOne({
           product_id: item.product_id,
         });
+        console.log(preorders)
         console.log('Item Product ID:', item.product_id);
         if (!product_shall) {
           console.log("สินค้ายังไม่มีในระบบ (เพิ่มสินค้า)");
