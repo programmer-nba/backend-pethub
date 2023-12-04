@@ -320,7 +320,7 @@ exports.PreorderEmpShall = async (req, res) => {
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
-            name: item.name, 
+            name: item.product_name, 
             barcode: item.barcode, 
             ProductAmount: item.product_amount,
             price_cost: item.price_cost, 
