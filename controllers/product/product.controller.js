@@ -130,6 +130,7 @@ exports.create = async (req, res) => {
 //เพิ่มสินค้าแบบเป็นเเพ็คสินค้า
 exports.createPack = async (req, res) => {
   try {
+    
     const product_id = req.body.product_id;
 
     const productpack = await Products.findOne({_id: product_id });
