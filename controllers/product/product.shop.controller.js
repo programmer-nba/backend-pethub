@@ -22,6 +22,7 @@ const {Employees} = require("../../models/user/employee.model");
 const {Shops} = require("../../models/shop/shop.model");
 const jwt = require("jsonwebtoken");
 const {response} = require("express");
+const { testing } = require("googleapis/build/src/apis/testing/index.js");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_DRIVE_REDIRECT_URI;
@@ -309,14 +310,15 @@ exports.PreorderEmpShall = async (req, res) => {
       preorders.status.length > 0 &&
       preorders.status[preorders.status.length - 1].name === "ยืนยันการสั่งซื้อ"
     ) {
+      
       for (let item of preorders.product_detail) {
         const product_shall = await ProductShall.findOne({
           product_id: item.product_id,
+          
         });
-        console.log(preorders)
-        console.log('Item Product ID:', item.product_id);
         if (!product_shall) {
           console.log("สินค้ายังไม่มีในระบบ (เพิ่มสินค้า)");
+          const products_amount = await  PackProducts.findOne({product_id : test.product_id})
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
@@ -329,7 +331,7 @@ exports.PreorderEmpShall = async (req, res) => {
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
           const updatedAmount =
-            item.product_amount + product_shall.ProductAmount;
+            item.product_amount + product_shall.ProductAmount ;
 
           product_shall.ProductAmount = updatedAmount;
           await product_shall.save();
@@ -342,7 +344,6 @@ exports.PreorderEmpShall = async (req, res) => {
 
       await PreOrderProductShell.updateOne({ ordernumbershell: orderId }, { processed: true });
 
-      // ทำการบันทึกข้อมูลลง ProductShall และตอบกลับ
       return res.status(200).send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
     } else {
       return res.send({
