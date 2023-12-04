@@ -4,8 +4,7 @@ const {
 } = require("../../models/product/product.model.js");
 const{
   PackProducts,
-  validatePackProducts,
-}=require("../../models/product/productpack.js");
+}=require("../../models/product/productpack.model.js");
 
 const fs = require("fs");
 const multer = require("multer");

@@ -8,8 +8,7 @@ const {
   ProductShops,
   validateProduct,
 } = require("../../models/product/product.shop.model");
-const {PackProducts} = require("../../models/product/productpack.js");
-
+const {PackProducts} = require("../../models/product/productpack.model.js");
 const {
   PreOrderProductShell,
 } = require("../../models/product/preordershell.model.js");
@@ -318,20 +317,21 @@ exports.PreorderEmpShall = async (req, res) => {
         });
         if (!product_shall) {
           console.log("สินค้ายังไม่มีในระบบ (เพิ่มสินค้า)");
-          const products_amount = await  PackProducts.findOne({product_id : test.product_id})
+          const productadd_amount = await PackProducts.findOne({product_id:item.product_id})
+          console.log(productadd_amount)
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
             name: item.product_name, 
             barcode: item.barcode, 
-            ProductAmount: item.product_amount,
+            ProductAmount: productadd_amount.amount * item.product_amount,
             price_cost: item.price_cost, 
           };
           await new ProductShall(new_product).save();
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
           const updatedAmount =
-            item.product_amount + product_shall.ProductAmount ;
+             item.product_amount + product_shall.ProductAmount ;
 
           product_shall.ProductAmount = updatedAmount;
           await product_shall.save();
