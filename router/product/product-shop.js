@@ -5,7 +5,7 @@ const Product = require("../../controllers/product/product.controller");
 const Category = require("../../controllers/product/category.controller")
 const ProductShops = require("../../controllers/product/product.shop.controller");
 const order = require("../../controllers/order/order.controller")
-
+const authCashier = require("../../lib/auth.cashier");
 router.post("/", auth, ProductShops.create);
 router.get("/", auth, Product.getProductAll);
 router.get("/category", auth, Category.getCategoryAll);
@@ -27,9 +27,9 @@ router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
 // router.get("/employee/stocksmall/:id", auth,  ProductShops.getStockById);ยังไมาได้ใช้
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock
-router.post("/employee/PreorderEmpShall/:id", auth, ProductShops.PreorderEmpShall); 
-router.get("/employee/chkProductShall", auth , ProductShops.getStockShall);
-router.get("/employee/checkProductShall/:id", auth , ProductShops.checkProductShall);
+router.post("/employee/PreorderEmpShall/:id", authCashier, ProductShops.PreorderEmpShall); 
+router.get("/employee/chkProductShall", authCashier , ProductShops.getStockShall);
+router.get("/employee/checkProductShall/:id", authCashier , ProductShops.checkProductShall);
 
 
 
@@ -40,9 +40,9 @@ router.get("/employee/checkProductShall/:id", auth , ProductShops.checkProductSh
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 //การพรีออกเดอร์จาก shall มาขอที่ stock
-router.post("/preorder/packproduct", auth, ProductShops.preorderProductShall);
-router.get("/preorder/packproduct", auth , ProductShops.getPreorderStoreAll)
-router.get("/preorder/packproductone/:id", auth , ProductShops.getPreorderStoreAId);
+router.post("/preorder/packproduct", authCashier, ProductShops.preorderProductShall);
+router.get("/preorder/packproduct", authCashier , ProductShops.getPreorderStoreAll)
+router.get("/preorder/packproductone/:id", authCashier , ProductShops.getPreorderStoreAId);
 //preorder พรีออเดอร์ไปที่จาก shall ไป shop
 router.get("preorder/shalltostock",auth , ProductShops.addProductsShall);
 //คำสั่งเปลี่ยนสถาณะออเดอร์ของพนักงาน shell ต่อ พนักงานสต๊อก

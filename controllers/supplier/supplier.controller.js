@@ -86,12 +86,12 @@ const vali_supplier = (data) => {
 
 exports.create = async (req, res) => {
   try {
-    // const {error} = vali_supplier(req.body);
-    // if (error) {
-    //   return res
-    //     .status(400)
-    //     .send({status: false, message: error.details[0].message});
-    // }
+    const {error} = vali_supplier(req.body);
+    if (error) {
+      return res
+        .status(400)
+        .send({status: false, message: error.details[0].message});
+    }
     const supplier = await Suppliers.findOne({
       supplier_company_name: req.body.supplier_company_name,
     });

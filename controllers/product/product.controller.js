@@ -253,12 +253,12 @@ exports.getProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    // const {error} = validateproduct(req.body);
-    // if (error) {
-    //   return res
-    //     .status(400)
-    //     .send({status: false, message: error.details[0].message});
-    // }
+    const {error} = validateproduct(req.body);
+    if (error) {
+      return res
+        .status(400)
+        .send({status: false, message: error.details[0].message});
+    }
     const product = await Products.findByIdAndUpdate(req.params.id, req.body);
     if (product) {
       return res

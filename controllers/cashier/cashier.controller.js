@@ -38,4 +38,25 @@
      res.status(500).send({message: error.message , status: false});
     }
   };
+
+  exports.findOneCashier = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const cashier = await Cashier.findById(id);
+      if (cashier) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลพนักงานสำเร็จ",
+          data: cashier,
+        });
+      } else {
+        return res.status(404).send({message: "ไม่พบพนักงาน", status: false});
+      }
+    } catch (error) {
+      res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  };
   

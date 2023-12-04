@@ -9,6 +9,7 @@ const authCashier = require("../../lib/auth.cashier")
 
 
 router.post("/", authAdmin, cashier.create);
+router.get("/getcashier/:id", authAdmin, cashier.findOneCashier );
 
 
 module.exports = router; 
