@@ -5,6 +5,7 @@ require("dotenv").config();
 const {Admins} = require("../models/user/admin.model.js");
 const {Employees} = require("../models/user/employee.model.js");
 const {Shops} = require("../models/shop/shop.model.js");
+const {Cashier} = require("../models/user/cashier.model.js")
 
 router.post("/login", async (req, res) => {
   try {
@@ -12,8 +13,9 @@ router.post("/login", async (req, res) => {
       admin_username: req.body.username,
     });
     if (!admin) {
-      await checkEmployee(req, res);
-    } else {
+      await Promise.all([checkEmployee(req, res), checkCashier(req, res)]);
+    } 
+    else {
       const validPasswordAdmin = await bcrypt.compare(
         req.body.password,
         admin.admin_password
@@ -133,5 +135,50 @@ const checkEmployee = async (req, res) => {
     res.status(500).send({message: "Internal Server Error", status: false});
   }
 };
+
+
+const checkCashier = async (req, res) => {
+  try {
+    const cashier = await Cashier.findOne({
+      cashier_username: req.body.username,
+    });
+    if (!cashier) {
+      console.log("ไม่พบข้อมูลพนักงาน");
+    } else {
+      const validPasswordAdmin = await bcrypt.compare(
+        req.body.password,
+        cashier.cashier_password
+      );
+      if (!validPasswordAdmin) {
+        // รหัสไม่ตรง
+        return res.status(401).send({
+          message: "password is not find",
+          status: false,
+        });
+      } else {
+        const token = cashier.generateAuthToken();
+        const ResponesData = {
+          name: cashier.cashier_name,
+          username: cashier.cashier_username,
+          // shop_id: cashier.cashier_shop_id,
+        };
+        return res.status(200).send({
+          status: true,
+          token: token,
+          message: "เข้าสู่ระบบสำเร็จ",
+          result: ResponesData,
+          level: "cashier",
+          position: cashier.cashier_role,
+        });
+      }
+    }
+  } catch (error) {
+    res.status(500).send({message: "Internal Server Error", status: false});
+  }
+};
+
+
+
+
 
 module.exports = router;

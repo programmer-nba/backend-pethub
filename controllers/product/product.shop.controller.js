@@ -351,7 +351,7 @@ exports.PreorderEmpShall = async (req, res) => {
         }
       }
 
-      // await PreOrderProductShell.updateOne({ ordernumbershell: orderId }, { processed: true });
+      await PreOrderProductShell.updateOne({ ordernumbershell: orderId }, { processed: true });
 
       return res
         .status(200)
@@ -364,6 +364,30 @@ exports.PreorderEmpShall = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({message: error.message, status: false});
+  }
+};
+
+//เเสดงสินค้าใน shall by id
+exports.checkProductShall = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const mystock = await ProductShall.find({_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    return res.send(mystock);
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+//เเสดงสินค้าใน shall ทั้งหมด
+exports.getStockShall = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const mystock = await ProductShall.find(); //{shop_id:id} เอาใส่ไว้ใน() findOne
+
+    return res.send(mystock);
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
 
