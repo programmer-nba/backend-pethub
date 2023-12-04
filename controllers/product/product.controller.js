@@ -134,7 +134,6 @@ exports.createPack = async (req, res) => {
     const product_id = req.body.product_id;
 
     const productpack = await Products.findOne({_id: product_id });
-    console.log(productpack);
 
     if (productpack) {
       const amount = req.body.amount;
