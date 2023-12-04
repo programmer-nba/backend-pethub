@@ -127,7 +127,7 @@ exports.create = async (req, res) => {
   }
 };
 
-//เพิ่มสินค้าแบบเป็นเเพ็คสินค้า
+//เพิ่มสินค้าแบบเป็นเเพ็คสินค้า โดย 
 exports.createPack = async (req, res) => {
   try {
     
