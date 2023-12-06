@@ -29,13 +29,13 @@ CashierSchema.methods.generateAuthToken = function () {
     {
       _id: this._id,
       name: this.cashier_name,
-    //   shop_id: this.cashier_shop_id,
+      shop_id: this.cashier_shop_id,
       phone: this.cashier_phone,
       row: "cashier",
     },
     process.env.JWTPRIVATEKEY,
     {
-      expiresIn: "1h",
+      expiresIn: "4h",
     }
   );
   return token;
@@ -46,7 +46,7 @@ const Cashier = mongoose.model("cashier", CashierSchema);
 
 const validateCashier = (data) => {
   const schema = Joi.object({
-    // cachesashier_id: Joi.string().required().label("กรุณากรอกไอดี  ด้วย"),
+    cashier_shop_id: Joi.string().required().label("กรุณากรอกไอดี  ด้วย"),
     cashier_name: Joi.string().required().label("กรุณากรอกชื่อพนักงาน"),
     cashier_username: Joi.string().required().label("กรูณากรอกไอดีผู้ใช้"),
     cashier_password: passwordComplexity(complexityOptions)
@@ -54,7 +54,7 @@ const validateCashier = (data) => {
       .label("ไม่มีข้อมูลรหัสผ่าน"),
     cashier_phone: Joi.string().required().label("กรอกเบอร์โทรพนักงาน"),
     cashier_position: Joi.string().required().label("กรอกตำแหน่งพนักงาน"),
-    // cashier_role: Joi.string().required().label("กรอกหน้าที่พนักงาน")
+    cashier_role: Joi.string().required().label("กรอกหน้าที่พนักงาน")
   });
   return schema.validate(data);
 };
