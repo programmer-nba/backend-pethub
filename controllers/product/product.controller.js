@@ -260,7 +260,6 @@ exports.updateProduct = async (req, res) => {
     //     .send({status: false, message: error.details[0].message});
     // }
     const product = await Products.findByIdAndUpdate(req.params.id, req.body);
-    console.log(product)
     if (product) {
       return res
         .status(200)
