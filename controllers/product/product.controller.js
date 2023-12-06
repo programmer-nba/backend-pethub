@@ -35,6 +35,10 @@ const storage = multer.diskStorage({
 
 //update image
 async function uploadFileCreate(req, res, {i, reqFiles}) {
+  if (!req[i]) {
+    console.error("Invalid value for 'i'");
+    return res.status(400).send({ message: "Invalid value for 'i'" });
+  }
   const filePath = req[i].path;
   let fileMetaData = {
     name: req.originalname,
@@ -259,6 +263,7 @@ exports.updateProduct = async (req, res) => {
     //     .status(400)
     //     .send({status: false, message: error.details[0].message});
     // }
+   
     const product = await Products.findByIdAndUpdate(req.params.id, req.body);
     if (product) {
       return res
@@ -270,6 +275,7 @@ exports.updateProduct = async (req, res) => {
         .send({message: "แก้ไขข้อมูลสินค้าไม่สำเร็จ", status: false});
     }
   } catch (err) {
+
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 };

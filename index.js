@@ -22,6 +22,8 @@ app.use("/pethub/product-shop", require("./router/product/product-shop"));
 
 app.use("/pethub/cashier", require("./router/cashier"));
 
+app.use("/pethub/shopping", require("./router/shopping"));
+
 
 app.use("/pethub/supplier", require("./router/supplier/index"));
 
