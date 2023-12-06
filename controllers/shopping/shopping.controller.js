@@ -5,6 +5,7 @@ const dayjs = require("dayjs");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const {PreOrderProductShell}= require("../../models/product/preordershell.model")
 const {ProductShall} = require("../../models/product/product.shall.model.js")
+const {preorder_shopping} = require("../../models/ิbuy_product/buyproduct.model.js")
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
@@ -161,6 +162,41 @@ exports.calcelProduct = async (req, res) => {
 //       res.status(500).send({message: "มีบางอย่างผิดพลาด"});
 //     }
 //   };
+exports.preorder = async (req, res) => {
+    console.log(req.body);
+    try {
+      const status = {
+        name: "รอตรวจสอบ",
+        timestamps: dayjs(Date.now()).format(""),
+      };
+  
+      const order_product = await new preorder_shopping({
+        ...req.body,
+        status: status,
+        timestamps: dayjs(Date.now()).format(""),
+      }).save();
+      if (order_product) {
+        return res.status(200).send({
+          status: true,
+          message: "สั่งซื้อสินค้าทำเสร็จ",
+          data: order_product,
+        });
+      } else {
+        return res.status(500).send({
+          message: order_product,
+          status: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด222",
+        status: false,
+        error: error.message,
+      });
+    }
+  };
+
 async function generatePublicUrl(res) {
     try {
       const fileId = res;

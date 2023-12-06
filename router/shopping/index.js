@@ -11,6 +11,7 @@ const shopping = require("../../controllers/shopping/shopping.controller.js")
 router.get("/showproduct", shopping.findProductAll )
 router.delete("/deleteproduct/:id",shopping.deleteProduct)
 router.put("/cancel/:id",shopping.calcelProduct)
+router.post("/preorder",shopping.preorder)
 // router.get("/getbarcode/:barcode",shopping.getByBarcode)
 
 module.exports = router;
