@@ -13,6 +13,7 @@ const {
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
+const { array } = require("joi");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_DRIVE_REDIRECT_URI;
@@ -170,7 +171,8 @@ exports.preorder = async (req, res) => {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     };
-    console.log(req.body)
+    // console.log(req.body)
+    let order = [] // ต้องสร้าง array เปล่าขึ้นมาเพื่อเก็บค่า
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
       let total = 0;
@@ -181,65 +183,35 @@ exports.preorder = async (req, res) => {
         const price = product.price * item.product_amount;
         total += price;
       }
-      const order = {
+       order.push ({// ใช้คำสั่งpush ในการส่งค่าเข้าไป
         product_id: product.product_id,
-        product_name: product.product_name,
         amount: item.product_amount,
         total: total,
-      }
+      })
       console.log(order);
     }
     const product_name = await ProductShall.findOne({_id: req.body._id});
 
-    // const order_product = await new preorder_shopping({
-    //   ...req.body,
-    //   poshop_shop_id: req.body.shop_id,
-    //   poshop_detail: req.body.product_detail,
-    //   status: status,
-    //   timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-    // }).save();
-
-    // const result = req.body.product_detail.reduce((acc, curr) => {
-    //   const existingProduct = acc.find(
-    //     (item) => item.product_id === curr.product_id
-    //   );
-
-    //   if (existingProduct) {
-    //     // ถ้ามี product_id เดียวกันแล้วให้บวกเพิ่ม
-    //     existingProduct.product_amount += curr.product_amount;
-    //   } else {
-    //     // ถ้ายังไม่มีให้เพิ่ม Object ใหม่เข้าไปใน Array
-    //     acc.push({
-    //       product_id: curr.product_id,
-    //       product_amount: curr.product_amount,
-    //     });
-    //   }
-    //   return acc;
-    // }, []);
-    // const updatedOrder = await preorder_shopping.findOneAndUpdate(
-    //   {_id: req.body._id},
-    //   {
-    //     $set: {
-    //       poshop_detail: result,
-    //       // สามารถเพิ่ม properties อื่น ๆ ที่ต้องการอัปเดตได้ตามต้องการ
-    //     },
-    //   },
-    //   {new: true, upsert: true}
-    // );
-    // console.log(updatedOrder);
-    // // ให้ทำการแก้ไขข้อมูลในฐานข้อมูล
-    // if (updatedOrder) {
-    //   return res.status(200).send({
-    //     status: true,
-    //     message: "สั่งซื้อสินค้าทำเสร็จ",
-    //     data: {_id: updatedOrder._id, ...updatedOrder._doc},
-    //   });
-    // } else {
-    //   return res.status(500).send({
-    //     message: "มีบางอย่างผิดพลาด",
-    //     status: false,
-    //   });
-    // }
+    const order_product = await new preorder_shopping({
+      ...req.body,
+      customer_shop_id: req.body.shop_id,
+      customer_detail:order ,
+      status: status,
+      timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+    }).save();
+ 
+    if (order_product) {
+      return res.status(200).send({
+        status: true,
+        message: "สั่งซื้อสินค้าทำเสร็จ",
+        data: order_product,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).send({
