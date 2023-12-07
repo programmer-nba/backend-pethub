@@ -163,40 +163,50 @@ exports.calcelProduct = async (req, res) => {
 //     }
 //   };
 exports.preorder = async (req, res) => {
-  // console.log(req.body);
   try {
-
     const status = {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     };
 
-      const product_name = await ProductShall.findOne({ _id: req.body._id });
+    const product_name = await ProductShall.findOne({ _id: req.body._id });
 
-      console.log(product_name)
-      const order_product = await new preorder_shopping({
-        ...req.body,
-        poshop_shop_id: req.body.shop_id,
-        product_detail: req.body.product_id, 
-        status: status,
-        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      }).save();
-      
-      // console.log(req.body.product_detail);
+    const order_product = await new preorder_shopping({
+      ...req.body,
+      poshop_shop_id: req.body.shop_id,
+      poshop_detail: req.body.product_detail,
+      status: status,
+      timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+    }).save();
 
-      if (order_product) {
-        return res.status(200).send({
-          status: true,
-          message: "สั่งซื้อสินค้าทำเสร็จ",
-          data: order_product,
-        });
+    const result = req.body.product_detail.reduce((acc, curr) => {
+      const existingProduct = acc.find(item => item.product_id === curr.product_id);
+
+      if (existingProduct) {
+        // ถ้ามี product_id เดียวกันแล้วให้บวกเพิ่ม
+        existingProduct.product_amount += curr.product_amount;
       } else {
-        return res.status(500).send({ 
-          message: "มีบางอย่างผิดพลาด",
-          status: false,
-        });
+        // ถ้ายังไม่มีให้เพิ่ม Object ใหม่เข้าไปใน Array
+        acc.push({ product_id: curr.product_id, product_amount: curr.product_amount });
       }
-    
+
+      return acc;
+    }, []);
+
+    console.log(result);
+
+    if (order_product) {
+      return res.status(200).send({
+        status: true,
+        message: "สั่งซื้อสินค้าทำเสร็จ",
+        data: order_product,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -206,7 +216,6 @@ exports.preorder = async (req, res) => {
     });
   }
 };
-
 
 exports.ShowReceiptById = async (req,res)=>{
   try {
