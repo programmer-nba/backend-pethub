@@ -189,12 +189,11 @@ exports.preorder = async (req, res) => {
         // ถ้ายังไม่มีให้เพิ่ม Object ใหม่เข้าไปใน Array
         acc.push({ product_id: curr.product_id, product_amount: curr.product_amount });
       }
-
       return acc;
     }, []);
 
     console.log(result);
-
+    // ให้ทำการแก้ไขข้อมูลในฐานข้อมูล
     if (order_product) {
       return res.status(200).send({
         status: true,
