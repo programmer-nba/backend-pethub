@@ -191,14 +191,23 @@ exports.preorder = async (req, res) => {
       }
       return acc;
     }, []);
-
-    console.log(result);
+    const updatedOrder = await preorder_shopping.findOneAndUpdate(
+      { _id: req.body._id },
+      {
+        $set: {
+          poshop_detail: result,
+          // สามารถเพิ่ม properties อื่น ๆ ที่ต้องการอัปเดตได้ตามต้องการ
+        },
+      },
+      { new: true, upsert: true }
+    );
+    console.log(updatedOrder);
     // ให้ทำการแก้ไขข้อมูลในฐานข้อมูล
-    if (order_product) {
+    if (updatedOrder) {
       return res.status(200).send({
         status: true,
         message: "สั่งซื้อสินค้าทำเสร็จ",
-        data: order_product,
+        data: { _id: updatedOrder._id, ...updatedOrder._doc },
       });
     } else {
       return res.status(500).send({
