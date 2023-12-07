@@ -171,35 +171,44 @@ exports.preorder = async (req, res) => {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     };
-    // console.log(req.body)
-    let order = [] // ต้องสร้าง array เปล่าขึ้นมาเพื่อเก็บค่า
+
+    let order = [];
+    let grandTotal = 0;
+
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
       let total = 0;
-      const product = await ProductShall.findOne({product_id: item.product_id});
+      const product = await ProductShall.findOne({ product_id: item.product_id });
       if (product.ProductAmount < item.product_amount) {
         console.log("จำนวนสินค้าไม่เพียงพอ");
       } else {
         const price = product.price * item.product_amount;
         total += price;
+        grandTotal += total;
+
+        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+        product.ProductAmount -= item.product_amount;
+        await product.save();
       }
-       order.push ({// ใช้คำสั่งpush ในการส่งค่าเข้าไป
+
+      order.push({
         product_id: product.product_id,
         amount: item.product_amount,
         total: total,
-      })
-      console.log(order);
+      });
     }
-    const product_name = await ProductShall.findOne({_id: req.body._id});
+
+    const product_name = await ProductShall.findOne({ _id: req.body._id });
 
     const order_product = await new preorder_shopping({
       ...req.body,
       customer_shop_id: req.body.shop_id,
-      customer_detail:order ,
+      customer_detail: order,
+      customer_total: grandTotal,
       status: status,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
- 
+
     if (order_product) {
       return res.status(200).send({
         status: true,
