@@ -163,18 +163,27 @@ exports.calcelProduct = async (req, res) => {
 //     }
 //   };
 exports.preorder = async (req, res) => {
-    console.log(req.body);
-    try {
-      const status = {
-        name: "รอตรวจสอบ",
-        timestamps: dayjs(Date.now()).format(""),
-      };
-  
+  // console.log(req.body);
+  try {
+
+    const status = {
+      name: "รอตรวจสอบ",
+      timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+    };
+
+      const product_name = await ProductShall.findOne({ _id: req.body._id });
+
+      console.log(product_name)
       const order_product = await new preorder_shopping({
         ...req.body,
+        poshop_shop_id: req.body.shop_id,
+        product_detail: req.body.product_id, 
         status: status,
-        timestamps: dayjs(Date.now()).format(""),
+        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       }).save();
+      
+      // console.log(req.body.product_detail);
+
       if (order_product) {
         return res.status(200).send({
           status: true,
@@ -182,20 +191,66 @@ exports.preorder = async (req, res) => {
           data: order_product,
         });
       } else {
-        return res.status(500).send({
-          message: order_product,
+        return res.status(500).send({ 
+          message: "มีบางอย่างผิดพลาด",
           status: false,
         });
       }
-    } catch (error) {
-      console.log(error);
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด222",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+
+
+exports.ShowReceiptById = async (req,res)=>{
+  try {
+    const id = req.params.id;
+    const preorder_list = await preorder_shopping.findOne({_id: id});
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
       return res.status(500).send({
-        message: "มีบางอย่างผิดพลาด222",
+        message: "มีบางอย่างผิดพลาด",
         status: false,
-        error: error.message,
       });
     }
-  };
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+
+exports.ShowReceiptAll = async (req,res)=>{
+  try {
+    const id = req.params.id;
+    const preorder_list = await preorder_shopping.find();
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+
+
 
 async function generatePublicUrl(res) {
     try {

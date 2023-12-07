@@ -5,7 +5,7 @@ const PreOrderShoppingSchema = new mongoose.Schema({
   poshop_ref_short: { type: String, required: false },
   poshop_ref_full: { type: String, required: false, default: "ไม่มี" },
   poshop_shop_id: { type: String, required: false },
-  poshop_detail: { type: Array, required: false, default: [] },
+  poshop_detail: { type: Array, required: false, },
   poshop_total: { type: Number, required: false },
   poshop_type_price: { type: String, required: false, default: "เงินสด" },
   poshop_total_price: { type: Number, required: false },
