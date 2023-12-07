@@ -1027,3 +1027,16 @@ exports.postPreorders = async (req, res) => {
     res.status(500).send("ไม่สามารถเซฟได้");
   }
 };
+
+exports.updatePrice = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const update_price = await ProductShall.findOne({_id: id});
+    update_price.price = req.body.price;
+    update_price.save();
+    return res.status(200).send({status: true, message: "เพิ่มราคาสำเร็จ"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("ไม่สามารถเซฟได้");
+  }
+}

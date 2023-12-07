@@ -28,8 +28,9 @@ router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock
 router.post("/employee/PreorderEmpShall/:id", authCashier, ProductShops.PreorderEmpShall); 
-router.get("/employee/chkProductShall", authCashier , ProductShops.getStockShall);
+router.get("/employee/chkProductShall", ProductShops.getStockShall);
 router.get("/employee/checkProductShall/:id", authCashier , ProductShops.checkProductShall);
+router.put("/employee/checkProductShall/:id", ProductShops.updatePrice);
 
 
 
