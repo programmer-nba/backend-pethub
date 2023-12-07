@@ -249,19 +249,22 @@ exports.ImportStockShop = async (req, res) => {
         const product_shop = await ProductShops.findOne({
           product_id: item.product_id,
         });
+       
         const product = await Products.findOne({_id: item.product_id});
+        console.log(product)
         if (!product_shop) {
           console.log("สินค้ายังไม่มีในระบบ (เพิ่มสินค้า)");
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
+            logo:product.logo,
             name: product.name,
             barcode: product.barcode,
             ProductAmount: item.product_amount,
             price_cost: product.price_cost,
           };
-
           await new ProductShops(new_product).save();
+          
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
           const updatedAmount =
@@ -281,7 +284,7 @@ exports.ImportStockShop = async (req, res) => {
         {ordernumber: orderId},
         {processed: true}
       );
-      // ย้าย res.status(200).send ออกจากลูป for
+      
       return res
         .status(200)
         .send({status: true, message: "บันทึกข้อมูลสำเร็จ"});
@@ -657,6 +660,24 @@ exports.getPreorderEmpById = async (req, res) => {
 //     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
 //   }
 // };
+
+exports.updateProduct = async (req,res) =>{
+  try {
+    const product = await ProductShops.findByIdAndUpdate(req.params.id, req.body);
+    if (product) {
+      return res
+        .status(200)
+        .send({message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true});
+    } else {
+      return res
+        .status(500)
+        .send({message: "แก้ไขข้อมูลสินค้าไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
 
 exports.getPreorderById = async (req, res) => {
   try {
