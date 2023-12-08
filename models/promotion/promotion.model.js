@@ -9,6 +9,7 @@ const productPetHubchema = new mongoose.Schema({
     name:{type: String, required: false},
     name_product:{type: String, required: false},
     details_code: { type:  String, required: false},
+    price_cost:{type: String,required: false},
     percent_timestamp: {type: Array, required: false, default: []},
   });
   

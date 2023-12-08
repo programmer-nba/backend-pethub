@@ -1,6 +1,7 @@
 const {productpethubs}= require ("../../models/promotion/promotion.model")
 const {ProductShall} =require("../../models/product/product.shall.model")
 const {PackProducts} = require("../../models/product/productpack.model")
+const dayjs = require("dayjs");
 
 exports.createPromotionId = async (req, res) => {
     try {
@@ -8,8 +9,8 @@ exports.createPromotionId = async (req, res) => {
         const product_id = req.params.product_id;
         const productpomotion = await ProductShall.findOne({product_id:product_id});
         const packpromotion = await PackProducts.findOne({product_id:product_id})
-        console.log("productpomotion:", packpromotion);
-        console.log("productpomotion:", productpomotion);
+        // console.log("productpomotion:", packpromotion);
+        // console.log("productpomotion:", productpomotion);
         if (productpomotion) {
           const amount = req.body.amount;
           const price_cost = req.body.price_cost; // เพิ่มบรรทัดนี้
@@ -20,6 +21,8 @@ exports.createPromotionId = async (req, res) => {
             name: packpromotion.name,
             name_product:packpromotion.name_pack,
             barcode: packpromotion.barcode,
+            price_cost:req.body.price_cost,
+            percent_timestamp:dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             amount: amount,
           };
     
