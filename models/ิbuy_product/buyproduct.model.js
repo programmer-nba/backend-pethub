@@ -3,9 +3,9 @@ const Joi = require("joi");
 
 const PreOrderShoppingSchema = new mongoose.Schema({
   customer_shop_id: { type: String, required: false },
-  customer_name:{ type: String, required: true},
-  customer_phone: { type: String, required: true },
-  customer_address:{ type: String, required: true},
+  customer_name:{ type: String, required: false},
+  customer_phone: { type: String, required: false },
+  customer_address:{ type: String, required: false},
   customer_detail: { type: Array, required: false, },
   customer_total: { type: Number, required: false },
   // poshop_type_price: { type: String, required: false, default: "เงินสด" },

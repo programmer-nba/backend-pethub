@@ -10,9 +10,7 @@ const promotion = require("../../controllers/promotion/promotion.controller.js")
 
 
 
-router.post("/createpromotion/:product_id", promotion.createPromotionId);
-
-
+router.post("/PromotionPercen/:id", promotion.PromotionPercen)
 
 
 module.exports = router;

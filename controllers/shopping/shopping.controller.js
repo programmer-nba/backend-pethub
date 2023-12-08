@@ -174,6 +174,7 @@ exports.preorder = async (req, res) => {
 
     let order = [];
     let grandTotal = 0;
+    
 
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
@@ -198,6 +199,7 @@ exports.preorder = async (req, res) => {
       });
     }
 
+ 
     const product_name = await ProductShall.findOne({ _id: req.body._id });
 
     const order_product = await new preorder_shopping({
@@ -205,7 +207,7 @@ exports.preorder = async (req, res) => {
       customer_shop_id: req.body.shop_id,
       customer_detail: order,
       customer_total: grandTotal,
-      status: status,
+      // discount: discount, // เพิ่มข้อมูลส่วนลด
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
 
