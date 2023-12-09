@@ -9,6 +9,8 @@ const ProductShallall = new mongoose.Schema({
   ProductAmount: {type: Number, required: false},
   price_cost: {type: Number, required: false}, //ราคาต้นทุน
   price: {type: Number, required: false}, //ราคาสินค้า
+  promotion:{type: String, required: false },//โปรโมชั่นของสินค้า
+  discount:{type: String, required: false }//ส่วนลดหลังจากใช้โปรโมชั่น
 });
 
 const ProductShall = mongoose.model("product_shall", ProductShallall);

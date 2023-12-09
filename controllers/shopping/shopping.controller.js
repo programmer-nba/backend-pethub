@@ -175,7 +175,6 @@ exports.preorder = async (req, res) => {
 
     let order = [];
     let grandTotal = 0;
-    
 
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
@@ -184,30 +183,47 @@ exports.preorder = async (req, res) => {
       if (product.ProductAmount < item.product_amount) {
         console.log("จำนวนสินค้าไม่เพียงพอ");
       } else {
-        const price = product.price * item.product_amount;
-        total += price;
-        grandTotal += total;
+        // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
+        if (product.promotion) {
+          // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
+          const promotion = await Promotion.findOne({ _id: product.promotion});
+          console.log(promotion);
+          const price = (promotion && promotion.discountPercentage) ?
+            (product.price - (product.price * promotion.discountPercentage / 100)) * item.product_amount :
+            product.price * item.product_amount;
 
-        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-        product.ProductAmount -= item.product_amount;
-        await product.save();
+          total += price;
+          grandTotal += total;
+
+          // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+          product.ProductAmount -= item.product_amount;
+          await product.save();
+        } else {
+          // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
+          const price = product.price * item.product_amount;
+          total += price;
+          grandTotal += total;
+
+          // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+          product.ProductAmount -= item.product_amount;
+          await product.save();
+        }
       }
-
       order.push({
         product_id: product.product_id,
         amount: item.product_amount,
         total: total,
       });
     }
-
- 
     const product_name = await ProductShall.findOne({ _id: req.body._id });
+    const promotion = await Promotion.findOne();
+    console.log(promotion)
     const order_product = await new preorder_shopping({
       ...req.body,
       customer_shop_id: req.body.shop_id,
       customer_detail: order,
       customer_total: grandTotal,
-      // discount: discount, // เพิ่มข้อมูลส่วนลด
+      customer_discount:promotion.name,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
 
@@ -232,6 +248,7 @@ exports.preorder = async (req, res) => {
     });
   }
 };
+
 
 exports.ShowReceiptById = async (req, res) => {
   try {

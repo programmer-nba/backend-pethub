@@ -9,10 +9,7 @@ const dayjs = require("dayjs");
     try {
         const id = req.params.id;
       const { name, description, discountPercentage, startDate, endDate } = req.body;
-       const  product = await ProductShall.findOne({ product_id:id });
-        console.log(product)
       const newPromotion = new Promotion({
-        product_id:product.product_id,
         name:req.body.name ,
         description:req.body.description ,
         discountPercentage:req.body.discountPercentage,

@@ -14,6 +14,7 @@ const {
 } = require("../../models/product/preordershell.model.js");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const admin = require("../../models/product/product.shop.model");
+const {Promotion} =  require("../../models/promotion/promotion.model.js")
 const {Products} = require("../../models/product/product.model");
 const dayjs = require("dayjs");
 const {google} = require("googleapis");
@@ -393,6 +394,10 @@ exports.getStockShall = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+
+
+
+
 
 //เเสดงสินค้าที่เพิ่มเข้าสต๊อกทั้งหมด
 exports.getStock = async (req, res) => {
@@ -1056,6 +1061,21 @@ exports.updatePrice = async (req, res) => {
     update_price.price = req.body.price;
     update_price.save();
     return res.status(200).send({status: true, message: "เพิ่มราคาสำเร็จ"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("ไม่สามารถเซฟได้");
+  }
+}
+
+//เพิ่มโปรโมชั่นให้สินค้า
+exports.updatePromotion = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const update_promotion = await ProductShall.findOne({_id: id});
+    console.log(update_promotion)
+    update_promotion.promotion = req.body._id;
+    update_promotion.save();
+    return res.status(200).send({status: true, message: "เพิ่มส่วนลดสำเร็จ"});
   } catch (error) {
     console.log(error);
     res.status(500).send("ไม่สามารถเซฟได้");
