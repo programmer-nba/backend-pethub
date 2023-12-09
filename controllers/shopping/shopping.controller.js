@@ -10,6 +10,7 @@ const {ProductShall} = require("../../models/product/product.shall.model.js");
 const {
   preorder_shopping,
 } = require("../../models/ิbuy_product/buyproduct.model.js");
+const {Promotion} =  require("../../models/promotion/promotion.model.js")
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
@@ -201,7 +202,6 @@ exports.preorder = async (req, res) => {
 
  
     const product_name = await ProductShall.findOne({ _id: req.body._id });
-
     const order_product = await new preorder_shopping({
       ...req.body,
       customer_shop_id: req.body.shop_id,
