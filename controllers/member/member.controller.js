@@ -3,27 +3,44 @@ const dayjs = require("dayjs");
 const{Member,validatemember} = require("../../models/user/member.model")
 
 exports.create = async (req, res) => {
-    try {
-        const {error} = validatemember(req.body);
-      if (error)
-        return res
-          .status(400)
-          .send({message: error.details[0].message, status: false});
+  try {
+    const { error } = validatemember(req.body);
 
-      const result = await new Member({
-        ...req.body,
-        member_name:req.body.member_name,
-        member_lastname:req.body.member_lastname,
-        member_phone:req.body.member_phone,
-        member_position:req.body.member_position
-      }).save();
-      res
-        .status(201)
-        .send({message: "สร้างข้อมูลสำเร็จ", status: true, result: result});
-    } catch (error) {
-     res.status(500).send({message: error.message , status: false});
+    if (error) {
+      return res
+        .status(400)
+        .send({ message: error.details[0].message, status: false });
     }
-  };
+
+    // ตรวจสอบว่ามีเบอร์โทรที่ซ้ำหรือไม่
+    const existingMember = await Member.findOne({
+      member_phone: req.body.member_phone,
+    });
+
+    if (existingMember) {
+      return res.status(409).send({
+        message: "เบอร์โทรที่ใช้ลงทะเบียนซ้ำกับข้อมูลที่มีอยู่แล้ว",
+        status: false,
+      });
+    }
+
+    const result = await new Member({
+      ...req.body,
+      member_name: req.body.member_name,
+      member_lastname: req.body.member_lastname,
+      member_phone: req.body.member_phone,
+      member_position: req.body.member_position,
+    }).save();
+
+    res.status(201).send({
+      message: "สร้างข้อมูลสำเร็จ",
+      status: true,
+      result: result,
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message, status: false });
+  }
+};
 
 exports.findOneMember = async (req, res) => {
     try {
