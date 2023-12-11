@@ -9,24 +9,13 @@ exports.create = async (req, res) => {
         return res
           .status(400)
           .send({message: error.details[0].message, status: false});
-  
-      const user = await Member.findOne({
-        member_username: req.body.member_username,
-      });
-      if (user)
-        return res.status(409).send({
-          status: false,
-          message: "มีชื่อผู้ใช้งานนี้ในระบบเเล้ว",
-        });
-  
-      const salt = await bcrypt.genSalt(Number(process.env.SALT));
-      const hashPassword = await bcrypt.hash(req.body.member_password, salt);
-      const date = dayjs(Date.now()).format("");
 
       const result = await new Member({
         ...req.body,
-        member_password: hashPassword,
-        member_date_start: date,
+        member_name:req.body.member_name,
+        member_lastname:req.body.member_lastname,
+        member_phone:req.body.member_phone,
+        member_position:req.body.member_position
       }).save();
       res
         .status(201)
