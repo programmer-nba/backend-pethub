@@ -175,25 +175,29 @@ exports.preorder = async (req, res) => {
 
     let order = [];
     let grandTotal = 0;
+    let normalTotal = 0;
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
       let total = 0;
       let discount = "";
-      let discountdetail = "";    
+      let discountdetail = "";  
+      let normaltotal =0;  
       const product = await ProductShall.findOne({ product_id: item.product_id });
       if (product.ProductAmount < item.product_amount) {
         console.log("จำนวนสินค้าไม่เพียงพอ");
       } else {
         // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
         if (product.promotion !=="") {
+          const normalPrice = product.price * item.product_amount;
           // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
           const promotion = await Promotion.findOne({ _id: product.promotion});
           const price = (promotion && promotion.discountPercentage) ?
             (product.price - (product.price * promotion.discountPercentage / 100)) * item.product_amount :
             product.price * item.product_amount;
-
+          
+          normaltotal = normalPrice ;
           total += price;
-          grandTotal += total;
+          grandTotal += total;     //
           discount = promotion.name
           discountdetail = promotion.description
           // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
@@ -202,6 +206,7 @@ exports.preorder = async (req, res) => {
         } else {
           // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
           const price = product.price * item.product_amount;
+          normaltotal = price ;
           total += price;
           grandTotal += total;
 
@@ -213,17 +218,22 @@ exports.preorder = async (req, res) => {
       order.push({
         product_id: product.product_id,
         amount: item.product_amount,
+        normaltotal : normaltotal,
         total: total,
         discount: discount,
         discountdetail: discountdetail
       });
+      // เพิ่มราคาปกติในทุกรอบของลูป
+      normalTotal += normaltotal;
     }
+    const customer_total = normalTotal;
     const product_name = await ProductShall.findOne({ _id: req.body._id });
     const order_product = await new preorder_shopping({
       ...req.body,
       customer_shop_id: req.body.shop_id,
       customer_detail: order,
-      customer_total: grandTotal,
+      customer_total: customer_total,
+      customer_discount: grandTotal,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
 
@@ -231,7 +241,10 @@ exports.preorder = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "สั่งซื้อสินค้าทำเสร็จ",
-        data: order_product,
+        data: {
+          order_product,
+          customer_total
+        },
       });
     } else {
       return res.status(500).send({
