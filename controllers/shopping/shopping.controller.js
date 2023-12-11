@@ -176,12 +176,15 @@ exports.preorder = async (req, res) => {
     let order = [];
     let grandTotal = 0;
     let normalTotal = 0;
+    let totalDiscount = 0;
+    let discountAmountPerItem = 0;
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
       let total = 0;
       let discount = "";
       let discountdetail = "";  
       let normaltotal =0;  
+      
       const product = await ProductShall.findOne({ product_id: item.product_id });
       if (product.ProductAmount < item.product_amount) {
         console.log("จำนวนสินค้าไม่เพียงพอ");
@@ -215,13 +218,17 @@ exports.preorder = async (req, res) => {
           await product.save();
         }
       }
+      const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
+      totalDiscount += discountAmountPerItem; // เพิ่มส่วนลดรวม
+
       order.push({
         product_id: product.product_id,
         amount: item.product_amount,
         normaltotal : normaltotal,
         total: total,
         discount: discount,
-        discountdetail: discountdetail
+        discountdetail: discountdetail,
+        discountAmountPerItem:totalDiscount,
       });
       // เพิ่มราคาปกติในทุกรอบของลูป
       normalTotal += normaltotal;
@@ -233,6 +240,7 @@ exports.preorder = async (req, res) => {
       customer_shop_id: req.body.shop_id,
       customer_detail: order,
       customer_total: customer_total,
+      customer_discountdetails:totalDiscount,
       customer_discount: grandTotal,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
@@ -243,7 +251,6 @@ exports.preorder = async (req, res) => {
         message: "สั่งซื้อสินค้าทำเสร็จ",
         data: {
           order_product,
-          customer_total
         },
       });
     } else {

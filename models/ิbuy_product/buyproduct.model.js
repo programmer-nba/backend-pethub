@@ -9,6 +9,7 @@ const PreOrderShoppingSchema = new mongoose.Schema({
   customer_detail: { type: Array, required: false, },
   customer_total: { type: Number, required: false },
   // poshop_type_price: { type: String, required: false, default: "เงินสด" },
+  customer_discountdetails:{ type: Number, required: false },
   customer_discount: { type: Number, required: false, default: 0 },
   customer_status: { type: Boolean, required: false, default: false },
   customer_timestamp: { type: Date, required: false, default: Date.now() },
