@@ -8,8 +8,8 @@ const dayjs = require("dayjs");
   exports.PromotionPercen = async (req, res) => {
     try {
         const id = req.params.id;
-      const { name, description, discountPercentage, startDate, endDate } = req.body;
-      const newPromotion = new Promotion({
+       const { name, description, discountPercentage, startDate, endDate } = req.body;
+        const newPromotion = new Promotion({
         name:req.body.name ,
         description:req.body.description ,
         discountPercentage:req.body.discountPercentage,
@@ -42,3 +42,19 @@ const dayjs = require("dayjs");
     }
   };
   
+  exports.PromotionfildAll = async (req, res) => {
+    try {
+      const promotion = await Promotion.find();
+      if (promotion) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลโปรโมชั่นสำเร็จ",
+          data: promotion,
+        });
+      } else {
+        return res.status(404).send({message: "ไม่พบข้อมูลโปรโมชั่น", status: false});
+      }
+    } catch (err) {
+      res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };

@@ -11,6 +11,7 @@ const promotion = require("../../controllers/promotion/promotion.controller.js")
 
 
 router.post("/PromotionPercen/:id", promotion.PromotionPercen)
+router.get("/PromotionPercenAll",promotion.PromotionfildAll)
 
 
 module.exports = router;

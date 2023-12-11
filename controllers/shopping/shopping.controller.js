@@ -172,7 +172,6 @@ exports.preorder = async (req, res) => {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     };
-
     let order = [];
     let grandTotal = 0;
     let normalTotal = 0;
@@ -235,13 +234,15 @@ exports.preorder = async (req, res) => {
     }
     const customer_total = normalTotal;
     const product_name = await ProductShall.findOne({ _id: req.body._id });
+    const invoiceshoppingnumber = await invoiceShoppingNumber();
     const order_product = await new preorder_shopping({
       ...req.body,
+      invoiceShoppingNumber:invoiceshoppingnumber,
       customer_shop_id: req.body.shop_id,
       customer_detail: order,
-      customer_total: customer_total,
-      customer_discountdetails:totalDiscount,
-      customer_discount: grandTotal,
+      total: customer_total,
+      discount:totalDiscount,
+      net: grandTotal,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
 
@@ -249,9 +250,7 @@ exports.preorder = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "สั่งซื้อสินค้าทำเสร็จ",
-        data: {
-          order_product,
-        },
+        data: order_product,
       });
     } else {
       return res.status(500).send({
@@ -328,4 +327,27 @@ async function generatePublicUrl(res) {
   } catch (error) {
     console.log(error.message);
   }
+}
+
+async function invoiceShoppingNumber(date) {
+  const order = await preorder_shopping.find();
+  let invoice_sheopping = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await preorder_shopping.find({invoice: data});
+      if (check.length === 0) {
+        invoice_sheopping =
+          `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    invoice_sheopping =
+      `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+  }
+  return invoice_sheopping;
 }
