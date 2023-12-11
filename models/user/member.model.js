@@ -15,6 +15,7 @@ const complexityOptions = {
   
   const MemberSchema = new mongoose.Schema({
     member_name: {type: String, required: true},
+    member_lastname: {type: String, required: true},
     member_username: {type: String, required: true},
     member_password: {type: String, required: true},
     member_phone: {type: String, required: true},
@@ -41,6 +42,7 @@ const Member = mongoose.model("member", MemberSchema);
 const validatemember = (data) => {
     const schema = Joi.object({
         member_name: Joi.string().required().label("กรุณากรอกชื่อ"),
+        member_lastname: Joi.string().required().label("กรุณากรอกนามสกุล"),
         member_username: Joi.string().required().label("กรูณากรอกไอดีผู้ใช้"),
         member_password: passwordComplexity(complexityOptions)
         .required()

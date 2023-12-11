@@ -10,6 +10,7 @@ const member =require("../../controllers/member/member.controller")
 
 router.post("/", member.create);
 router.get("/:id", member.findOneMember)
+router.put("/updatemember/:id",member.updateMember)
 
 
 
