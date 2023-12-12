@@ -271,7 +271,7 @@ exports.preorder = async (req, res) => {
 exports.ShowReceiptById = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await preorder_shopping.findOne({_id: id});
+    const preorder_list = await preorder_shopping.findOne({invoiceShoppingNumber: id});
     if (preorder_list) {
       return res.status(200).send({
         status: true,
