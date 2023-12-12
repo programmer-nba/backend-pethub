@@ -161,6 +161,24 @@
     }
 };
 
+  exports.deleteType = async(req,res) =>{
+  try {
+    const id = req.params.id;
+    const member = await typeMember.findByIdAndDelete(id);
+    if (!member) {
+      return res
+        .status(404)
+        .send({status: false, message: "ไม่พบข้อมูลประเภทลูกค้า"});
+    } else {
+      return res
+        .status(200)
+        .send({status: true, message: "ลบข้อมูลประเภทสินค้าสำเร็จ"});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
+
 
 
 
