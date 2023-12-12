@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const{Member,validatemember} = require("../../models/user/member.model")
+const {typeMember} = require("../../models/user/type.model")
 
 exports.create = async (req, res) => {
   try {
@@ -43,26 +44,36 @@ exports.create = async (req, res) => {
 };
 
 exports.findOneMember = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const member = await Member.findOne({ member_phone: id });
-      console.log(member)
-      if (member) {
-        return res.status(200).send({
-          status: true,
-          message: "ดึงข้อมูลลูกค้าสำเร็จสำเร็จ",
-          data: member,
-        });
-      } else {
-        return res.status(404).send({message: "ไม่พบข้อมูลลูกค้า", status: false});
-      }
-    } catch (error) {
-      res.status(500).send({
-        message: "มีบางอย่างผิดพลาด",
-        status: false,
+  try {
+    const id = req.params.id;
+    const member = await Member.findOne({ member_phone: id });
+    console.log(member)
+    if (member) {
+
+      const type = await typeMember.findById(member.member_type);
+
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลลูกค้าสำเร็จ",
+        data: {
+          member_name: member.member_name,
+          member_lastname:member.member_lastname,
+          member_phone:member.member_phone,
+          member_position:member.member_position,   
+          member_type: type ? type.typeMember || "ไม่มี" : "ไม่มี",
+        },
       });
+    } else {
+      return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
     }
-  };
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
+  }
+};
 
 exports.updateMember = async (req, res) => {
     try {
@@ -123,5 +134,109 @@ exports.deleteMember = async (req,res) =>{
     }
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
+
+exports.createTypeMember = async (req, res) => {
+  try {
+    const typemember = await new typeMember({
+      ...req.body,
+      typeMember:req.body.typeMember
+    }).save();
+    res.status(200).send({message: "เพิ่มประเภทสินค้าสำเร็จ", status: true ,  result: typemember});
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+
+exports.findTypemember = async (req,res) =>{
+  try {
+    const member = await typeMember.find();
+    if (member) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลประเภทลูกค้าสำเร็จ",
+        data: member,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลประเภทลูกค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+
+exports.findOneTypeMember = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const type = await typeMember.findOne({ _id: id });
+    console.log(type)
+    if (type) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลประเภทลูกค้าสำเร็จ",
+        data: type,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลประเภทลูกค้า", status: false});
+    }
+  } catch (error) {
+    res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
+  }
+};
+
+exports.updateTypeMember = async (req, res) => {
+  try {
+    const type = await typeMember.findByIdAndUpdate(req.params.id, req.body);
+    if (type) {
+      return res
+        .status(200)
+        .send({message: "แก้ไขข้อมูลประเภทสินค้าสำเร็จ", status: true});
+    } else {
+      return res
+        .status(500)
+        .send({message: "แก้ไขข้อมูลประเภทสินค้าไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+
+exports.deleteTypeMember = async (req,res) =>{
+  try {
+    const id = req.params.id;
+    const type = await typeMember.findByIdAndDelete(id);
+    if (!type) {
+      return res
+        .status(404)
+        .send({status: false, message: "ไม่พบข้อมูลประเภทสินค้า"});
+    } else {
+      return res
+        .status(200)
+        .send({status: true, message: "ลบข้อมูลประเภทลูกค้าสำเร็จ"});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
+
+exports.findTypemember = async (req,res) =>{
+  try {
+    const member = await typeMember.find();
+    if (member) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลประเภทลูกค้าสำเร็จ",
+        data: member,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลประเภทลูกค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 }

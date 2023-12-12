@@ -3,7 +3,8 @@
   const dayjs = require("dayjs");
   const {PreOrderProducts} = require("../../models/product/preorder.model");
   const {PreOrderProductShell}= require("../../models/product/preordershell.model")
-  
+  const {Member}= require("../../models/user/member.model")
+  const {typeMember} = require("../../models/user/type.model")
   
   exports.create = async (req, res) => {
     try {
@@ -39,7 +40,7 @@
     }
   };
 
-  exports.findOneCashier = async (req, res) => {
+ exports.findOneCashier = async (req, res) => {
     try {
       const id = req.params.id;
       const cashier = await Cashier.findById(id);
@@ -137,6 +138,34 @@
       res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   }
+  
+  exports.updateTypemember = async (req, res) => {
+    try {
+      const phoneNumber = req.params.member_phone;
+      const update_typemember = await Member.findOneAndUpdate(
+        { member_phone: phoneNumber },
+        { $set: { member_type: req.body.member_type } },
+        { new: true }
+      );
+  
+      if (!update_typemember) {
+        return res.status(404).send({ status: false, message: "ไม่พบสมาชิกที่ตรงกับหมายเลขโทรศัพท์ที่ระบุ" });
+      }
+      
+      console.log(update_typemember);
+  
+      return res.status(200).send({ status: true, message: "อัปเดตประเภทลูกค้าสำเร็จ" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("ไม่สามารถอัปเดตได้");
+    }
+};
+
+
+
+
+
+  
 
   
   

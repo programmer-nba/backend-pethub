@@ -1,5 +1,7 @@
 const {Admins, validateAdmin} = require("../../models/user/admin.model");
 const bcrypt = require("bcrypt");
+const {Member}= require("../../models/user/member.model")
+const {typeMember} = require("../../models/user/type.model")
 
 exports.create = async (req, res) => {
   try {
@@ -123,5 +125,74 @@ exports.deleteAdmin = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+
+exports.getMemberById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const member = await Member.findOne({ member_phone: id });
+    console.log(member)
+    if (member) {
+
+      const type = await typeMember.findById(member.member_type);
+
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลลูกค้าสำเร็จ",
+        data: {
+          member_name: member.member_name,
+          member_lastname:member.member_lastname,
+          member_phone:member.member_phone,
+          member_position:member.member_position,   
+          member_type: type ? type.typeMember || "ไม่มี" : "ไม่มี",
+        },
+      });
+    } else {
+      return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
+  }
+};
+
+exports.getMemberByAll = async (req, res) => {
+  try {
+    const members = await Member.find();
+    console.log(members);
+
+    if (members.length > 0) {
+      const membersData = [];
+
+      for (const member of members) {
+        const type = await typeMember.findById(member.member_type);
+        
+        membersData.push({
+          member_name: member.member_name,
+          member_lastname: member.member_lastname,
+          member_phone: member.member_phone,
+          member_position: member.member_position,   
+          member_type: type ? type.typeMember || "ไม่มี" : "ไม่มี",
+        });
+      }
+
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลลูกค้าสำเร็จ",
+        data: membersData,
+      });
+    } else {
+      return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
   }
 };

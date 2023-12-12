@@ -17,7 +17,6 @@ const validatemember = (data) => {
         member_lastname: Joi.string().required().label("กรุณากรอกนามสกุล"),
         member_phone: Joi.string().required().label("กรอกเบอร์โทรลูกค้า"),
         member_position: Joi.string().required().label("กรอกตำแหน่งที่อยู่"),
-        member_type: Joi.string().required().label("กรุณากรอกระดับผู้ใช้"),
     });
     return schema.validate(data);
   };

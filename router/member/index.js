@@ -8,10 +8,18 @@ const authCashier = require("../../lib/auth.cashier")
 const member =require("../../controllers/member/member.controller")
 
 
-router.post("/", member.create);
-router.get("/:id", member.findOneMember)
-router.put("/updatemember/:id",member.updateMember)
-router.delete("/deleteMember/:id",member.deleteMember)
+
+router.post("/" ,authCashier, member.create);
+router.get("/:id",authCashier, member.findOneMember)
+router.put("/updatemember/:id",authCashier,member.updateMember)
+router.delete("/deleteMember/:id",authCashier,member.deleteMember)
+
+
+router.post("/addTypemember",authAdmin, member.createTypeMember)
+router.get("/getmember/typememberAll",authAdmin, member.findTypemember)
+router.get("/getmember/typememberBy/:id" ,authAdmin,member.findOneTypeMember)
+router.put("/editTypeMember/:id",authAdmin,member.updateTypeMember )
+router.delete("/deleteTypeMember/:id",authAdmin,member.deleteTypeMember)
 
 
 
