@@ -92,6 +92,24 @@ router.get("/me", authMe, async (req, res) => {
       }
       employee;
     }
+    if (decoded && decoded.row === "cashier") {
+      const id = decoded._id;
+      const cashier = await Cashier.findOne({_id: id});
+      if (!cashier) {
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
+      } else {
+        return res.status(200).send({
+          name: cashier.cashier_name,
+          username: cashier.cashier_username,
+          position: cashier.cashier_position,
+          level: cashier.cashier_role,
+        });
+      }
+      cashier;
+    }
+    
   } catch (error) {
     res.status(500).send({message: "Internal Server Error", status: false});
   }
