@@ -217,20 +217,3 @@ exports.deleteTypeMember = async (req,res) =>{
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 }
-
-exports.findTypemember = async (req,res) =>{
-  try {
-    const member = await typeMember.find();
-    if (member) {
-      return res.status(200).send({
-        status: true,
-        message: "ดึงข้อมูลประเภทลูกค้าสำเร็จ",
-        data: member,
-      });
-    } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลประเภทลูกค้า", status: false});
-    }
-  } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
-  }
-}
