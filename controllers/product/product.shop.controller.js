@@ -605,7 +605,17 @@ exports.getPreorderStoreAId = async (req, res) => {
 //เเสดงออเดอร์สินค้าทั้งหมดจาก store
 exports.getPreorderStoreAll = async (req, res) => {
   try {
-    const preorder_list = await PreOrderProductShell.find();
+    const shop_id = req.params.id; 
+
+    if (!shop_id) {
+      return res.status(400).send({
+        message: "กรุณาระบุ shop_id",
+        status: false,
+      });
+    }
+
+    const preorder_list = await PreOrderProductShell.find({ shop_id: shop_id });
+
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -619,7 +629,10 @@ exports.getPreorderStoreAll = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
   }
 };
 
