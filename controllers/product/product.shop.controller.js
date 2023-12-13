@@ -15,6 +15,7 @@ const {
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const admin = require("../../models/product/product.shop.model");
 const {Promotion} =  require("../../models/promotion/promotion.model.js")
+const {PromotionFree} = require("../../models/promotion/promotionbyfree.js")
 const {Products} = require("../../models/product/product.model");
 const dayjs = require("dayjs");
 const {google} = require("googleapis");
@@ -643,28 +644,6 @@ exports.getPreorderEmpById = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-
-//ดึงข้อมูลจากพรีออเดอร์จาก shall มาดู
-// exports.getPreorderShallById = async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const preorder_list = await PreOrderProductShell.findOne({_id: id});
-//     if (preorder_list) {
-//       return res.status(200).send({
-//         status: true,
-//         message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
-//         data: preorder_list,
-//       });
-//     } else {
-//       return res.status(500).send({
-//         message: "มีบางอย่างผิดพลาด",
-//         status: false,
-//       });
-//     }
-//   } catch (error) {
-//     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
-//   }
-// };
 
 exports.updateProduct = async (req,res) =>{
   try {

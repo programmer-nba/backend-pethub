@@ -3,8 +3,8 @@ const Joi = require("joi");
 
 const promotionByFreeSchema  = new mongoose.Schema({
     product_id:{type: String, required: false },
-    name: { type: String, required: false },
-    description: { type: String, required: false },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
     buyQty: { type: Number, required: true },  // จำนวนที่ต้องซื้อ
     freeQty: { type: Number, required: true }, // จำนวนที่ได้ฟรี
     startDate: { type: Date, required: true },

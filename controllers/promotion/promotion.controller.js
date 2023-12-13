@@ -84,26 +84,28 @@ const dayjs = require("dayjs");
   }
 
   
-  exports.Promotionbyfree = async (req, res) => {
+ exports.Promotionbyfree = async (req, res) => {
+    console.log(req.body)
     try {
       const { error } = validatePromotionFree(req.body);
       if (error) {
-        return res.status(400).send({ status: false, message: error.details[0].message });
+        return res
+          .status(400)
+          .send({ message: error.details[0].message, status: false });
       }
-  
       const { name, description, startDate, endDate, buyQty, freeQty } = req.body;
       const newPromotion = new PromotionFree({
-        name: name,
-        description: description,
+        name:req.body.name,
+        description:req.body.description,
         startDate: startDate || new Date(),
         endDate: endDate || new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
-        buyQty: buyQty,
-        freeQty: freeQty,
+        buyQty:req.body.buyQty,
+        freeQty:req.body.freeQty,
       });
-  
+     
       // บันทึกข้อมูลโปรโมชั่นลงในฐานข้อมูล
       await newPromotion.save();
-  
+      console.log(newPromotion)
       return res.status(200).send({
         status: true,
         message: "บันทึกโปรโมชั่นสำเร็จ",
@@ -118,3 +120,22 @@ const dayjs = require("dayjs");
       });
     }
   };
+
+  exports.PromotionfildfreeAll = async (req, res) => {
+    try {
+      const promotion = await PromotionFree.find();
+      if (promotion) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลโปรโมชั่นสำเร็จ",
+          data: promotion,
+        });
+      } else {
+        return res.status(404).send({message: "ไม่พบข้อมูลโปรโมชั่น", status: false});
+      }
+    } catch (err) {
+      res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  
+  

@@ -32,7 +32,7 @@ router.get("/employee/chkProductShall", ProductShops.getStockShall);
 router.get("/employee/checkProductShall/:id", authCashier , ProductShops.checkProductShall);
 router.put("/employee/checkProductShall/:id", ProductShops.updatePrice);
 router.put("/employee/editupdateProduct/:id", ProductShops.updateProduct);
-router.put("/cashier/addpromotion/:id", authCashier , ProductShops.updatePromotion)
+router.put("/cashier/addpromotion/:id" , ProductShops.updatePromotion)
 
 
 

@@ -11,8 +11,9 @@ const promotion = require("../../controllers/promotion/promotion.controller.js")
 
 
 router.post("/PromotionPercen/:id", promotion.PromotionPercen)//สร้างส่วนลดเป็นเปอร์เซ็น
-router.post("/PromotionFree/:id",promotion.Promotionbyfree) //สร้างโปรโมชั่นแบบเเถม
+router.post("/PromotionFree",promotion.Promotionbyfree) //สร้างโปรโมชั่นแบบเเถม
 router.get("/PromotionPercenAll",promotion.PromotionfildAll)
+router.get("/PromotionFreeAll",promotion.PromotionfildfreeAll)
 router.get("/PromotionfindId/:id",promotion.PromotionfindId)
 
 module.exports = router;

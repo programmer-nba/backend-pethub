@@ -147,25 +147,7 @@ exports.calcelProduct = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-// exports.getByBarcode = async (req, res) => {
-//     try {
-//       const shop_id = req.params.shop_id;
-//       const barcode = req.params.barcode;
-//       const product = await ProductShall.find({
-//         productShop_id: shop_id,
-//         productShop_barcode: barcode,
-//       });
-//       if (product) {
-//         return res.status(200).send({status: true, data: product});
-//       } else {
-//         return res
-//           .status(400)
-//           .send({status: false, message: "ดึงข้อมูลไม่สำเร็จ"});
-//       }
-//     } catch (err) {
-//       res.status(500).send({message: "มีบางอย่างผิดพลาด"});
-//     }
-//   };
+
 exports.preorder = async (req, res) => {
   try {
     const status = {
@@ -224,10 +206,11 @@ exports.preorder = async (req, res) => {
         product_id: product.product_id,
         amount: item.product_amount,
         normaltotal : normaltotal,
+        discountAmountPerItem:totalDiscount,
         total: total,
         discount: discount,
         discountdetail: discountdetail,
-        discountAmountPerItem:totalDiscount,
+        
       });
       // เพิ่มราคาปกติในทุกรอบของลูป
       normalTotal += normaltotal;
