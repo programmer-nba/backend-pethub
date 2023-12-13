@@ -15,7 +15,7 @@ router.put("/updatemember/:id",authCashier,member.updateMember)
 router.delete("/deleteMember/:id",authCashier,member.deleteMember)
 
 
-router.post("/addTypemember",authAdmin, member.createTypeMember)
+router.post("/addTypemember", member.createTypeMember)
 router.get("/getmember/typememberAll",authAdmin, member.findTypemember)
 router.get("/getmember/typememberBy/:id" ,authAdmin,member.findOneTypeMember)
 router.put("/editTypeMember/:id",authAdmin,member.updateTypeMember )
