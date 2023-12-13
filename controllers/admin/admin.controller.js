@@ -140,13 +140,7 @@ exports.getMemberById = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "ดึงข้อมูลลูกค้าสำเร็จ",
-        data: {
-          member_name: member.member_name,
-          member_lastname:member.member_lastname,
-          member_phone:member.member_phone,
-          member_position:member.member_position,   
-          member_type: type ? type.typeMember || "ไม่มี" : "ไม่มี",
-        },
+        data: member
       });
     } else {
       return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
@@ -162,37 +156,17 @@ exports.getMemberById = async (req, res) => {
 
 exports.getMemberByAll = async (req, res) => {
   try {
-    const members = await Member.find();
-    console.log(members);
-
-    if (members.length > 0) {
-      const membersData = [];
-
-      for (const member of members) {
-        const type = await typeMember.findById(member.member_type);
-        
-        membersData.push({
-          member_name: member.member_name,
-          member_lastname: member.member_lastname,
-          member_phone: member.member_phone,
-          member_position: member.member_position,   
-          member_type: type ? type.typeMember || "ไม่มี" : "ไม่มี",
-        });
-      }
-
+    const member = await Member.find();
+    if (member) {
       return res.status(200).send({
         status: true,
         message: "ดึงข้อมูลลูกค้าสำเร็จ",
-        data: membersData,
+        data: member,
       });
     } else {
-      return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
+      return res.status(404).send({message: "ไม่พบข้อมูลลูกค้า", status: false});
     }
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      message: "มีบางอย่างผิดพลาด",
-      status: false,
-    });
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };

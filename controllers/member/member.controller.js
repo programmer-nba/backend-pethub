@@ -55,7 +55,7 @@ exports.findOneMember = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "ดึงข้อมูลลูกค้าสำเร็จ",
-        data: {member},
+        data: member,
       });
     } else {
       return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
