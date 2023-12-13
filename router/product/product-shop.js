@@ -43,7 +43,7 @@ router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 //การพรีออกเดอร์จาก shall มาขอที่ stock
 router.post("/preorder/packproduct",auth , ProductShops.preorderProductShall);
-router.get("/preorder/packproduct", authCashier , ProductShops.getPreorderStoreAll)
+router.get("/preorder/packproduct", auth , ProductShops.getPreorderStoreAll)
 router.get("/preorder/packproductone/:id", authCashier , ProductShops.getPreorderStoreAId);
 //preorder พรีออเดอร์ไปที่จาก shall ไป shop
 router.get("preorder/shalltostock",auth , ProductShops.addProductsShall);
