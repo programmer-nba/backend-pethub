@@ -13,8 +13,7 @@ router.get("/getcashier/:id", authAdmin, cashier.findOneCashier);
 router.get("/showcashierall",authAdmin, cashier.getCashierAll);
 router.put("/edit/:id", authCashier, cashier.updateCashier);
 router.delete("/delete/:id",authAdmin, cashier.deleteCashier );
-router.put("/updateTypeMember/:member_phone",authCashier,cashier.updateTypemember)
-router.delete("/delete/typemember/:id",cashier.deleteType)
+
 
 
 
