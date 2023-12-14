@@ -191,7 +191,7 @@ exports.preorderProductShall = async (req, res) => {
     };
     const ordernumbershell = await orderNumberShell();
     const invoice = await invoiceShellNumber();
-    //const preorders = await ProductShops.findOne({ product_id: req.body.product_id });
+    // const preorders = await ProductShops.findOne({ product_id: req.body.product_id });
 
     // for (let item of preorders.product_detail) {
     //   const preorder_product = await ProductShops.findOne({
@@ -639,24 +639,28 @@ exports.getPreorderStoreAll = async (req, res) => {
 //ดึงข้อมูลแบบ id พรีออเดอร์
 exports.getPreorderEmpById = async (req, res) => {
   try {
-    const id = req.params.id;
-    const preorder_list = await PreOrderProducts.findOne({ordernumber: id});
-    if (preorder_list) {
+    const shopId = req.params.id;
+    const preorderList = await PreOrderProducts.find({ shop_id: shopId });
+
+    if (preorderList && preorderList.length > 0) {
       return res.status(200).send({
         status: true,
         message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
-        data: preorder_list,
+        data: preorderList,
       });
     } else {
-      return res.status(500).send({
-        message: "มีบางอย่างผิดพลาด",
+      return res.status(404).send({
+        message: "ไม่พบข้อมูลรายการสั่งซื้อสำหรับ shop_id ที่ระบุ",
         status: false,
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาดในการดึงข้อมูล",
+      status: false,
+    });
   }
-};
+}
 
 exports.updateProduct = async (req,res) =>{
   try {

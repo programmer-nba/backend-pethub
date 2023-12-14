@@ -42,9 +42,9 @@ router.put("/cashier/addpromotion/:id" , ProductShops.updatePromotion)
 router.post("/preorder", auth, ProductShops.preorderProduct);
 router.get("/preorder", auth, ProductShops.getPreorderAll);
 //การพรีออกเดอร์จาก shall มาขอที่ stock
-router.post("/preorder/packproduct",authCashier , ProductShops.preorderProductShall);
+router.post("/preorder/packproduct" , ProductShops.preorderProductShall);
 router.get("/preorder/packproduct/:id", auth , ProductShops.getPreorderStoreAll)
-router.get("/preorder/packproductone/:id", authCashier , ProductShops.getPreorderStoreAId);
+router.get("/preorder/packproductone/:id" , ProductShops.getPreorderStoreAId);
 //preorder พรีออเดอร์ไปที่จาก shall ไป shop
 router.get("preorder/shalltostock",auth , ProductShops.addProductsShall);
 //คำสั่งเปลี่ยนสถาณะออเดอร์ของพนักงาน shell ต่อ พนักงานสต๊อก
@@ -59,7 +59,7 @@ router.get("/preorder/admin", authAdmin, ProductShops.getPreorderAll);
 router.get("/preorder/:id",auth, ProductShops.getPreorderEmpById)
 
 //preorder พรีออเดอร์ไปที่ shop 
-router.get("preorder/admin", authAdmin, ProductShops.addProducts)
+router.get("/preorder/admin", authAdmin, ProductShops.addProducts)
 router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 
