@@ -585,7 +585,7 @@ exports.getPreorderAdminById = async (req, res) => {
 exports.getPreorderStoreAId = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProductShell.findOne({shop_id: id});
+    const preorder_list = await PreOrderProductShell.find({shop_id: id});
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -637,6 +637,8 @@ exports.getPreorderStoreAll = async (req, res) => {
 };
 
 
+
+
 exports.getPreorderchsById = async (req, res) => {
   try {
     const shopId = req.params.id;
@@ -661,6 +663,10 @@ exports.getPreorderchsById = async (req, res) => {
     });
   }
 }
+
+
+
+
 //ดึงข้อมูลแบบ id พรีออเดอร์
 exports.getPreorderEmpById = async (req, res) => {
   try {
@@ -1102,3 +1108,30 @@ exports.updatePromotion = async (req, res) => {
     res.status(500).send("ไม่สามารถเซฟได้");
   }
 }
+
+exports.ShallCancelPreorder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await PreOrderProductShell.findOne({_id: id});
+    console.log(updateStatus);
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยกเลิกการสั่งซื้อ",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยกเลิกการสั่งซื้อสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};

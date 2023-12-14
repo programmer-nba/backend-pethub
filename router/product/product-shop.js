@@ -64,7 +64,12 @@ router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 
 
-router.get("/preorderchs/:id", ProductShops.getPreorderchsById)
+
+//14/12/2023
+router.get("/preorderchs/:id",authCashier, ProductShops.getPreorderchsById)
+router.put("/preorderchsDelete/:id",authCashier,ProductShops.ShallCancelPreorder)
+
+
 
 
 //confrim
