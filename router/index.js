@@ -101,6 +101,7 @@ router.get("/me", authMe, async (req, res) => {
           .send({message: "มีบางอย่างผิดพลาด", status: false});
       } else {
         return res.status(200).send({
+          shop_id:cashier.cashier_shop_id,
           name: cashier.cashier_name,
           username: cashier.cashier_username,
           position: cashier.cashier_position,
