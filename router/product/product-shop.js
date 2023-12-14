@@ -21,7 +21,7 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 //พนักงานพรีออเดอร์สินค้า
 router.post("/employee/stock/:id", auth, ProductShops.ImportStockShop);
-router.get("/employee/showDetail/:id",ProductShops.getDetailsStock)
+router.get("/employee/showDetail",ProductShops.getDetailsStock)
 router.get("/employee/stock", auth, ProductShops.getStock);
 router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
