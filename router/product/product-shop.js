@@ -64,6 +64,8 @@ router.get("/preorder/:id", auth, ProductShops.getPreorderById);
 router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 
 
+router.get("/preorderchs/:id", ProductShops.getPreorderchsById)
+
 
 //confrim
 router.put("/preorder/admin/confirm/:id", authAdmin, ProductShops.confirmPreorder);

@@ -585,7 +585,7 @@ exports.getPreorderAdminById = async (req, res) => {
 exports.getPreorderStoreAId = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProductShell.find({shop_id: id});
+    const preorder_list = await PreOrderProductShell.findOne({shop_id: id});
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -636,6 +636,31 @@ exports.getPreorderStoreAll = async (req, res) => {
   }
 };
 
+
+exports.getPreorderchsById = async (req, res) => {
+  try {
+    const shopId = req.params.id;
+    const preorderList = await PreOrderProductShell.find({ shop_id: shopId });
+
+    if (preorderList && preorderList.length > 0) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorderList,
+      });
+    } else {
+      return res.status(404).send({
+        message: "ไม่พบข้อมูลรายการสั่งซื้อสำหรับ shop_id ที่ระบุ",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาดในการดึงข้อมูล",
+      status: false,
+    });
+  }
+}
 //ดึงข้อมูลแบบ id พรีออเดอร์
 exports.getPreorderEmpById = async (req, res) => {
   try {
