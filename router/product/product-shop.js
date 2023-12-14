@@ -36,7 +36,7 @@ router.put("/employee/editupdateProduct/:id", ProductShops.updateProduct);
 router.put("/cashier/addpromotion/:id" , ProductShops.updatePromotion)
 
 
-router.get("/shopproductAll/:id",ProductShops.getProductShopByOrder)
+router.get("/shopDetailsProduct/:id",ProductShops.getProductShopByOrder)
 //router.post("/preorder", auth, order.AddPreorder);//test
 
 //การพรีออเดอร์มา
