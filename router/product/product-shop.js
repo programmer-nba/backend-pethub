@@ -21,6 +21,7 @@ router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 //พนักงานพรีออเดอร์สินค้า
 router.post("/employee/stock/:id", auth, ProductShops.ImportStockShop);
+router.get("/employee/showDetail/:id",ProductShops.getDetailsStock)
 router.get("/employee/stock", auth, ProductShops.getStock);
 router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
@@ -28,14 +29,14 @@ router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
 
 //พนักงานพรีออเดอร์สินค้าเเละเพิ่มสินค้าแบบเป็นเเพ็คเข้า stock
 router.post("/employee/PreorderEmpShall/:id", authCashier, ProductShops.PreorderEmpShall); 
-router.get("/employee/chkProductShall", ProductShops.getStockShall);
+router.get("/employee/chkProductShall/:id", ProductShops.getStockShall);
 router.get("/employee/checkProductShall/:id", authCashier , ProductShops.checkProductShall);
 router.put("/employee/checkProductShall/:id", ProductShops.updatePrice);
 router.put("/employee/editupdateProduct/:id", ProductShops.updateProduct);
 router.put("/cashier/addpromotion/:id" , ProductShops.updatePromotion)
 
 
-
+router.get("/shopproductAll/:id",ProductShops.getProductShopByOrder)
 //router.post("/preorder", auth, order.AddPreorder);//test
 
 //การพรีออเดอร์มา

@@ -388,7 +388,7 @@ exports.getStockShall = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const mystock = await ProductShall.find(); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShall.find({shop_id:id}); // เอาใส่ไว้ใน() findOne
 
     return res.send(mystock);
   } catch (error) {
@@ -397,7 +397,31 @@ exports.getStockShall = async (req, res) => {
 };
 
 
+//14/12/2566
+exports.getDetailsStock = async (req, res) => {
+  try {
+    const id = req.params.id;
 
+    const mystock = await ProductShops.find(); //{shop_id:id} เอาใส่ไว้ใน() findOne
+
+    return res.send(mystock);
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+
+exports.getStock = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const mystock = await ProductShops.find(); //{shop_id:id} เอาใส่ไว้ใน() findOne
+
+    return res.send(mystock);
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
 
 
 //เเสดงสินค้าที่เพิ่มเข้าสต๊อกทั้งหมด
@@ -1124,6 +1148,30 @@ exports.ShallCancelPreorder = async (req, res) => {
         status: true,
         message: "ยกเลิกการสั่งซื้อสำเร็จ",
         data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+
+
+//14/12/2566
+exports.getProductShopByOrder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const preorder_list = await PreOrderProducts.findOne({ordernumber: id});
+    if (preorder_list) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: preorder_list,
       });
     } else {
       return res.status(500).send({
