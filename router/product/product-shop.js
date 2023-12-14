@@ -65,7 +65,7 @@ router.get("/preorder/admin/:id", authAdmin, ProductShops.getPreorderById);
 
 
 
-//14/12/2023
+//14/12/2023 เพิ่มปุ่มยกเลิกการสั่งชื้อสินค้า กับ เเเสดงพรีออเดอร์จาก shall  ไป shop
 router.get("/preorderchs/:id",authCashier, ProductShops.getPreorderchsById)
 router.put("/preorderchsDelete/:id",authCashier,ProductShops.ShallCancelPreorder)
 
