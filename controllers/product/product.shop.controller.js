@@ -585,7 +585,7 @@ exports.getPreorderAdminById = async (req, res) => {
 exports.getPreorderStoreAId = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProductShell.findOne({shop_id: id});
+    const preorder_list = await PreOrderProductShell.find({shop_id: id});
     if (preorder_list) {
       return res.status(200).send({
         status: true,
