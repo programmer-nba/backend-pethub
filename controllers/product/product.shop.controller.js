@@ -1181,27 +1181,16 @@ exports.getProductShopByOrder = async (req, res) => {
     const id = req.params.id;
     const preorder_list = await PreOrderProducts.findOne({ ordernumber: id });
     if (preorder_list) {
+      // ตัวอย่างการแสดงข้อมูล product_detail เฉพาะ
       const product_detail = preorder_list.product_detail;
-      const product = await Products.findById(product_detail.product_id);
-
-      if (product) {
-        return res.status(200).send({
-          status: true,
-          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
-          data: {
-            product_name: product.product_name,
-            product_logo: product.product_logo,
-          },
-        });
-      } else {
-        return res.status(500).send({
-          message: "ไม่พบข้อมูลสินค้า",
-          status: false,
-        });
-      }
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: { product_detail },
+      });
     } else {
       return res.status(500).send({
-        message: "ไม่พบข้อมูลรายการสั่งซื้อ",
+        message: "มีบางอย่างผิดพลาด",
         status: false,
       });
     }
