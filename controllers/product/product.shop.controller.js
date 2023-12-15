@@ -343,6 +343,7 @@ exports.PreorderEmpShall = async (req, res) => {
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
+            logo:item.product_logo,
             name: item.product_name,
             barcode: item.barcode,
             ProductAmount: amount,

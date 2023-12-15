@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const ProductShallall = new mongoose.Schema({
   product_id: {type: String, required: false},
   shop_id: {type: String, required: false},
+  logo:{type: String, required: false},//รูปภาพสินค้า
   name: {type: String, required: false}, //ชื่อสินค้า
   barcode: {type: String, required: false}, // บาร์โค๊ดสินค้า
   ProductAmount: {type: Number, required: false},
