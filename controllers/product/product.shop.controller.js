@@ -1187,7 +1187,7 @@ exports.getProductShopByOrder = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
-        data: { product_detail },
+        product_detail,
       });
     } else {
       return res.status(500).send({
