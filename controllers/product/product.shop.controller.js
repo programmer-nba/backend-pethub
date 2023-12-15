@@ -1122,7 +1122,8 @@ exports.postPreorders = async (req, res) => {
 exports.updatePrice = async (req, res) => {
   try {
     const id = req.params.id;
-    const update_price = await ProductShall.findOne({_id: id});
+    const update_price = await ProductShall.findOne({product_id: id});
+    console.log(update_price)
     update_price.price = req.body.price;
     update_price.save();
     return res.status(200).send({status: true, message: "เพิ่มราคาสำเร็จ"});
