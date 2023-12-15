@@ -5,6 +5,7 @@
   const {PreOrderProductShell}= require("../../models/product/preordershell.model")
   const {Member}= require("../../models/user/member.model")
   const {typeMember} = require("../../models/user/type.model")
+  const {Categorys} = require("../../models/product/category.model.js")
   
   exports.create = async (req, res) => {
     try {
@@ -179,6 +180,22 @@
   }
 }
 
+exports.getCategoryAllChs = async (req, res) => {
+  try {
+    const category = await Categorys.find();
+    if (category) {
+      return res
+        .status(200)
+        .send({message: "ดึงประเภทสินค้าสำเร็จ", status: true, data: category});
+    } else {
+      return res
+        .status(500)
+        .send({message: "ดึงประเภทสินค้าไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
 
 
 
