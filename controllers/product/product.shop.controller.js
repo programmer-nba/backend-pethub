@@ -807,7 +807,7 @@ exports.confirmPreorder = async (req, res) => {
 exports.candelPreorderEmyee = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({ordernumber: id});
+    const updateStatus = await PreOrderProducts.findOne({_id: id});
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -1188,4 +1188,3 @@ exports.getProductShopByOrder = async (req, res) => {
     });
   }
 };
-//
