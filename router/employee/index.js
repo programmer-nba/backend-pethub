@@ -19,5 +19,8 @@ router.put("/confirm/:id", auth, employee.confirmEmployee);
 
 
 
+router.get("/show/getProductPack",auth, employee.fildAllProductPack)
+
+
 
 module.exports = router;

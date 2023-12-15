@@ -197,7 +197,31 @@ exports.getCategoryAllChs = async (req, res) => {
   }
 };
 
-
+exports.getDetailsProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const preorder_list = await PreOrderProductShell.findOne({ ordernumbershell: id });
+    if (preorder_list) {
+      // ตัวอย่างการแสดงข้อมูล product_detail เฉพาะ
+      const product_detail = preorder_list.product_detail;
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        data: { product_detail },
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
+  }
+};
 
 
   

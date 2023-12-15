@@ -16,5 +16,7 @@ router.delete("/delete/:id",authAdmin, cashier.deleteCashier );
 router.get("/getCategoryAllChs",authCashier, cashier.getCategoryAllChs)
 
 
+router.get("/chk/ShowDetailsProduct/:id",authCashier,cashier.getDetailsProduct)
+
 
 module.exports = router; 

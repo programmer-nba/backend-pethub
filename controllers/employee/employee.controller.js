@@ -5,6 +5,7 @@ const {
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
+const {PackProducts} = require("../../models/product/productpack.model")
 
 
 exports.fildAll = async (req, res) => {
@@ -209,3 +210,23 @@ exports.update = async (req, res) => {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+
+exports.fildAllProductPack = async (req, res) => {
+  try {
+    const id = req.body._id
+    const product = await PackProducts.find({shop_id:id});
+    console.log(product)
+    if (product) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลสินค้าเป็นเเพ็คสำเร็จ",
+        data: product,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่สินค้าแบบเป็นเเพ็ค", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
