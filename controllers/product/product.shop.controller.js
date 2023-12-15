@@ -353,7 +353,7 @@ exports.PreorderEmpShall = async (req, res) => {
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
 
-          const updatedAmount = product_shall.ProductAmount * amount;
+          const updatedAmount = product_shall.ProductAmount + amount;
           product_shall.ProductAmount = updatedAmount;
           await product_shall.save();
 
