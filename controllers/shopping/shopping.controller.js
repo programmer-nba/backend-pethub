@@ -165,7 +165,7 @@ exports.preorder = async (req, res) => {
       let discount = "";
       let discountdetail = "";  
       let normaltotal =0;  
-      
+      let nameproduct ="";
       const product = await ProductShall.findOne({ product_id: item.product_id });
       if (product.ProductAmount < item.product_amount) {
         console.log("จำนวนสินค้าไม่เพียงพอ");
@@ -194,6 +194,7 @@ exports.preorder = async (req, res) => {
           total += price;
           grandTotal += total;
 
+          nameproduct = product.name;
           // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
           product.ProductAmount -= item.product_amount;
           await product.save();
@@ -204,13 +205,13 @@ exports.preorder = async (req, res) => {
 
       order.push({
         product_id: product.product_id,
+        nameproduct: nameproduct,
         amount: item.product_amount,
         normaltotal : normaltotal,
         discountAmountPerItem:totalDiscount,
         total: total,
         discount: discount,
         discountdetail: discountdetail,
-        
       });
       // เพิ่มราคาปกติในทุกรอบของลูป
       normalTotal += normaltotal;
@@ -250,6 +251,7 @@ exports.preorder = async (req, res) => {
     });
   }
 };
+
 
 exports.ShowReceiptById = async (req, res) => {
   try {

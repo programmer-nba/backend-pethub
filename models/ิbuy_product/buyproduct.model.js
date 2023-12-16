@@ -8,6 +8,7 @@ const PreOrderShoppingSchema = new mongoose.Schema({
   customer_phone: { type: String, required: false },
   customer_detail: { type: Array, required: false, },
   total: { type: Number, required: false },
+  nameproduct:{ type: Number, required: false },
   // poshop_type_price: { type: String, required: false, default: "เงินสด" },
   discount: { type: Number, required: false, default: 0 },
   net:{ type: Number, required: false },
