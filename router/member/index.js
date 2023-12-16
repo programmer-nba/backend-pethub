@@ -12,7 +12,7 @@ const member =require("../../controllers/member/member.controller")
 router.post("/" ,authCashier, member.create);
 router.get("/:id",authCashier, member.findOneMember)
 router.put("/updatemember/:id",authCashier,member.updateMember)
-router.delete("/deleteMember/:id",authCashier,member.deleteMember)
+router.delete("/deleteMember/:member_phone",authCashier,member.deleteMember)
 
 
 router.post("/addTypemember",authAdmin, member.createTypeMember)

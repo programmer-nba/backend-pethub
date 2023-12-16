@@ -113,23 +113,29 @@ exports.updateMember = async (req, res) => {
     }
   };
 
-exports.deleteMember = async (req,res) =>{
-  try {
-    const id = req.params.id;
-    const member = await Member.findByIdAndDelete(id);
-    if (!member) {
-      return res
-        .status(404)
-        .send({status: false, message: "ไม่พบข้อมูลลูกค้า"});
-    } else {
-      return res
-        .status(200)
-        .send({status: true, message: "ลบข้อมูลลูกค้าสำเร็จ"});
+exports.deleteMember = async (req, res) => {
+    try {
+      const memberPhone = req.params.member_phone;
+      const member = await Member.findOneAndDelete({ member_phone: memberPhone });
+  
+      if (!member) {
+        return res.status(404).send({
+          status: false,
+          message: `ไม่พบข้อมูลลูกค้าสำหรับหมายเลขโทรศัพท์ ${memberPhone}`,
+        });
+      } else {
+        return res.status(200).send({
+          status: true,
+          message: "ลบข้อมูลลูกค้าสำเร็จ",
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({
+        status: false,
+        message: "มีบางอย่างผิดพลาด",
+      });
     }
-  } catch (err) {
-    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
-  }
-}
+  };
 
 exports.createTypeMember = async (req, res) => {
   try {
