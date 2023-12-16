@@ -162,19 +162,21 @@ exports.preorder = async (req, res) => {
     const product_detail = req.body.product_detail;
     for (let item of product_detail) {
       let total = 0;
-      let discount = "";
+      let discount = 0;
       let discountdetail = "";  
       let normaltotal =0;  
-      let nameproduct ="";
+      
       const product = await ProductShall.findOne({ product_id: item.product_id });
+      console.log(product)
       if (product.ProductAmount < item.product_amount) {
         console.log("จำนวนสินค้าไม่เพียงพอ");
       } else {
         // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
-        if (product.promotion !=="") {
+        if (product.promotion !== "" ) {
           const normalPrice = product.price * item.product_amount;
           // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
           const promotion = await Promotion.findOne({ _id: product.promotion});
+          console.log(`promotion=${promotion}`)
           const price = (promotion && promotion.discountPercentage) ?
             (product.price - (product.price * promotion.discountPercentage / 100)) * item.product_amount :
             product.price * item.product_amount;
@@ -188,13 +190,13 @@ exports.preorder = async (req, res) => {
           product.ProductAmount -= item.product_amount;
           await product.save();
         } else {
+          console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
           // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
           const price = product.price * item.product_amount;
           normaltotal = price ;
           total += price;
           grandTotal += total;
 
-          nameproduct = product.name;
           // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
           product.ProductAmount -= item.product_amount;
           await product.save();
@@ -205,13 +207,13 @@ exports.preorder = async (req, res) => {
 
       order.push({
         product_id: product.product_id,
-        nameproduct: nameproduct,
         amount: item.product_amount,
         normaltotal : normaltotal,
         discountAmountPerItem:totalDiscount,
         total: total,
         discount: discount,
         discountdetail: discountdetail,
+        
       });
       // เพิ่มราคาปกติในทุกรอบของลูป
       normalTotal += normaltotal;
