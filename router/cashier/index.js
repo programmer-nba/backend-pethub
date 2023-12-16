@@ -17,6 +17,6 @@ router.get("/getCategoryAllChs",authCashier, cashier.getCategoryAllChs)
 
 
 router.get("/chk/ShowDetailsProduct/:id",authCashier,cashier.getDetailsProduct)
-
+router.get("/chk/TypeMember", authCashier,cashier.findAllTypemember)
 
 module.exports = router; 

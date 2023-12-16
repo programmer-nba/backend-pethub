@@ -223,6 +223,23 @@ exports.getDetailsProduct = async (req, res) => {
   }
 };
 
+exports.findAllTypemember = async (req,res) =>{
+  try {
+    const member = await typeMember.find();
+    if (member) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลประเภทลูกค้าสำเร็จ",
+        data: member,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลประเภทลูกค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+
 
   
 

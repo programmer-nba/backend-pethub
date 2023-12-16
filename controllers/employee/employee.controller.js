@@ -223,7 +223,7 @@ exports.fildAllProductPack = async (req, res) => {
         data: product,
       });
     } else {
-      return res.status(404).send({message: "ไม่สินค้าแบบเป็นเเพ็ค", status: false});
+      return res.status(404).send({message: "ไม่มีสินค้าแบบเป็นเเพ็ค",  status: false});
     }
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
