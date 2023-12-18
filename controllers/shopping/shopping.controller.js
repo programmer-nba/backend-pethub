@@ -10,7 +10,9 @@ const {ProductShall} = require("../../models/product/product.shall.model.js");
 const {
   preorder_shopping,
 } = require("../../models/ิbuy_product/buyproduct.model.js");
+const {Products} = require("../../models/product/product.model.js")
 const {Promotion} =  require("../../models/promotion/promotion.model.js")
+const {ProductShops} = require("../../models/product/product.shop.model.js")
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
@@ -296,6 +298,27 @@ exports.ShowReceiptAll = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+
+
+exports.getByBarcode = async (req,res)=>{
+  try {
+    const shop_id = req.params.shop_id;
+    const barcode = req.params.barcode;
+    const product = await ProductShall.find({
+      shop_id: shop_id,
+      barcode: barcode,
+    });
+    if (product) {
+      return res.status(200).send({status: true, data: product});
+    } else {
+      return res
+        .status(400)
+        .send({status: false, message: "ดึงข้อมูลไม่สำเร็จ"});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด"});
+  }
+}
 
 async function generatePublicUrl(res) {
   try {

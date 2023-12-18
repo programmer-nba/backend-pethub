@@ -14,6 +14,6 @@ router.put("/cancel/:id",shopping.calcelProduct)
 router.post("/preorder",shopping.preorder)
 router.get("/ShowReceipt/:id",shopping.ShowReceiptById)
 router.get("/ShowReceiptAll", authCashier,shopping.ShowReceiptAll)
-// router.get("/getbarcode/:barcode",shopping.getByBarcode)
+router.get("/getbarcode/:shop_id/:barcode",shopping.getByBarcode)
 
 module.exports = router;
