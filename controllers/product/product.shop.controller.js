@@ -296,6 +296,15 @@ exports.ImportStockShop = async (req, res) => {
           product_shop.ProductAmount = updatedAmount;
           product_shop.save();
 
+          const products = await Products.findOne({
+            _id: item.product_id,
+          });
+          //ลบจำนวนสินค้า
+          products.quantity -= item.product_amount;
+          await products.save();
+
+
+
           if (!updatedAmount) {
             return res
               .status(403)
@@ -378,6 +387,14 @@ exports.PreorderEmpShall = async (req, res) => {
           const updatedAmount = product_shall.ProductAmount + amount;
           product_shall.ProductAmount = updatedAmount;
           await product_shall.save();
+
+          //ค้นหา
+          const product_shop = await ProductShops.findOne({
+            product_id: item.product_id,
+          });
+          //ลบจำนวนสินค้า
+          product_shop.ProductAmount -= amount;
+          await product_shop.save();
 
           if (!updatedAmount) {
             return res
