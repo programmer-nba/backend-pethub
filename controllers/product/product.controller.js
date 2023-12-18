@@ -9,6 +9,7 @@ const{
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
+const req = require("express/lib/request.js");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_DRIVE_REDIRECT_URI;
@@ -219,7 +220,57 @@ exports.ChackPackById = async (req,res) =>{
   }
 }
 
+//ดึงสินค้าออกมาเป็นแบบเเพ็ค ตามจำนวนเเพ็คที่มี
+exports.ChackPackProductPack = async (req,res) =>{
+  try {
+    const packproduct = await PackProducts.find({ product_id: req.params.id });
+    if (packproduct) {
+      return res
+        .status(200)
+        .send({message: "ดึงข้อมูลสินค้าสำเร็จ", status: true, data: packproduct});
+    } else {
+      return res
+        .status(500)
+        .send({message: "ดึงข้อมูลสินค้าไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
 
+exports.UpdateProduckPack = async(req,res) =>{
+  try {
+    const product = await PackProducts.findByIdAndUpdate(req.params.id, req.body);
+    if (product) {
+      return res
+        .status(200)
+        .send({message: "แก้ไขข้อมูลสินค้าแบบเป็นเเพ็คสำเร็จ", status: true});
+    } else {
+      return res
+        .status(500)
+        .send({message: "แก้ไขข้อมูลสินค้าแบบเป็นเเพ็คไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+}
+
+exports.deleteProductPack = async(req,res) =>{
+  try {
+    const id = req.params.id;
+    const product = await PackProducts.findByIdAndDelete(id);
+    if (!product) {
+      return res.status(404).send({status: false, message: "ไม่พบสินค้าแบบเป็นเเพ็ค"});
+    } else {
+      return res
+        .status(200)
+        .send({status: true, message: "ลบข้อมูลสินค้าแบบเป็นเเพ็คสำเร็จ"});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
 
 //ดึงสินจากตาราง product 
 exports.getProductAll = async (req, res) => {

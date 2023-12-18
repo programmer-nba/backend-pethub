@@ -7,8 +7,9 @@ router.post("/create",authAdmin , product.create);
 router.post("/createpack",authAdmin , product.createPack);
 router.get("/chackpack",authAdmin , product.ChackPackAll);
 router.get("/ChackPackById/:id",authAdmin , product.ChackPackById);
-
-
+router.get("/chackPackByProduct/:id",product.ChackPackProductPack)
+router.put("/editPackProduct/:id",product.UpdateProduckPack)
+router.delete("/deletePackproduct/:id",product.deleteProductPack )
 
 router.get("/",authAdmin, product.getProductAll);
 router.get("/:id",authAdmin, product.getProductById);
