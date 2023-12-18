@@ -146,10 +146,23 @@ exports.findByShopId = async (req, res) => {
 exports.preorderProduct = async (req, res) => {
   console.log(req.body);
   try {
+    const { product_detail } = req.body;
+    const { product_id, product_amount } = product_detail[0];
+    
+    // ทำตรวจสอบจำนวนสินค้าที่มีอยู่ โดยใช้ตรวจสอบจากฐานข้อมูลเช่นกัน
+    const availableProduct = await Products.findOne({ _id: product_id });
+    if (!availableProduct || product_amount > availableProduct.quantity) {
+      return res.status(400).send({
+        status: false,
+        message: "สินค้าไม่พอสำหรับการสั่งชื้อ",
+      });
+    }
+    
     const status = {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
+    
     const invoice = await invoiceNumber();
     const preordernumber = await orderNumber();
 
@@ -160,6 +173,7 @@ exports.preorderProduct = async (req, res) => {
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
+    
     if (order_product) {
       return res.status(200).send({
         status: true,
@@ -181,6 +195,7 @@ exports.preorderProduct = async (req, res) => {
     });
   }
 };
+
 
 // หน้าร้าน สั่ง preorder มาที่ร้านค้า shop มารอส่งให้พนักงานตรวจสอบ
 exports.preorderProductShall = async (req, res) => {
