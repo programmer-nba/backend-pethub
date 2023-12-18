@@ -184,24 +184,30 @@ exports.preorderProduct = async (req, res) => {
 
 // หน้าร้าน สั่ง preorder มาที่ร้านค้า shop มารอส่งให้พนักงานตรวจสอบ
 exports.preorderProductShall = async (req, res) => {
+ console.log(req.body)
   try {
+    const { product_detail } = req.body;
+    const { product_id, product_amount } = product_detail[0];
+    // ทำตรวจสอบจำนวนสินค้าที่มีอยู่ โดยใช้ตรวจสอบจากฐานข้อมูลเช่นกัน
+    const availableProduct = await ProductShops.findOne({ product_id });
+    if (!availableProduct || product_amount > availableProduct.ProductAmount) {
+      return res.status(400).send({
+        status: false,
+        message: "สินค้าไม่พอสำหรับการสั่งชื้อ",
+      });
+    }
+
+    // ถ้าจำนวนพอเพียง ก็ทำการสร้างคำสั่งซื้อ
     const status = {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
     const ordernumbershell = await orderNumberShell();
     const invoice = await invoiceShellNumber();
-    // const preorders = await ProductShops.findOne({ product_id: req.body.product_id });
-
-    // for (let item of preorders.product_detail) {
-    //   const preorder_product = await ProductShops.findOne({
-    //      product_id: item.product_id })
-    // }
     const order_product = await new PreOrderProductShell({
       ...req.body,
       invoice: invoice,
       ordernumbershell: ordernumbershell,
-      // product_detail: item.product_id,
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -221,7 +227,7 @@ exports.preorderProductShall = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send({
-      message: "มีบางอย่างผิดพลาด222",
+      message: "มีบางอย่างผิดพลาด",
       status: false,
       error: error.message,
     });
