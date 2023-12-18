@@ -138,6 +138,14 @@ exports.createPack = async (req, res) => {
     const product_id = req.body.product_id;
 
     const productpack = await Products.findOne({_id: product_id });
+    const existingPack = await PackProducts.findOne({ product_id });
+
+    if (existingPack) {
+      return res.status(400).send({
+        status: false,
+        message: "สินค้าตัวนี้ถูกใช้ไปแล้ว สามารถสร้าง Pack สินค้าได้เพียงครั้งเดียว",
+      });
+    }
 
     if (productpack) {
       const amount = req.body.amount;
