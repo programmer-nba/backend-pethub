@@ -11,7 +11,6 @@ router.get("/chackPackByProduct/:id",product.ChackPackProductPack)
 router.put("/editPackProduct/:id",product.UpdateProduckPack)
 router.delete("/deletePackproduct/:id",product.deleteProductPack )
 
-router.put("/updateBarcode/:id",product.updateBarcode)
 router.get("/",authAdmin, product.getProductAll);
 router.get("/:id",authAdmin, product.getProductById);
 router.put("/:id",authAdmin, product.updateProduct);
