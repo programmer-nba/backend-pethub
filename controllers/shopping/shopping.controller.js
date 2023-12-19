@@ -11,6 +11,7 @@ const {
   preorder_shopping,
 } = require("../../models/ิbuy_product/buyproduct.model.js");
 const {Products} = require("../../models/product/product.model.js")
+const {PromotionFree} =  require("../../models/promotion/promotionbyfree.js")
 const {Promotion} =  require("../../models/promotion/promotion.model.js")
 const {ProductShops} = require("../../models/product/product.shop.model.js")
 const fs = require("fs");
@@ -160,76 +161,27 @@ exports.preorder = async (req, res) => {
     let grandTotal = 0;
     let normalTotal = 0;
     let totalDiscount = 0;
-    let discountAmountPerItem = 0;
+
     const product_detail = req.body.product_detail;
+
     for (let item of product_detail) {
-      let total = 0;
-      let discount = 0;
-      let discountdetail = "";  
-      let normaltotal =0;  
-      
-      const product = await ProductShall.findOne({ product_id: item.product_id });
-      console.log(product)
-      if (product.ProductAmount < item.product_amount) {
-        console.log("จำนวนสินค้าไม่เพียงพอ");
-      } else {
-        // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
-        if (product.promotion !== "" ) {
-          const normalPrice = product.price * item.product_amount;
-          // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
-          const promotion = await Promotion.findOne({ _id: product.promotion});
-          console.log(`promotion=${promotion}`)
-          const price = (promotion && promotion.discountPercentage) ?
-            (product.price - (product.price * promotion.discountPercentage / 100)) * item.product_amount :
-            product.price * item.product_amount;
-          
-          normaltotal = normalPrice ;
-          total += price;
-          grandTotal += total;     //
-          discount = promotion.name
-          discountdetail = promotion.description
-          // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-          product.ProductAmount -= item.product_amount;
-          await product.save();
-        } else {
-          console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
-          // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
-          const price = product.price * item.product_amount;
-          normaltotal = price ;
-          total += price;
-          grandTotal += total;
-
-          // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-          product.ProductAmount -= item.product_amount;
-          await product.save();
-        }
-      }
-      const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
-      totalDiscount += discountAmountPerItem; // เพิ่มส่วนลดรวม
-
-      order.push({
-        product_id: product.product_id,
-        amount: item.product_amount,
-        normaltotal : normaltotal,
-        discountAmountPerItem:totalDiscount,
-        total: total,
-        discount: discount,
-        discountdetail: discountdetail,
-        
-      });
-      // เพิ่มราคาปกติในทุกรอบของลูป
-      normalTotal += normaltotal;
+      const result = await calculateProductPrice(item);
+      order.push(result);
+      normalTotal += result.normaltotal;
+      totalDiscount += result.discountAmountPerItem;
+      grandTotal += result.total;
     }
+
     const customer_total = normalTotal;
-    const product_name = await ProductShall.findOne({ _id: req.body._id });
     const invoiceshoppingnumber = await invoiceShoppingNumber();
+
     const order_product = await new preorder_shopping({
       ...req.body,
       invoiceShoppingNumber:invoiceshoppingnumber,
       customer_shop_id: req.body.shop_id,
       customer_detail: order,
       total: customer_total,
-      discount:totalDiscount,
+      discount: totalDiscount,
       net: grandTotal,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
@@ -361,3 +313,60 @@ async function invoiceShoppingNumber(date) {
   }
   return invoice_sheopping;
 }
+
+// ฟังก์ชันคำนวณราคาสินค้า
+const calculateProductPrice = async (item) => {
+  let total = 0;
+  let discount = 0;
+  let discountdetail = "";
+  let normaltotal = 0;
+
+  const product = await ProductShall.findOne({ product_id: item.product_id });
+
+  if (product.ProductAmount < item.product_amount) {
+    console.log("จำนวนสินค้าไม่เพียงพอ");
+  } else {
+    // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
+    if (product.promotion !== "") {
+      const normalPrice = product.price * item.product_amount;
+      // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
+      const promotion = await Promotion.findOne({ _id: product.promotion });
+
+      const price =
+        promotion && promotion.discountPercentage
+          ? (product.price - (product.price * promotion.discountPercentage) / 100) * item.product_amount
+          : product.price * item.product_amount;
+
+      normaltotal = normalPrice;
+      total += price;
+      discount = promotion.name;
+      discountdetail = promotion.description;
+
+      // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+      product.ProductAmount -= item.product_amount;
+      await product.save();
+    } else {
+      console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
+      // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
+      const price = product.price * item.product_amount;
+      normaltotal = price;
+      total += price;
+
+      // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+      product.ProductAmount -= item.product_amount;
+      await product.save();
+    }
+  }
+
+  const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
+
+  return {
+    product_id: product.product_id,
+    amount: item.product_amount,
+    normaltotal,
+    discountAmountPerItem,
+    total,
+    discount,
+    discountdetail,
+  };
+};

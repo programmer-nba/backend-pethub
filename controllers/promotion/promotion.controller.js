@@ -93,13 +93,12 @@ const dayjs = require("dayjs");
           .status(400)
           .send({ message: error.details[0].message, status: false });
       }
-      const { name, description, startDate, endDate, buyQty, freeQty } = req.body;
+      const { name, description, startDate, endDate, freeQty } = req.body;
       const newPromotion = new PromotionFree({
         name:req.body.name,
         description:req.body.description,
         startDate: startDate || new Date(),
         endDate: endDate || new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
-        buyQty:req.body.buyQty,
         freeQty:req.body.freeQty,
       });
      
