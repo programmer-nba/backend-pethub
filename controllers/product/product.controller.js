@@ -356,3 +356,30 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
+exports.updateBarcode = async (req, res) => {
+  try {
+    const productId = req.params.id; // หรือตาม id ที่คุณใช้ในการอ้างอิงข้อมูลสินค้า
+    const newBarcode = req.body.newBarcode.toString(); // ค่า barcode ใหม่ที่ได้จากการสแกน
+
+    // ตรวจสอบว่าสินค้าที่ต้องการอัพเดทมีอยู่หรือไม่
+    const existingProduct = await Products.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).send({ status: false, message: "ไม่พบสินค้าที่ต้องการอัพเดท" });
+    }
+
+    // ทำการอัพเดท barcode
+    existingProduct.barcode = newBarcode;
+    const updatedProduct = await existingProduct.save();
+
+    return res.status(200).send({
+      status: true,
+      message: "อัพเดท Barcode สำเร็จ",
+      data: updatedProduct
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      message: "มีบางอย่างผิดพลาด"
+    });
+  }
+};
