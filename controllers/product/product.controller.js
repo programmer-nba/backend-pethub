@@ -33,7 +33,6 @@ const storage = multer.diskStorage({
     // console.log(file.originalname);
   },
 });
-
 //update image
 async function uploadFileCreate(req, res, {i, reqFiles}) {
   if (!req[i]) {
