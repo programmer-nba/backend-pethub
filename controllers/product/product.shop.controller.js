@@ -713,8 +713,6 @@ exports.getPreorderStoreAll = async (req, res) => {
 };
 
 
-
-
 exports.getPreorderchsById = async (req, res) => {
   try {
     const shopId = req.params.id;
