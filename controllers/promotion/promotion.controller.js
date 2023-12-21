@@ -6,7 +6,7 @@ const {PromotionFree,validatePromotionFree} = require("../../models/promotion/pr
 const dayjs = require("dayjs");
 
 
-  exports.PromotionPercen = async (req, res) => {
+exports.PromotionPercen = async (req, res) => {
     try {
         const id = req.params.id;
        const { name, description, discountPercentage, startDate, endDate } = req.body;
