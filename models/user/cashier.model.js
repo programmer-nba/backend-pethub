@@ -20,7 +20,7 @@ const CashierSchema = new mongoose.Schema({
     cashier_password: {type: String, required: true},
     cashier_phone: {type: String, required: true},
     cashier_position: {type: String, required: false, default: "cashier"},
-    cashier_role: {type: String, required: false},
+    // cashier_role: {type: String, required: false},
     cashier_date_start: {type: Date, required: false, default: Date.now()},
 });
 
@@ -54,7 +54,7 @@ const validateCashier = (data) => {
       .label("ไม่มีข้อมูลรหัสผ่าน"),
     cashier_phone: Joi.string().required().label("กรอกเบอร์โทรพนักงาน"),
     cashier_position: Joi.string().required().label("กรอกตำแหน่งพนักงาน"),
-    cashier_role: Joi.string().required().label("กรอกหน้าที่พนักงาน")
+    // cashier_role: Joi.string().required().label("กรอกหน้าที่พนักงาน")
   });
   return schema.validate(data);
 };
