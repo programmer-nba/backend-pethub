@@ -456,7 +456,7 @@ exports.getDetailsStock = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const mystock = await ProductShops.find(); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShops.find({ shop_id: id }); //{shop_id:id} เอาใส่ไว้ใน() findOne
 
     return res.send(mystock);
   } catch (error) {
