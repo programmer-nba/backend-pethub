@@ -271,6 +271,7 @@ exports.ImportStockShop = async (req, res) => {
       for (let item of preorders.product_detail) {
         const product_shop = await ProductShops.findOne({
           product_id: item.product_id,
+          shop_id: preorders.shop_id,
         });
        
         const product = await Products.findOne({_id: item.product_id});
@@ -365,6 +366,7 @@ exports.PreorderEmpShall = async (req, res) => {
 
         const product_shall = await ProductShall.findOne({
           product_id: item.product_id,
+          shop_id: preorders.shop_id,
         });
 
         if (!product_shall) {
