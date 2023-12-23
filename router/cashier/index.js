@@ -10,6 +10,7 @@ const authCashier = require("../../lib/auth.cashier")
 
 router.post("/", authAdmin, cashier.create);
 router.get("/getcashier/:id", authAdmin, cashier.findOneCashier);
+router.get("/getAllcashier/:id" ,authAdmin ,cashier.findAllCashiire)
 router.get("/showcashierall",authAdmin, cashier.getCashierAll);
 router.put("/edit/:id", authCashier, cashier.updateCashier);
 router.delete("/delete/:id",authAdmin, cashier.deleteCashier );

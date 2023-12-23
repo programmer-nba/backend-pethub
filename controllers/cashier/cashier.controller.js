@@ -62,6 +62,30 @@
     }
   };
 
+  exports.findAllCashiire = async (req, res) => {
+    try {
+      const cashierShopId = req.params.id;
+      const cashier = await Cashier.find({ cashier_shop_id: cashierShopId });
+  
+      if (cashier.length > 0) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลพนักงานสำเร็จ",
+          data: cashier,
+        });
+      } else {
+        return res.status(404).send({ message: "ไม่พบพนักงาน", status: false });
+      }
+    } catch (error) {
+      res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  };
+  
+  
+
   exports.updateCashier = async (req, res) => {
     try {
       if (!req.body) {
