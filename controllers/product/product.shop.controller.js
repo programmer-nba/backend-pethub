@@ -464,6 +464,29 @@ exports.getDetailsStock = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+//25/12/2566 เเก้ไขข้อมูลสินค้าก่อนนำเข้าสต๊อก
+// exports.UpdateProduct = async (req, res) => {
+//   try {
+//     const orderNumber = req.params.orderNumber
+//     const productToUpdate = await PreOrderProducts.findOne(
+//       productToUpdate.product_detail   = req.body.product_id,
+//       productToUpdate.product_detail = req.body.product_amount
+
+//     );
+//       console.log(productToUpdate)
+//       productToUpdate.save();
+//     if (!productToUpdate) {
+//       return res.status(404).send({ message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไข", status: false });
+//     }
+
+//     return res.status(200).send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+//   }
+// };
+
+
 
 
 exports.getStock = async (req, res) => {
