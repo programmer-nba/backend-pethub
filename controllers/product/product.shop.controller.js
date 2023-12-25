@@ -283,6 +283,7 @@ exports.ImportStockShop = async (req, res) => {
             shop_id: preorders.shop_id,
             logo:product.logo,
             name: product.name,
+            category:product.category,
             barcode: product.barcode,
             ProductAmount: item.product_amount,
             price_cost: product.price_cost,
