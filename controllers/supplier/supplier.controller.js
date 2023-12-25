@@ -1,4 +1,5 @@
 const {Suppliers} = require("../../models/user/supplier.model.js");
+const {Products} = require("../../models/product/product.model.js")
 
 const fs = require("fs");
 const multer = require("multer");
@@ -268,3 +269,31 @@ exports.updateImgBank = async (req, res) => {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 };
+
+exports.ShowProduct = async(req,res) =>{
+  try {
+    const  supplier_id  = req.params.id; // ถ้า supplier_id อยู่ในพารามิเตอร์ของคำขอ
+  
+    const products = await Products.find({ supplier_id: supplier_id });
+  
+    if (products && products.length > 0) {
+      return res.status(200).send({
+        message: "ดึงข้อมูลสินค้าสำเร็จ",
+        status: true,
+        data: products
+      });
+    } else {
+      return res.status(404).send({
+        message: "ไม่พบสินค้าสำหรับ supplier_id ที่ระบุ",
+        status: false
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      message: "มีบางอย่างผิดพลาด: " + err.message
+    });
+  }
+  }
+
+

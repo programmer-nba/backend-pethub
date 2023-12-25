@@ -11,4 +11,8 @@ router.delete("/:id", authAdmin, supplier.deleteSupplier);
 router.put("/iden/:id", authAdmin, supplier.updateImgIden);
 router.put("/bank/:id", authAdmin, supplier.updateImgBank);
 
+
+//ดึงสินค้าจากซัพพายเออร์มาดู
+router.get("/ShowProduct/:id" , supplier.ShowProduct);
+
 module.exports = router;
