@@ -170,3 +170,32 @@ exports.getMemberByAll = async (req, res) => {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+
+
+//ยังไม่เสร็จ
+// exports.confirmRTProduct = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const updateStatus = await ReturnProduct.findOne({_id: id});
+//     console.log(updateStatus);
+//     if (updateStatus) {
+//       updateStatus.status.push({
+//         name: "ยืนยันการส่งสินค้าคืน",
+//         timestamps: dayjs(Date.now()).format(""),
+//       });
+//       updateStatus.save();
+//       return res.status(200).send({
+//         status: true,
+//         message: "ส่งสืนค้าคืนสำเร็จ",
+//         data: updateStatus,
+//       });
+//     } else {
+//       return res.status(500).send({
+//         message: "มีบางอย่างผิดพลาด",
+//         status: false,
+//       });
+//     }
+//   } catch (error) {
+//     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+//   }
+// };
