@@ -716,8 +716,6 @@ exports.getPreorderStoreAll = async (req, res) => {
     });
   }
 };
-
-
 exports.getPreorderchsById = async (req, res) => {
   try {
     const shopId = req.params.id;
@@ -742,9 +740,6 @@ exports.getPreorderchsById = async (req, res) => {
     });
   }
 }
-
-
-
 
 //ดึงข้อมูลแบบ id พรีออเดอร์
 exports.getPreorderEmpById = async (req, res) => {
@@ -1215,9 +1210,6 @@ exports.ShallCancelPreorder = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-
-
-
 //14/12/2566
 exports.getProductShopByOrder = async (req, res) => {
   try {
@@ -1246,29 +1238,36 @@ exports.getProductShopByOrder = async (req, res) => {
 };
 //25/12/2566 เเก้ไขข้อมูลสินค้าก่อนนำเข้าสต๊อก
 exports.UpdateProduct = async (req, res) => {
-  // console.log("จำนวนสินค้าตัวเดิม",req.body);
+  // console.log("จำนวนสินค้าตัวเดิม", req.body);
   try {
-    const id = req.params.id;
+    const ordernumber = req.params.id // เปลี่ยน id เป็น ordernumber
+    const productCount = await PreOrderProducts.findOne({ "ordernumber": ordernumber });
+    if (!productCount) {
+      return res.status(400).send({ message: "กรุณากรอก ordernumber ก่อน", status: false });
+    }
     const productDetails = req.body.product_detail;
-    // console.log("จำนวนสินค้าที่ต้องการอัพเดดใหม่:", productDetails);
+    console.log("จำนวนสินค้าที่ต้องการอัพเดดใหม่:", productDetails);
     const productIds = productDetails.map(product => product.product_id);
 
     for (let product of productDetails) {
       const result = await PreOrderProducts.updateMany(
-        { "ordernumber": id, "product_detail.product_id": product.product_id },
+        { "ordernumber": ordernumber, "product_detail.product_id": product.product_id },
         { $set: { "product_detail.$.product_amount": product.product_amount } }
       );
       if (result.nModified === 0) {
-        return res.status(404).send({ message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไขหรือข้อมูลสินค้านั้นอาจจะไม่ถูกอัปเดต", status: false });
+        return res.status(404).send({
+          message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไขหรือข้อมูลสินค้านั้นอาจจะไม่ถูกอัปเดต",
+          status: false
+        });
       }
     }
-
     return res.status(200).send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด", errorDetails: err });
   }
 };
+
 
 
 

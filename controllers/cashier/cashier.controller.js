@@ -264,8 +264,36 @@ exports.findAllTypemember = async (req,res) =>{
   }
 }
 
+exports.UpdateProductAmount = async (req,res) =>{
+  try {
+    const ordernumbershell = req.params.id // เปลี่ยน id เป็น ordernumber
+    const productCount = await PreOrderProductShell.findOne({ "ordernumbershell": ordernumbershell });
+    if (!productCount) {
+      return res.status(400).send({ message: "กรุณากรอก ordernumber ก่อน", status: false });
+    }
+    const productDetails = req.body.product_detail;
+    console.log("จำนวนสินค้าที่ต้องการอัพเดดใหม่:", productDetails);
+    const productIds = productDetails.map(product => product.product_id);
 
-  
+    for (let product of productDetails) {
+      const result = await PreOrderProductShell.updateMany(
+        { "ordernumbershell": ordernumbershell, "product_detail.product_id": product.product_id },
+        { $set: { "product_detail.$.product_amount": product.product_amount } }
+      );
+      if (result.nModified === 0) {
+        return res.status(404).send({
+          message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไขหรือข้อมูลสินค้านั้นอาจจะไม่ถูกอัปเดต",
+          status: false
+        });
+      }
+    }
+    return res.status(200).send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
+  } catch (err) {
+    console.error(err);
+    ret
+}
+
+}
 
   
   
