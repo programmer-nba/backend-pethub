@@ -464,27 +464,6 @@ exports.getDetailsStock = async (req, res) => {
     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-//25/12/2566 เเก้ไขข้อมูลสินค้าก่อนนำเข้าสต๊อก
-// exports.UpdateProduct = async (req, res) => {
-//   try {
-//     const orderNumber = req.params.orderNumber
-//     const productToUpdate = await PreOrderProducts.findOne(
-//       productToUpdate.product_detail   = req.body.product_id,
-//       productToUpdate.product_detail = req.body.product_amount
-
-//     );
-//       console.log(productToUpdate)
-//       productToUpdate.save();
-//     if (!productToUpdate) {
-//       return res.status(404).send({ message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไข", status: false });
-//     }
-
-//     return res.status(200).send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด" });
-//   }
-// };
 
 
 
@@ -1265,3 +1244,36 @@ exports.getProductShopByOrder = async (req, res) => {
     });
   }
 };
+//25/12/2566 เเก้ไขข้อมูลสินค้าก่อนนำเข้าสต๊อก
+exports.UpdateProduct = async (req, res) => {
+  // console.log("จำนวนสินค้าตัวเดิม",req.body);
+  try {
+    const id = req.params.id;
+    const productDetails = req.body.product_detail;
+    // console.log("จำนวนสินค้าที่ต้องการอัพเดดใหม่:", productDetails);
+    const productIds = productDetails.map(product => product.product_id);
+
+    for (let product of productDetails) {
+      const result = await PreOrderProducts.updateMany(
+        { "ordernumber": id, "product_detail.product_id": product.product_id },
+        { $set: { "product_detail.$.product_amount": product.product_amount } }
+      );
+      if (result.nModified === 0) {
+        return res.status(404).send({ message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไขหรือข้อมูลสินค้านั้นอาจจะไม่ถูกอัปเดต", status: false });
+      }
+    }
+
+    return res.status(200).send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด", errorDetails: err });
+  }
+};
+
+
+
+
+
+
+
+
