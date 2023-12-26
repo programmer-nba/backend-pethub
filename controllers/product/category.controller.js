@@ -85,10 +85,10 @@ exports.create = async (req, res) => {
         .status(400)
         .send({status: false, message: error.details[0].message});
     }
-    await new Categorys({
+    const data =   await new Categorys({
       name: req.body.name,
     }).save();
-    res.status(200).send({message: "เพิ่มประเภทสินค้าสำเร็จ", status: true});
+    res.status(200).send({message: "เพิ่มประเภทสินค้าสำเร็จ", status: true , data:data});
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }

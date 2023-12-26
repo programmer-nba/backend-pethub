@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const {PackProducts} = require("../../models/product/productpack.model")
-
+const {ReturnProduct} = require("../../models/product/return.product.model")
 
 exports.fildAll = async (req, res) => {
   try {
@@ -229,4 +229,29 @@ exports.fildAllProductPack = async (req, res) => {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-
+//25/12/2566 นำสินค้าส่งคืน
+exports.Productback = async (req,res) =>{
+  try {
+    const id = req.params.id;
+    const preorder_list = await ReturnProduct.findOne({ ordernumber: id });
+    if (preorder_list) {
+      // ตัวอย่างการแสดงข้อมูล product_detail เฉพาะ
+      const product_detail = preorder_list.product_detail;
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+        product_detail,
+      });
+    } else {
+      return res.status(500).send({
+        message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
+  }
+}

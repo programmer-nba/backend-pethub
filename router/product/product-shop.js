@@ -22,7 +22,7 @@ router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmy
 //พนักงานพรีออเดอร์สินค้า
 router.post("/employee/stock/:id", auth, ProductShops.ImportStockShop);
 router.get("/employee/showDetail/:id",ProductShops.getDetailsStock)
-router.put("/UpdateProduct/:id", ProductShops.UpdateProduct) //เเก้ไขข้อมูลสินค้าก่อนนำเข้าสต๊อก
+router.put("/UpdateProduct/:id",auth, ProductShops.UpdateProduct) //เเก้ไขข้อมูลสินค้าก่อนนำเข้าสต๊อก
 router.get("/employee/stock", auth, ProductShops.getStock);
 router.get("/employee/checkEmpStock/:id", auth, ProductShops.checkEmpStock);
 router.get("/admin/checkStock/:id", authAdmin, ProductShops.checkEmpStockAdmin);
