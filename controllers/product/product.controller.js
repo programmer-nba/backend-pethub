@@ -11,6 +11,8 @@ const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
 const req = require("express/lib/request.js");
+const {Categorys} = require("../../models/product/category.model.js")
+const {Suppliers} = require("../../models/user/supplier.model.js")
 const xlsx = require('xlsx');
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
@@ -363,33 +365,39 @@ exports.deleteProduct = async (req, res) => {
 
 exports.createEcelProduct = async (req, res) => {
   try {
-    // ไม่ต้องใช้ multer หรือการอัปโหลดไฟล์
-
-    const products = [];
-
-    // ดึงค่าจาก req.body โดยตรง
-    const data = {
+    let category = await Categorys.findOne({ name: req.body.category });
+    if (!category) {
+      category = await Categorys.create({ name: req.body.category });
+    }
+    let supplier = await Suppliers.findOne({ _id: req.body._id });
+    if (!supplier) {
+      supplier = await Suppliers.create({ name: req.body._id });
+    }
+    let packProduct = await PackProducts.findOne({ name_pack: req.body.name_pack, amount: req.body.amount });
+    console.log(packProduct)
+    const productData = {
       name: req.body.name,
       barcode: req.body.barcode,
-      category: req.body.category,
-      supplier_id: req.body.supplier_id,
+      category: category._id,
+      supplier_id: supplier._id,
       quantity: req.body.quantity,
       price_cost: req.body.price_cost,
       retailprice: req.body.retailprice,
       wholesaleprice: req.body.wholesaleprice,
       memberretailprice: req.body.memberretailprice,
       memberwholesaleprice: req.body.memberwholesaleprice,
-      name_pack: req.body.name_pack,
-      amount: req.body.amount,
       status: true,
+      name_pack: req.body.name_pack,
     };
+    const products = await Products.create([productData]);
+    const productId = products[0]._id;
+    const { logo, name, barcode } = products[0];
+    if (!packProduct) {
+      packProduct = await PackProducts.create({ product_id: productId, logo, name, barcode, amount: req.body.amount, name_pack: req.body.name_pack });
+    }
 
-    products.push(data);
-
-    const createdProducts = await Products.create(products);
-
-    if (createdProducts.length > 0) {
-      return res.status(200).send({ status: true, message: 'สร้างผลิตภัณฑ์สำเร็จ', data: createdProducts });
+    if (packProduct) {
+      return res.status(200).send({ status: true, message: 'สร้างผลิตภัณฑ์สำเร็จ', data: packProduct });
     } else {
       return res.status(403).send({ status: false, message: 'ไม่สามารถสร้างผลิตภัณฑ์ได้' });
     }
@@ -397,5 +405,9 @@ exports.createEcelProduct = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
+
+
+
 
 

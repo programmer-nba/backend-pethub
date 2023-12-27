@@ -235,51 +235,76 @@ exports.Productback = async (req, res) => {
   try {
     const ordernumber = req.params.id;
     const productDetailsToRemove = req.body.product_detail;
+
+    // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
     if (!productDetailsToRemove || !productDetailsToRemove.length) {
       return res.status(400).send({
         message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการลบ",
         status: false,
       });
     }
+
+    // ค้นหาข้อมูล PreOrderProducts จาก ordernumber
     const preorder = await PreOrderProducts.findOne({ ordernumber: ordernumber });
+
     if (!preorder) {
       return res.status(500).send({
         message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
         status: false,
       });
     }
+
     const deletedProducts = [];
     let returnProductData = {
       ordernumber: preorder.ordernumber,
       product_detail: [],
     };
+
+    // วนลูปผ่านรายละเอียดสินค้าที่ต้องการลบ
     for (const removedProduct of productDetailsToRemove) {
       // ค้นหาข้อมูลจาก Products ด้วย _id แทน product_id
       const additionalProductInfo = await Products.findOne({ _id: removedProduct.product_id });
+
+      // ค้นหาและดึงข้อมูลสินค้าที่ต้องการลบ
       const updatedProductDetail = preorder.product_detail.filter(product =>
         product.product_id == removedProduct.product_id
       );
-        console.log(updatedProductDetail[0].product_amount)
+
       // ดึงค่า product_amount จาก removedProduct
       const product_amount = updatedProductDetail[0].product_amount;
-      returnProductData.product_detail = [...returnProductData.product_detail, {
-        product_id: removedProduct.product_id,
+
+      // สร้างข้อมูลสำหรับ ReturnProduct
+      const returnProductInfo = {
+        product_id: removedProduct.product_id, 
         barcode: additionalProductInfo.barcode,
         price_cost: additionalProductInfo.price_cost,
         product_name: additionalProductInfo.name,
         product_amount: product_amount,
         product_logo: additionalProductInfo.logo,
-      }];
+      };
 
-      const returnProduct = new ReturnProduct(returnProductData);
+      // สร้างและบันทึกข้อมูลใน ReturnProduct collection
+      const returnProduct = new ReturnProduct({
+        ordernumber: preorder.ordernumber,
+        product_detail: [returnProductInfo],
+      });
+
       await returnProduct.save();
+
+      // เก็บข้อมูลสินค้าที่ถูกลบไว้
       deletedProducts.push({
-        product_id: removedProduct.product_id,
-        product_name: removedProduct.product_name,
-        // product_amount: product_amount,
-        product_logo: additionalProductInfo.product_logo,
+        ...returnProductInfo,
       });
     }
+
+    // ลบ product_id จาก PreOrderProducts
+    await PreOrderProducts.updateOne(
+      { ordernumber: ordernumber },
+      { $pull: { product_detail: { product_id: { $in: productDetailsToRemove.map(p => p.product_id) } } } }
+    );
+    // ลบ product_id จาก Products
+    await Products.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
+    // ส่งข้อมูลการลบสินค้ากลับไป
     return res.status(200).send({
       status: true,
       message: "ลบสินค้าสำเร็จ",
@@ -288,11 +313,12 @@ exports.Productback = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).send({
-      message: "มีบางอย่างผิดพลาด",
+      message: error.message,
       status: false,
     });
   }
 };
+
 
 
 

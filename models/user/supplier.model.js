@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const SupplierSchema = new mongoose.Schema({
-  supplier_tel: {type: String, required: true}, //เบอร์โทรศัพท์
+  supplier_tel: {type: String, required: false}, //เบอร์โทรศัพท์
   supplier_status: {type: Boolean, required: false, default: true}, //สถานะ
 
   //บัญชีธนาคาร
