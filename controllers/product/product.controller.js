@@ -363,38 +363,39 @@ exports.deleteProduct = async (req, res) => {
 
 exports.createEcelProduct = async (req, res) => {
   try {
-    // ตรวจสอบว่ามีข้อมูล Excel ใน req.body.data หรือไม่ (ปรับตามการอัปโหลดไฟล์ของคุณ)
-    const excelData = req.body.data;
-    console.log(req.body.data)
+    // ไม่ต้องใช้ multer หรือการอัปโหลดไฟล์
+
     const products = [];
-    for (const row of excelData) {
-      const data = {
-        name: row.name,
-        barcode: row.barcode,
-        category: row.category,
-        supplier_id: row.supplier_id,
-        quantity: row.quantity,
-        price_cost: row.price_cost,
-        retailprice: row.retailprice,
-        wholesaleprice: row.wholesaleprice,
-        memberretailprice: row.memberretailprice,
-        memberwholesaleprice: row.memberwholesaleprice,
-        name_pack:row.name_pack,
-        amount:row.amount,
-        status: true,
-        // is_pack: row.is_pack, // ถ้า 'is_pack' มีอยู่ใน Excel
-      };
-      products.push(data);
-    }
-    const createdProducts = await Products.bulkCreate(products);
+
+    // ดึงค่าจาก req.body โดยตรง
+    const data = {
+      name: req.body.name,
+      barcode: req.body.barcode,
+      category: req.body.category,
+      supplier_id: req.body.supplier_id,
+      quantity: req.body.quantity,
+      price_cost: req.body.price_cost,
+      retailprice: req.body.retailprice,
+      wholesaleprice: req.body.wholesaleprice,
+      memberretailprice: req.body.memberretailprice,
+      memberwholesaleprice: req.body.memberwholesaleprice,
+      name_pack: req.body.name_pack,
+      amount: req.body.amount,
+      status: true,
+    };
+
+    products.push(data);
+
+    const createdProducts = await Products.create(products);
 
     if (createdProducts.length > 0) {
-      return res.status(200).send({ status: true, message: "สร้างผลิตภัณฑ์สำเร็จ", data: createdProducts });
+      return res.status(200).send({ status: true, message: 'สร้างผลิตภัณฑ์สำเร็จ', data: createdProducts });
     } else {
-      return res.status(403).send({ status: false, message: "ไม่สามารถสร้างผลิตภัณฑ์ได้" });
+      return res.status(403).send({ status: false, message: 'ไม่สามารถสร้างผลิตภัณฑ์ได้' });
     }
   } catch (err) {
-    return res.status(500).send({ status: false, message:err.message });
+    return res.status(500).send({ status: false, message: err.message });
   }
 };
+
 
