@@ -6,6 +6,7 @@ const{
   PackProducts,
 }=require("../../models/product/productpack.model.js");
 
+const xlsx = require('xlsx');
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
@@ -356,6 +357,44 @@ exports.deleteProduct = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+
+exports.createEcelProduct = async (req, res) => {
+  try {
+    // ตรวจสอบว่ามีข้อมูล Excel ใน req.body.data หรือไม่ (ปรับตามการอัปโหลดไฟล์ของคุณ)
+    const excelData = req.body.data;
+    console.log(req.body.data)
+    if (!excelData) {
+      return res.status(400).send({ status: false, message: "ไม่พบข้อมูล Excel" });
+    }
+    const products = [];
+    for (const row of excelData) {
+      const data = {
+        name: row.name,
+        barcode: row.barcode,
+        category: row.category,
+        supplier_id: row.supplier_id,
+        quantity: row.quantity,
+        price_cost: row.price_cost,
+        retailprice: row.retailprice,
+        wholesaleprice: row.wholesaleprice,
+        memberretailprice: row.memberretailprice,
+        memberwholesaleprice: row.memberwholesaleprice,
+        status: true,
+        // is_pack: row.is_pack, // ถ้า 'is_pack' มีอยู่ใน Excel
+      };
+      products.push(data);
+    }
+    const createdProducts = await Products.bulkCreate(products);
+
+    if (createdProducts.length > 0) {
+      return res.status(200).send({ status: true, message: "สร้างผลิตภัณฑ์สำเร็จ", data: createdProducts });
+    } else {
+      return res.status(403).send({ status: false, message: "ไม่สามารถสร้างผลิตภัณฑ์ได้" });
+    }
+  } catch (err) {
+    return res.status(500).send({ status: false, message: "เกิดข้อผิดพลาดบางประการ" });
   }
 };
 

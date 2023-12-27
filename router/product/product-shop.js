@@ -6,7 +6,10 @@ const Category = require("../../controllers/product/category.controller")
 const ProductShops = require("../../controllers/product/product.shop.controller");
 const order = require("../../controllers/order/order.controller")
 const authCashier = require("../../lib/auth.cashier");
+
+
 router.post("/", auth, ProductShops.create);
+router.post("/createEcelProduct",Product.createEcelProduct)
 router.get("/", auth, Product.getProductAll);
 router.get("/category", auth, Category.getCategoryAll);
 router.get("/shop-id/:id", auth, ProductShops.findByShopId);
