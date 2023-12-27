@@ -257,12 +257,11 @@ exports.Productback = async (req, res) => {
       // ค้นหาข้อมูลจาก Products ด้วย _id แทน product_id
       const additionalProductInfo = await Products.findOne({ _id: removedProduct.product_id });
       const updatedProductDetail = preorder.product_detail.filter(product =>
-        product.product_id !== removedProduct.product_id
+        product.product_id == removedProduct.product_id
       );
-
+        console.log(updatedProductDetail[0].product_amount)
       // ดึงค่า product_amount จาก removedProduct
-      const product_amount = removedProduct.product_amount;
-   
+      const product_amount = updatedProductDetail[0].product_amount;
       returnProductData.product_detail = [...returnProductData.product_detail, {
         product_id: removedProduct.product_id,
         barcode: additionalProductInfo.barcode,
@@ -277,7 +276,7 @@ exports.Productback = async (req, res) => {
       deletedProducts.push({
         product_id: removedProduct.product_id,
         product_name: removedProduct.product_name,
-        product_amount: product_amount,
+        // product_amount: product_amount,
         product_logo: additionalProductInfo.product_logo,
       });
     }
