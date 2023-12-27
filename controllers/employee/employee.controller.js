@@ -7,6 +7,7 @@ const dayjs = require("dayjs");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const {PackProducts} = require("../../models/product/productpack.model")
 const {ReturnProduct} = require("../../models/product/return.product.model")
+const {Products} = require("../../models/product/product.model")
 
 exports.fildAll = async (req, res) => {
   try {
@@ -233,11 +234,10 @@ exports.fildAllProductPack = async (req, res) => {
 exports.Productback = async (req, res) => {
   try {
     const ordernumber = req.params.id;
-    const productIdToRemove = req.body;
-
-    if (!productIdToRemove) {
+    const productDetailsToRemove = req.body.product_detail;
+    if (!productDetailsToRemove || !productDetailsToRemove.length) {
       return res.status(400).send({
-        message: "กรุณาระบุ product_id ที่ต้องการลบ",
+        message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการลบ",
         status: false,
       });
     }
@@ -248,19 +248,43 @@ exports.Productback = async (req, res) => {
         status: false,
       });
     }
-    // ตัดสินค้าที่ต้องการลบออกจาก product_detail
-    preorder.product_detail = preorder.product_detail.filter(product => product.product_id !== productIdToRemove);
-    // สร้าง instance ของ ReturnProduct และบันทึกในฐานข้อมูล
-    const returnProduct = new ReturnProduct({
+    const deletedProducts = [];
+    let returnProductData = {
       ordernumber: preorder.ordernumber,
-      product_detail: preorder.product_detail,
-      // คำอธิบายเพิ่มเติมเกี่ยวกับ "ReturnProduct" ตามที่คุณต้องการ
-    });
-    await returnProduct.save();
+      product_detail: [],
+    };
+    for (const removedProduct of productDetailsToRemove) {
+      // ค้นหาข้อมูลจาก Products ด้วย _id แทน product_id
+      const additionalProductInfo = await Products.findOne({ _id: removedProduct.product_id });
+      const updatedProductDetail = preorder.product_detail.filter(product =>
+        product.product_id !== removedProduct.product_id
+      );
+
+      // ดึงค่า product_amount จาก removedProduct
+      const product_amount = removedProduct.product_amount;
+   
+      returnProductData.product_detail = [...returnProductData.product_detail, {
+        product_id: removedProduct.product_id,
+        barcode: additionalProductInfo.barcode,
+        price_cost: additionalProductInfo.price_cost,
+        product_name: additionalProductInfo.name,
+        product_amount: product_amount,
+        product_logo: additionalProductInfo.logo,
+      }];
+
+      const returnProduct = new ReturnProduct(returnProductData);
+      await returnProduct.save();
+      deletedProducts.push({
+        product_id: removedProduct.product_id,
+        product_name: removedProduct.product_name,
+        product_amount: product_amount,
+        product_logo: additionalProductInfo.product_logo,
+      });
+    }
     return res.status(200).send({
       status: true,
-      message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
-      product_detail: preorder.product_detail,
+      message: "ลบสินค้าสำเร็จ",
+      deletedProducts: deletedProducts,
     });
   } catch (error) {
     console.error(error);
@@ -269,6 +293,21 @@ exports.Productback = async (req, res) => {
       status: false,
     });
   }
-}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
