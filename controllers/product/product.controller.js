@@ -394,7 +394,7 @@ exports.createEcelProduct = async (req, res) => {
       return res.status(403).send({ status: false, message: "ไม่สามารถสร้างผลิตภัณฑ์ได้" });
     }
   } catch (err) {
-    return res.status(500).send({ status: false, message: "เกิดข้อผิดพลาดบางประการ" });
+    return res.status(500).send({ status: false, message:err.message });
   }
 };
 
