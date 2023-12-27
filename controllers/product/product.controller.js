@@ -366,9 +366,6 @@ exports.createEcelProduct = async (req, res) => {
     // ตรวจสอบว่ามีข้อมูล Excel ใน req.body.data หรือไม่ (ปรับตามการอัปโหลดไฟล์ของคุณ)
     const excelData = req.body.data;
     console.log(req.body.data)
-    if (!excelData) {
-      return res.status(400).send({ status: false, message: "ไม่พบข้อมูล Excel" });
-    }
     const products = [];
     for (const row of excelData) {
       const data = {
