@@ -9,6 +9,10 @@ const ProductSchema = new mongoose.Schema({
   supplier_id: {type: String, required: true}, //คู่ค้า
   quantity: {type: Number, required: true}, //จำนวนสินค้า
   price_cost: {type: Number, required: true}, //ราคาต้นทุน
+  retailprice:{type: Number, required: true},//ราคาปลีก
+  wholesaleprice:{type: Number, required: true},//ราคาส่ง
+  memberretailprice:{type: Number, required: true},//ราคาปลีกสมาชิก
+  memberwholesaleprice:{type: Number, required: true},//ราคาส่งสมาชิก
   status: {type: Boolean, required: false, default: true},
 });
 

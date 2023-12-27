@@ -230,28 +230,45 @@ exports.fildAllProductPack = async (req, res) => {
   }
 };
 //25/12/2566 นำสินค้าส่งคืน
-exports.Productback = async (req,res) =>{
+exports.Productback = async (req, res) => {
   try {
-    const id = req.params.id;
-    const preorder_list = await ReturnProduct.findOne({ ordernumber: id });
-    if (preorder_list) {
-      // ตัวอย่างการแสดงข้อมูล product_detail เฉพาะ
-      const product_detail = preorder_list.product_detail;
-      return res.status(200).send({
-        status: true,
-        message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
-        product_detail,
+    const ordernumber = req.params.id;
+    const productIdToRemove = req.body;
+
+    if (!productIdToRemove) {
+      return res.status(400).send({
+        message: "กรุณาระบุ product_id ที่ต้องการลบ",
+        status: false,
       });
-    } else {
+    }
+    const preorder = await PreOrderProducts.findOne({ ordernumber: ordernumber });
+    if (!preorder) {
       return res.status(500).send({
         message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
         status: false,
       });
     }
+    // ตัดสินค้าที่ต้องการลบออกจาก product_detail
+    preorder.product_detail = preorder.product_detail.filter(product => product.product_id !== productIdToRemove);
+    // สร้าง instance ของ ReturnProduct และบันทึกในฐานข้อมูล
+    const returnProduct = new ReturnProduct({
+      ordernumber: preorder.ordernumber,
+      product_detail: preorder.product_detail,
+      // คำอธิบายเพิ่มเติมเกี่ยวกับ "ReturnProduct" ตามที่คุณต้องการ
+    });
+    await returnProduct.save();
+    return res.status(200).send({
+      status: true,
+      message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+      product_detail: preorder.product_detail,
+    });
   } catch (error) {
+    console.error(error);
     return res.status(500).send({
       message: "มีบางอย่างผิดพลาด",
       status: false,
     });
   }
 }
+
+

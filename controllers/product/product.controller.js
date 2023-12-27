@@ -112,6 +112,10 @@ exports.create = async (req, res) => {
           supplier_id: req.body.supplier_id,
           quantity: req.body.quantity,
           price_cost: req.body.price_cost,
+          retailprice:req.body.retailprice,
+          wholesaleprice:req.body.wholesaleprice,
+          memberretailprice:req.body.memberretailprice,
+          memberwholesaleprice:req.body.memberwholesaleprice,
           status: true,
           // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };

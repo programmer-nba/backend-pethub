@@ -2,7 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const CategorySchema = new mongoose.Schema({
-  name: {type: String, required: true}, //ชื่อประเภทสินค้า
+  name: {type: String, required: true , default :"ไม่มีประเภทสินค้า"}, //ชื่อประเภทสินค้า
   
 });
 

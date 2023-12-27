@@ -19,7 +19,7 @@ router.put("/cancel/:id", auth, employee.calcelEmployee);
 router.put("/confirm/:id", auth, employee.confirmEmployee);
 
 
-router.get("/returnProduct/:id",employee.Productback)
+router.post("/returnProduct/:id",employee.Productback)
 router.get("/show/getProductPack",auth, employee.fildAllProductPack)
 
 

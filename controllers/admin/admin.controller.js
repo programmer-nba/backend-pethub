@@ -2,6 +2,8 @@ const {Admins, validateAdmin} = require("../../models/user/admin.model");
 const bcrypt = require("bcrypt");
 const {Member}= require("../../models/user/member.model")
 const {typeMember} = require("../../models/user/type.model")
+const {PackProducts} = require("../../models/product/productpack.model")
+const {Products} = require("../../models/product/product.model")
 
 exports.create = async (req, res) => {
   try {
@@ -172,6 +174,38 @@ exports.getMemberByAll = async (req, res) => {
 };
 
 
+exports.DeletPackAndOne = async (req,res) =>{
+  try {
+    const id = req.params.id;
+    const packProduct = await Products.findByIdAndDelete(id);
+    if (!packProduct) {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบสินค้า"
+      });
+    }
+    const product_id = packProduct.product_id;
+    const packProductsToDelete = await PackProducts.find({ product_id: packProduct.product_id });
+    for (const packProductToDelete of packProductsToDelete) {
+      await PackProducts.findByIdAndDelete(packProductToDelete._id);
+    }
+    if (!packProductsToDelete) {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบสินค้าแบบเป็นแพ็ค"
+      });
+    }
+    return res.status(200).send({
+      status: true,
+      message: "ลบข้อมูลสินค้าเป็นสินเเละเป็นเเพ็คสำเร็จ"
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      message: "มีบางอย่างผิดพลาด"
+    });
+  }
+}
 //ยังไม่เสร็จ
 // exports.confirmRTProduct = async (req, res) => {
 //   try {
