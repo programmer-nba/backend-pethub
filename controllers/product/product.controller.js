@@ -382,6 +382,8 @@ exports.createEcelProduct = async (req, res) => {
         wholesaleprice: row.wholesaleprice,
         memberretailprice: row.memberretailprice,
         memberwholesaleprice: row.memberwholesaleprice,
+        name_pack:row.name_pack,
+        amount:row.amount,
         status: true,
         // is_pack: row.is_pack, // ถ้า 'is_pack' มีอยู่ใน Excel
       };
