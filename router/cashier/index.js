@@ -16,7 +16,7 @@ router.put("/edit/:id", authCashier, cashier.updateCashier);
 router.delete("/delete/:id",authAdmin, cashier.deleteCashier );
 router.get("/getCategoryAllChs",authCashier, cashier.getCategoryAllChs)
 
-
+router.post("/ProductReturn/:id",cashier.ProductReturn)
 router.get("/chk/ShowDetailsProduct/:id",authCashier,cashier.getDetailsProduct)
 router.get("/chk/TypeMember", authCashier,cashier.findAllTypemember)
 router.put("/UpdateProductAmount/:id",cashier.UpdateProductAmount)

@@ -3,6 +3,7 @@
   const dayjs = require("dayjs");
   const {PreOrderProducts} = require("../../models/product/preorder.model");
   const {PreOrderProductShell}= require("../../models/product/preordershell.model")
+  const {ProductShops} = require("../../models/product/product.shop.model.js")
   const {Member}= require("../../models/user/member.model")
   const {typeMember} = require("../../models/user/type.model")
   const {Categorys} = require("../../models/product/category.model.js")
@@ -295,5 +296,70 @@ exports.UpdateProductAmount = async (req,res) =>{
 
 }
 
-  
+
+exports.ProductReturn = async (req, res) => {
+  try {
+    const ordernumbershell = req.params.id;
+    const productDetailsToRemove = req.body.product_detail;
+
+    // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
+    if (!productDetailsToRemove || !productDetailsToRemove.length) {
+      return res.status(400).send({
+        message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการส่งคืน",
+        status: false,
+      });
+    }
+    const preorder = await PreOrderProductShell.findOne({ ordernumbershell: ordernumbershell });
+    if (!preorder) {
+      return res.status(500).send({
+        message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
+        status: false,
+      });
+    }
+    const deletedProducts = [];
+    let returnProductData = {
+      ordernumbershell: preorder.ordernumbershell,
+      product_detail: [],
+    };
+    for (const removedProduct of productDetailsToRemove) {
+      const additionalProductInfo = await ProductShops.findOne({ _id: removedProduct.product_id });
+      const updatedProductDetail = preorder.product_detail.filter(product =>
+        product.product_id == removedProduct.product_id
+      );
+      const product_amount = updatedProductDetail[0].product_amount;
+      const returnProductInfo = {
+        product_id: removedProduct.product_id, 
+        barcode: additionalProductInfo.barcode,
+        price_cost: additionalProductInfo.price_cost,
+        product_name: additionalProductInfo.name,
+        product_amount: product_amount,
+        product_logo: additionalProductInfo.logo,
+      };
+      const returnProduct = new ReturnProduct({
+        ordernumber: preorder.ordernumber,
+        product_detail: [returnProductInfo],
+      });
+      await returnProduct.save();
+      deletedProducts.push({
+        ...returnProductInfo,
+      });
+    }
+    await PreOrderProductShell.updateOne(
+      { ordernumber: ordernumber },
+      { $pull: { product_detail: { product_id: { $in: productDetailsToRemove.map(p => p.product_id) } } } }
+    );
+    await Products.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
+    return res.status(200).send({
+      status: true,
+      message: "ลบสินค้าสำเร็จ",
+      deletedProducts: deletedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({
+      message: error.message,
+      status: false,
+    });
+  }
+};
   

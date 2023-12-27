@@ -239,7 +239,7 @@ exports.Productback = async (req, res) => {
     // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
     if (!productDetailsToRemove || !productDetailsToRemove.length) {
       return res.status(400).send({
-        message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการลบ",
+        message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการส่งคืน",
         status: false,
       });
     }
