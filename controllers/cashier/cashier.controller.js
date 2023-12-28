@@ -335,10 +335,7 @@ exports.ProductReturn = async (req, res) => {
         product_amount: product_amount,
         product_logo: additionalProductInfo.logo,
       };
-      const returnProduct = new ReturnProductShall({
-        ordernumbershell: preorder.ordernumbershell,
-        product_detail: [returnProductInfo],
-      });
+      const returnProduct = new ReturnProductShall(returnProductInfo);
       await returnProduct.save();
       deletedProducts.push({
         ...returnProductInfo,

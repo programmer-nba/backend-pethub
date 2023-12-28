@@ -270,10 +270,7 @@ exports.Productback = async (req, res) => {
         product_amount: product_amount,
         product_logo: additionalProductInfo.logo,
       };
-      const returnProduct = new ReturnProduct({
-        ordernumber: preorder.ordernumber,
-        product_detail: [returnProductInfo],
-      });
+      const returnProduct = new ReturnProduct(returnProductInfo);
       await returnProduct.save();
       deletedProducts.push({
         ...returnProductInfo,
