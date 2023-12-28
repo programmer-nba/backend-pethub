@@ -244,6 +244,7 @@ exports.Productback = async (req, res) => {
       });
     }
     const preorder = await PreOrderProducts.findOne({ ordernumber: ordernumber });
+    console.log(preorder)
     if (!preorder) {
       return res.status(500).send({
         message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",

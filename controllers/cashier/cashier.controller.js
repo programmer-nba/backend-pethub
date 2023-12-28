@@ -7,6 +7,7 @@
   const {Member}= require("../../models/user/member.model")
   const {typeMember} = require("../../models/user/type.model")
   const {Categorys} = require("../../models/product/category.model.js")
+  const {ReturnProductShall} = require("../../models/product/return.product.shell.model.js")
   
   exports.create = async (req, res) => {
     try {
@@ -308,7 +309,6 @@ exports.ProductReturn = async (req, res) => {
       });
     }
     const preorder = await PreOrderProductShell.findOne({ ordernumbershell: ordernumbershell });
-    console.error("Preorders:", preorder);
     if (!preorder) {
       return res.status(500).send({
         message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
@@ -321,7 +321,7 @@ exports.ProductReturn = async (req, res) => {
       product_detail: [],
     };
     for (const removedProduct of productDetailsToRemove) {
-      const additionalProductInfo = await ProductShops.findOne({ _id: removedProduct.product_id });
+      const additionalProductInfo = await ProductShops.findOne({ product_id: removedProduct.product_id });
       const updatedProductDetail = preorder.product_detail.filter(product =>
         product.product_id == removedProduct.product_id
       );
@@ -334,8 +334,8 @@ exports.ProductReturn = async (req, res) => {
         product_amount: product_amount,
         product_logo: additionalProductInfo.logo,
       };
-      const returnProduct = new returnProduct({
-        ordernumber: preorder.ordernumber,
+      const returnProduct = new ReturnProductShall({
+        ordernumbershell: preorder.ordernumbershell,
         product_detail: [returnProductInfo],
       });
       await returnProduct.save();
@@ -347,7 +347,7 @@ exports.ProductReturn = async (req, res) => {
       { ordernumbershell: ordernumbershell },
       { $pull: { product_detail: { product_id: { $in: productDetailsToRemove.map(p => p.product_id) } } } }
     );    
-    await Products.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
+    await ProductShops.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
     return res.status(200).send({
       status: true,
       message: "ลบสินค้าสำเร็จ",
