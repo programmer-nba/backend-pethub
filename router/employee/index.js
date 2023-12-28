@@ -17,11 +17,13 @@ router.delete("/:id", authAdmin, employee.deleteEmployee);
 router.put("/:id", auth, employee.update);
 router.put("/cancel/:id", auth, employee.calcelEmployee);
 router.put("/confirm/:id", auth, employee.confirmEmployee);
-
-
-router.post("/returnProduct/:id",employee.Productback)
+ 
+//ส่งคืนสินค้า
+router.post("/returnProduct/:id",auth,employee.Productback)
 router.get("/show/getProductPack",auth, employee.fildAllProductPack)
 
-
+//ดูรายการส่งคืนสินค้า
+router.get("/find/returnProduct",auth, employee.fildAllProductReturn)
+router.get("/findOne/returnProduct/:id",auth, employee.fildOneProductReturn)
 
 module.exports = router;

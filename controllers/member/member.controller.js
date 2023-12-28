@@ -31,6 +31,10 @@ exports.create = async (req, res) => {
       member_lastname: req.body.member_lastname,
       member_phone: req.body.member_phone,
       member_position: req.body.member_position,
+      member_idcard:req.body.member_idcard,
+      member_birthday:req.body.member_birthday,
+      member_note:req.body.member_note,
+      member_email:req.body.member_email
     }).save();
 
     res.status(201).send({

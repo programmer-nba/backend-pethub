@@ -361,4 +361,38 @@ exports.ProductReturn = async (req, res) => {
     });
   }
 };
-  
+
+exports.fildAllProducShalltReturn = async (req, res) => {
+  try {
+    const employee = await ReturnProductShall.find();
+    if (employee) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+        data: employee,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.fildOneProducShalltReturn = async (req, res) => {
+  try {
+    const id = req.params.id
+    const employee = await ReturnProductShall.findById(id);
+    if (employee) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+        data: employee,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
