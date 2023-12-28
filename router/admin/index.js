@@ -16,6 +16,10 @@ router.delete("/DeletPackAndOne/:id",admins.DeletPackAndOne)
 //router.post("/stock/:id", authAdmin, productShops.PreorderStock);
 //router.get("/stock//:id", authAdmin, productShops.getStockById);
 
+router.get("/ProductReturn/admin",authAdmin , admins.fildAllProductReturnAdmin)
+router.get("/ProductReturnfindOne/admin/:id",authAdmin,admins.fildOneProductReturnAdmin)
 
+router.get("/ProductReturnShall/admin",authAdmin , admins.fildAllProductReturnShallAdmin)
+router.get("/ProductReturnShallfindOne/admin/:id",authAdmin,admins.fildOneProductReturnShallAdmin)
 
 module.exports = router; 

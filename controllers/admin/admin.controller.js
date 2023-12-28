@@ -4,6 +4,8 @@ const {Member}= require("../../models/user/member.model")
 const {typeMember} = require("../../models/user/type.model")
 const {PackProducts} = require("../../models/product/productpack.model")
 const {Products} = require("../../models/product/product.model")
+const {ReturnProduct} = require("../../models/product/return.product.model")
+const {ReturnProductShall} = require("../../models/product/return.product.shell.model")
 
 exports.create = async (req, res) => {
   try {
@@ -233,3 +235,73 @@ exports.DeletPackAndOne = async (req,res) =>{
 //     return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
 //   }
 // };
+
+exports.fildAllProductReturnAdmin = async (req, res) => {
+  try {
+    const admin = await ReturnProduct.find();
+    console.log(admin)
+    if (admin) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+        data: admin,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+exports.fildOneProductReturnAdmin = async (req, res) => {
+  try {
+    const id = req.params.id
+    const admin = await ReturnProduct.findById(id);
+    if (admin) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+        data: admin,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.fildAllProductReturnShallAdmin = async (req, res) => {
+  try {
+    const admin = await ReturnProductShall.find();
+    console.log(admin)
+    if (admin) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+        data: admin,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+exports.fildOneProductReturnShallAdmin = async (req, res) => {
+  try {
+    const id = req.params.id
+    const admin = await ReturnProductShall.findById(id);
+    if (admin) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+        data: admin,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
