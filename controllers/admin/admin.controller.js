@@ -1,5 +1,6 @@
 const {Admins, validateAdmin} = require("../../models/user/admin.model");
 const bcrypt = require("bcrypt");
+const dayjs = require("dayjs");
 const {Member}= require("../../models/user/member.model")
 const {typeMember} = require("../../models/user/type.model")
 const {PackProducts} = require("../../models/product/productpack.model")
@@ -212,23 +213,17 @@ exports.DeletPackAndOne = async (req,res) =>{
 exports.confirmRTProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await ReturnProduct.findOneAndUpdate(
-      { _id: id },
-      {
-        $push: {
-          status: {
-            name: "ยืนยันการส่งสินค้าคืน",
-            timestamps: dayjs(Date.now()).format(""),
-          },
-        },
-      },
-      { new: true } // เพื่อให้คืนค่า document หลังจากการอัปเดต
-    );
-
+    const updateStatus = await ReturnProduct.findOne({_id: id});
+    console.log(updateStatus);
     if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยืนยันการส่งสินค้าคืน",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
       return res.status(200).send({
         status: true,
-        message: "ส่งสินค้าคืนสำเร็จ",
+        message: "ส่งสืนค้าคืนสำเร็จ",
         data: updateStatus,
       });
     } else {
@@ -238,13 +233,9 @@ exports.confirmRTProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({
-      message: "มีบางอย่างผิดพลาด",
-      status: false,
-    });
+    return res.status(500).send({message: error.message, status: false});
   }
 };
-
 
 exports.fildAllProductReturnAdmin = async (req, res) => {
   try {
