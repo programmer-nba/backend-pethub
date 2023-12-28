@@ -255,6 +255,7 @@ exports.ChackPackProductPack = async (req,res) =>{
 
 exports.UpdateProduckPack = async(req,res) =>{
   try {
+    
     const product = await PackProducts.findByIdAndUpdate(req.params.id, req.body);
     if (product) {
       return res
@@ -330,17 +331,50 @@ exports.updateProduct = async (req, res) => {
     //     .status(400)
     //     .send({status: false, message: error.details[0].message});
     // }
-   
-    const product = await Products.findByIdAndUpdate(req.params.id, req.body);
-    if (product) {
-      return res
-        .status(200)
-        .send({message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true});
-    } else {
-      return res
-        .status(500)
-        .send({message: "แก้ไขข้อมูลสินค้าไม่สำเร็จ", status: false});
-    }
+    let upload = multer({storage: storage}).array("imgCollection", 20);
+    upload(req, res, async function (err) {
+      if (err) {
+        return res.status(403).send({message: "มีบางอย่างผิดพลาด", data: err});
+      }
+      const reqFiles = [];
+      if (!req.files) {
+        res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          data: "No Request Files",
+          status: false,
+        });
+      } else {
+        const url = req.protocol + "://" + req.get("host");
+        // const productpack = await PackProducts.findOne({product_id:req.body.product_id})//เพิ่มตรงส่วนนี้มา
+        for (var i = 0; i < req.files.length; i++) {
+          await uploadFileCreate(req.files, res, {i, reqFiles});
+        }
+        const data = {
+          logo: reqFiles[0],
+          name: req.body.name,
+          barcode: req.body.barcode,
+          category: req.body.category,
+          supplier_id: req.body.supplier_id,
+          quantity: req.body.quantity,
+          price_cost: req.body.price_cost,
+          retailprice:req.body.retailprice,
+          wholesaleprice:req.body.wholesaleprice,
+          memberretailprice:req.body.memberretailprice,
+          memberwholesaleprice:req.body.memberwholesaleprice,
+          status: true,
+          // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
+        };
+        const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
+        if (new_product) {
+          return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: new_product});
+        } else {
+          return res
+            .status(403)
+            .send({status: false, message: "ไม่สามารถบันทึกได้"});
+        }
+      }
+    });
+
   } catch (err) {
 
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
@@ -354,6 +388,7 @@ exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).send({status: false, message: "ไม่พบสินค้า"});
     } else {
+      const packproduct = await PackProducts.findOneAndDelete({product_id:id})
       return res
         .status(200)
         .send({status: true, message: "ลบข้อมูลสินค้าสำเร็จ"});
@@ -365,13 +400,13 @@ exports.deleteProduct = async (req, res) => {
 
 exports.createEcelProduct = async (req, res) => {
   try {
+
     let category = await Categorys.findOne({ name: req.body.category });
     if (!category) {
       category = await Categorys.create({ name: req.body.category });
     }
     let supplier = await Suppliers.findOne({ supplier_company_name: req.body.supplier_id });
-    console.log(supplier);
-    let packProduct = await PackProducts.findOne({ name_pack: req.body.name_pack, amount: req.body.amount });
+    
     const productData = {
       name: req.body.name,
       barcode: req.body.barcode,
@@ -384,26 +419,25 @@ exports.createEcelProduct = async (req, res) => {
       memberretailprice: req.body.memberretailprice,
       memberwholesaleprice: req.body.memberwholesaleprice,
       status: true,
-      name_pack: req.body.name_pack,
     };
     const products = await Products.create([productData]);
     const productId = products[0]._id;
     const { logo, name, barcode } = products[0];
-    if (!packProduct) {
-      packProduct = await PackProducts.create({ product_id: productId, logo, name, barcode, amount: req.body.amount, name_pack: req.body.name_pack });
+    if(req.body.name_pack !=undefined){
+      let packProduct = await PackProducts.findOne({ name_pack: req.body.name_pack});
+      if (!packProduct) {
+        packProduct = await PackProducts.create({ product_id: productId, logo, name, barcode, amount: req.body.amount, name_pack: req.body.name_pack });
+      }
     }
-    if (packProduct) {
-      return res.status(200).send({
+    return res.status(200).send({
         status: true,
         message: 'สร้างผลิตภัณฑ์สำเร็จ',
         data: {
-          packProduct,
+          products,
           supplier,
         },
       });
-    } else {
-      return res.status(403).send({ status: false, message: 'ไม่สามารถสร้างผลิตภัณฑ์ได้' });
-    }
+ 
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
