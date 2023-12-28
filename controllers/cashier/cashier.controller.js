@@ -298,7 +298,6 @@ exports.UpdateProductAmount = async (req,res) =>{
 
 
 exports.ProductReturn = async (req, res) => {
-  console.log(req.body)
   try {
     const ordernumbershell = req.params.id;
     const productDetailsToRemove = req.body.product_detail;
@@ -309,7 +308,7 @@ exports.ProductReturn = async (req, res) => {
       });
     }
     const preorder = await PreOrderProductShell.findOne({ ordernumbershell: ordernumbershell });
-    console.log(PreOrderProductShell)
+    console.error("Preorders:", preorder);
     if (!preorder) {
       return res.status(500).send({
         message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
@@ -335,7 +334,7 @@ exports.ProductReturn = async (req, res) => {
         product_amount: product_amount,
         product_logo: additionalProductInfo.logo,
       };
-      const returnProduct = new ReturnProduct({
+      const returnProduct = new returnProduct({
         ordernumber: preorder.ordernumber,
         product_detail: [returnProductInfo],
       });
@@ -345,9 +344,9 @@ exports.ProductReturn = async (req, res) => {
       });
     }
     await PreOrderProductShell.updateOne(
-      { ordernumber: ordernumber },
+      { ordernumbershell: ordernumbershell },
       { $pull: { product_detail: { product_id: { $in: productDetailsToRemove.map(p => p.product_id) } } } }
-    );
+    );    
     await Products.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
     return res.status(200).send({
       status: true,
