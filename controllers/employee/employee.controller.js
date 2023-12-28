@@ -280,7 +280,6 @@ exports.Productback = async (req, res) => {
       { ordernumber: ordernumber },
       { $pull: { product_detail: { product_id: { $in: productDetailsToRemove.map(p => p.product_id) } } } }
     );
-    await Products.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
     return res.status(200).send({
       status: true,
       message: "ลบสินค้าสำเร็จ",
