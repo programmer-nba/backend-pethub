@@ -298,11 +298,10 @@ exports.UpdateProductAmount = async (req,res) =>{
 
 
 exports.ProductReturn = async (req, res) => {
+  console.log(req.body)
   try {
     const ordernumbershell = req.params.id;
     const productDetailsToRemove = req.body.product_detail;
-
-    // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
     if (!productDetailsToRemove || !productDetailsToRemove.length) {
       return res.status(400).send({
         message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการส่งคืน",
@@ -310,6 +309,7 @@ exports.ProductReturn = async (req, res) => {
       });
     }
     const preorder = await PreOrderProductShell.findOne({ ordernumbershell: ordernumbershell });
+    console.log(PreOrderProductShell)
     if (!preorder) {
       return res.status(500).send({
         message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
