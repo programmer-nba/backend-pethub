@@ -12,7 +12,8 @@ router.put("/:id",authAdmin, admins.updateAdmin);
 router.delete("/:id",authAdmin, admins.deleteAdmin);
 router.get("/chack/MemberById/:id",authAdmin, admins.getMemberById)
 router.get("/chack/MemberAll",authAdmin, admins.getMemberByAll)
-router.delete("/DeletPackAndOne/:id",admins.DeletPackAndOne)
+router.delete("/DeletPackAndOne/:id",authAdmin, admins.DeletPackAndOne)
+router.put("/confirmRTProduct/:id",authAdmin,admins.confirmRTProduct)
 //router.post("/stock/:id", authAdmin, productShops.PreorderStock);
 //router.get("/stock//:id", authAdmin, productShops.getStockById);
 
