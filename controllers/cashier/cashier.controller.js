@@ -345,7 +345,6 @@ exports.ProductReturn = async (req, res) => {
       { ordernumbershell: ordernumbershell },
       { $pull: { product_detail: { product_id: { $in: productDetailsToRemove.map(p => p.product_id) } } } }
     );    
-    await ProductShops.deleteMany({ _id: { $in: productDetailsToRemove.map(p => p.product_id) } });
     return res.status(200).send({
       status: true,
       message: "ลบสินค้าสำเร็จ",
