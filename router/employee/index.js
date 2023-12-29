@@ -21,6 +21,7 @@ router.put("/confirm/:id", auth, employee.confirmEmployee);
 //ส่งคืนสินค้า
 router.post("/returnProduct/:id",auth,employee.Productback)
 router.get("/show/getProductPack",auth, employee.fildAllProductPack)
+router.put("/confirmProductReturn/:id",auth, employee.confirmProductReturn)
 
 //ดูรายการส่งคืนสินค้า
 router.get("/find/returnProduct",auth, employee.fildAllProductReturn)
