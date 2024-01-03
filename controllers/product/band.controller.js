@@ -78,3 +78,41 @@ const {
       return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
     }
   };
+  exports.updateband= async (req, res) => {
+    try {
+      // const {error} = validateproduct(req.body);
+      // if (error) {
+      //   return res
+      //     .status(400)
+      //     .send({status: false, message: error.details[0].message});
+      // }
+      const category = await Bands.findByIdAndUpdate(req.params.id, req.body);
+      if (category) {
+        return res
+          .status(200)
+          .send({message: "แก้ไขข้อมูลเเบรนด์สินค้าสำเร็จ", status: true});
+      } else {
+        return res
+          .status(500)
+          .send({message: "แก้ไขข้อมูลเเบรนด์สินค้าไม่สำเร็จ", status: false});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  exports.deleteband = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const band = await Bands.findByIdAndDelete(id);
+      if (!band) {
+        return res.status(404).send({status: false, message: "ไม่พบเเบรนด์สินค้า"});
+      } else {
+        return res
+          .status(200)
+          .send({status: true, message: "ลบข้อมูลเเบรนด์สินค้าสำเร็จ"});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  
