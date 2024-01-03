@@ -7,6 +7,7 @@ const ProductSchema = new mongoose.Schema({
   barcode: {type: String, required: true}, //บาร์โค๊ดสินค้า
   category: {type: String, required: true}, //ประเภทสินค้า หรือรุ่น
   productgroup :{type: String, required: true},//ชื่อกลุ่มสินค้า
+  bands  :{type: String, required: true},//ชื่อเเบรน์สินค้า
   size:{type: String, required: true},//ขนาดของสินค้า
   taste:{type: String, required: true},//รสชาติของสินค้า
   supplier_id: {type: String}, //คู่ค้า

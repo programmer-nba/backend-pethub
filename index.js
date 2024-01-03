@@ -17,6 +17,7 @@ app.use("/pethub/admin", require("./router/admin"));
 app.use("/pethub/product", require("./router/product/index"));
 app.use("/pethub/product/category", require("./router/product/category"));
 app.use("/pethub/product/productgroup", require("./router/product/productGroup"))
+app.use("/pethub/product/brand", require("./router/product/brand"))
 
 app.use("/pethub/product-shop", require("./router/product/product-shop"));
 

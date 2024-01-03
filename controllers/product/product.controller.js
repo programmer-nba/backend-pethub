@@ -7,6 +7,7 @@ const{
 }=require("../../models/product/productpack.model.js");
 
 const {ProductGroup} =  require("../../models/product/ProductGroup.model.js")
+const {Bands} =require("../../models/product/band.model.js")
 const fs = require("fs");
 const multer = require("multer");
 const {google} = require("googleapis");
@@ -406,16 +407,17 @@ exports.createEcelProduct = async (req, res) => {
       category = await Categorys.create({ name: req.body.category });
     }
     let supplier = await Suppliers.findOne({ supplier_company_name: req.body.supplier_id });
+    let bands = await Bands.findOne({ name: req.body.bands })
     let productgroup = await ProductGroup.findOne({name:req.body.productgroup})
     if (!productgroup) {
       productgroup = await ProductGroup.create({ name: req.body.productgroup });
     }
-
     const productData = {
       name: req.body.name,
       barcode: req.body.barcode,
       category: category._id,
-      supplier_id: (supplier !=null? supplier._id: 'ไม่มีเเบรนด์ตัวนี้'),
+      supplier_id: (supplier !=null? supplier._id: 'ไม่มีซัพพลายเออร์ตัวนี้'),
+      bands:bands._id,
       productgroup:productgroup._id,
       size:req.body.size,
       taste:req.body.taste,
