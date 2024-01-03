@@ -2,7 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const BandSchema = new mongoose.Schema({
-  name: {type: String, required: true , default :"ไม่มีเเบรน์ตัวนี้"}, //ชื่อประเภทสินค้า
+  name: {type: String, required: false , default :"ไม่มีเเบรน์ตัวนี้"}, //ชื่อประเภทสินค้า
   
 });
 

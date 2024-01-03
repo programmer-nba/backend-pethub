@@ -8,7 +8,7 @@ const ProductSchema = new mongoose.Schema({
   category: {type: String, required: true}, //ประเภทสินค้า หรือรุ่น
   productgroup :{type: String, required: true},//ชื่อกลุ่มสินค้า
   bands  :{type: String, required: true},//ชื่อเเบรน์สินค้า
-  size:{type: String, required: true},//ขนาดของสินค้า
+  size:{type: String, required: false},//ขนาดของสินค้า
   taste:{type: String, required: true},//รสชาติของสินค้า
   supplier_id: {type: String}, //คู่ค้า
   quantity: {type: Number, required: true}, //จำนวนสินค้า
