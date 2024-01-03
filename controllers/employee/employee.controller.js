@@ -236,7 +236,6 @@ exports.Productback = async (req, res) => {
   try {
     const ordernumber = req.params.id;
     const productDetailsToRemove = req.body.product_detail;
-
     // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
     if (!productDetailsToRemove || !productDetailsToRemove.length) {
       return res.status(400).send({
@@ -263,7 +262,6 @@ exports.Productback = async (req, res) => {
       barcode:findreturn[0].barcode
     });
     const add = await returnProductInfo.save(); 
-
     // //ลบจำนวนที่หาย
     const dataedit ={
       product_id: findreturn[0].product_id, 
