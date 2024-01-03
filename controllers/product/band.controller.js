@@ -45,3 +45,36 @@ const {
       return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
     }
   };
+
+  exports.getBandAll = async (req, res) => {
+    try {
+      const band = await Bands.find();
+      if (band) {
+        return res
+          .status(200)
+          .send({message: "ดึงเเบรนด์สินค้าสำเร็จ", status: true, data: band});
+      } else {
+        return res
+          .status(500)
+          .send({message: "ดึงเเบรนด์สินค้าไม่สำเร็จ", status: false});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  exports.getBandById = async (req, res) => {
+    try {
+      const category = await Bands.findOne({_id: req.params.id});
+      if (category) {
+        return res
+          .status(200)
+          .send({message: "ดึงประเภทสินค้าสำเร็จ", status: true, data: category});
+      } else {
+        return res
+          .status(500)
+          .send({message: "ดึงประเภทสินค้าไม่สำเร็จ", status: false});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
