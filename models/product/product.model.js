@@ -5,7 +5,10 @@ const ProductSchema = new mongoose.Schema({
   logo: {type: String, required: false},
   name: {type: String, required: true}, //ชื่อสินค้า
   barcode: {type: String, required: true}, //บาร์โค๊ดสินค้า
-  category: {type: String, required: true}, //ประเภทสินค้า
+  category: {type: String, required: true}, //ประเภทสินค้า หรือรุ่น
+  productgroup :{type: String, required: true},//ชื่อกลุ่มสินค้า
+  size:{type: String, required: true},//ขนาดของสินค้า
+  taste:{type: String, required: true},//รสชาติของสินค้า
   supplier_id: {type: String}, //คู่ค้า
   quantity: {type: Number, required: true}, //จำนวนสินค้า
   price_cost: {type: Number, required: true}, //ราคาต้นทุน
