@@ -6,17 +6,17 @@ const ProductSchema = new mongoose.Schema({
   name: {type: String, required: true}, //ชื่อสินค้า
   barcode: {type: String, required: true}, //บาร์โค๊ดสินค้า
   category: {type: String, required: true}, //ประเภทสินค้า หรือรุ่น
-  productgroup :{type: String, required: true},//ชื่อกลุ่มสินค้า
-  bands  :{type: String, required: true},//ชื่อเเบรน์สินค้า
+  productgroup :{type: String, required: false},//ชื่อกลุ่มสินค้า
+  bands  :{type: String, required: false},//ชื่อเเบรน์สินค้า
   size:{type: String, required: false},//ขนาดของสินค้า
-  taste:{type: String, required: true},//รสชาติของสินค้า
+  taste:{type: String, required: false,},//รสชาติของสินค้า
   supplier_id: {type: String}, //คู่ค้า
-  quantity: {type: Number, required: true}, //จำนวนสินค้า
-  price_cost: {type: Number, required: true}, //ราคาต้นทุน
-  retailprice:{type: Number, required: true},//ราคาปลีก
-  wholesaleprice:{type: Number, required: true},//ราคาส่ง
-  memberretailprice:{type: Number, required: true},//ราคาปลีกสมาชิก
-  memberwholesaleprice:{type: Number, required: true},//ราคาส่งสมาชิก
+  quantity: {type: Number, required: false}, //จำนวนสินค้า
+  price_cost: {type: Number, required: false}, //ราคาต้นทุน
+  retailprice:{type: Number, required: false},//ราคาปลีก
+  wholesaleprice:{type: Number, required: false},//ราคาส่ง
+  memberretailprice:{type: Number, required: false},//ราคาปลีกสมาชิก
+  memberwholesaleprice:{type: Number, required: false},//ราคาส่งสมาชิก
   status: {type: Boolean, required: false, default: true},
 });
 
