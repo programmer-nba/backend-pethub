@@ -109,6 +109,38 @@ exports.create = async (req, res) => {
           await uploadFileCreate(req.files, res, {i, reqFiles});
           
         }
+        console.log(req.body.retailprice.level1)
+        const retailprice = {
+          level1: req.body.retailprice.level1,
+          level2: req.body.retailprice.level2,
+          level3: req.body.retailprice.level3,
+          level4: req.body.retailprice.level4,
+          level5: req.body.retailprice.level5,
+        };
+
+        const wholesaleprice = {
+          level1: req.body.wholesaleprice.level1,
+          level2: req.body.wholesaleprice.level2,
+          level3: req.body.wholesaleprice.level3,
+          level4: req.body.wholesaleprice.level4,
+          level5: req.body.wholesaleprice.level5,
+        };
+
+        const memberretailprice = {
+          level1: req.body.memberretailprice.level1,
+          level2: req.body.memberretailprice.level2,
+          level3: req.body.memberretailprice.level3,
+          level4: req.body.memberretailprice.level4,
+          level5: req.body.memberretailprice.level5,
+        };
+
+        const memberwholesaleprice = {
+          level1: req.body.memberwholesaleprice.level1,
+          level2: req.body.memberwholesaleprice.level2,
+          level3: req.body.memberwholesaleprice.level3,
+          level4: req.body.memberwholesaleprice.level4,
+          level5: req.body.memberwholesaleprice.level5,
+        };
         const data = {
           logo: reqFiles[0],
           name: req.body.name,
@@ -121,10 +153,10 @@ exports.create = async (req, res) => {
           supplier_id: req.body.supplier_id,
           quantity: req.body.quantity,
           price_cost: req.body.price_cost,
-          retailprice:req.body.retailprice,
-          wholesaleprice:req.body.wholesaleprice,
-          memberretailprice:req.body.memberretailprice,
-          memberwholesaleprice:req.body.memberwholesaleprice,
+          retailprice:retailprice,
+          wholesaleprice:wholesaleprice,
+          memberretailprice:memberretailprice,
+          memberwholesaleprice:memberwholesaleprice,
           status: true,
           // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };
