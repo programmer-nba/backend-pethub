@@ -13,10 +13,50 @@ const ProductSchema = new mongoose.Schema({
   supplier_id: {type: String}, //คู่ค้า
   quantity: {type: Number, required: false}, //จำนวนสินค้า
   price_cost: {type: Number, required: false}, //ราคาต้นทุน
-  retailprice:{type: Number, required: false},//ราคาปลีก
-  wholesaleprice:{type: Number, required: false},//ราคาส่ง
-  memberretailprice:{type: Number, required: false},//ราคาปลีกสมาชิก
-  memberwholesaleprice:{type: Number, required: false},//ราคาส่งสมาชิก
+  retailprice:{
+    type: [
+      {
+        level1: { type: Number, required: false },
+        level2: { type: Number, required: false },
+        level3: { type: Number, required: false },
+        level4: { type: Number, required: false },
+        level5: { type: Number, required: false },
+      },
+    ],
+  },//ราคาปลีก
+  wholesaleprice:{
+    type: [
+      {
+        level1: { type: Number, required: false },
+        level2: { type: Number, required: false },
+        level3: { type: Number, required: false },
+        level4: { type: Number, required: false },
+        level5: { type: Number, required: false },
+      },
+    ],
+  },//ราคาส่ง
+  memberretailprice:{
+    type: [
+      {
+        level1: { type: Number, required: false },
+        level2: { type: Number, required: false },
+        level3: { type: Number, required: false },
+        level4: { type: Number, required: false },
+        level5: { type: Number, required: false },
+      },
+    ],
+  },//ราคาปลีกสมาชิก
+  memberwholesaleprice:{
+    type: [
+      {
+        level1: { type: Number, required: false },
+        level2: { type: Number, required: false },
+        level3: { type: Number, required: false },
+        level4: { type: Number, required: false },
+        level5: { type: Number, required: false },
+      },
+    ],
+  },//ราคาส่งสมาชิก
   status: {type: Boolean, required: false, default: true},
 });
 
