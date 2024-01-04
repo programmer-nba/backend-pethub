@@ -387,7 +387,6 @@ exports.PreorderEmpShall = async (req, res) => {
           };
 
           await new ProductShall(new_product).save();
-          console.log(product_shall)
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
 
