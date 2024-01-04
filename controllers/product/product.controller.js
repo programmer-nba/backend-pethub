@@ -442,15 +442,16 @@ exports.createEcelProduct = async (req, res) => {
     const productId = products[0]._id;
     const { logo, name, barcode } = products[0];
     // if(req.body.name_pack !=undefined){
-      let packProduct = await PackProducts.findOne({ name_pack: req.body.name_pack});
-      if (!packProduct) {
-        packProduct = await PackProducts.create({ product_id: productId, logo, name, barcode, amount: req.body.amount, name_pack: req.body.name_pack });
-      }
+      // let packProduct = await PackProducts.findOne({ name_pack: req.body.name_pack});
+      // if (packProduct) {
+    const packProduct = await PackProducts.create({ product_id: productId, logo, name, barcode, amount: req.body.amount, name_pack: req.body.name_pack });
+      // }
     // }
     return res.status(200).send({
         status: true,
         message: 'สร้างผลิตภัณฑ์สำเร็จ',
         data: {
+          packProduct,
           products,
           supplier,
         },
