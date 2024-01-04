@@ -252,7 +252,7 @@ exports.Productback = async (req, res) => {
     }
     const productdetail =  preorder.product_detail
     const findreturn = productdetail.filter((item)=> item.product_id == req.body.product_detail[0].product_id)
-    console.log(findreturn[0].product_name)
+    console.log(preorder)
     //บันทึกข้อมูลส่งสินค้ากลับ
     const returnProductInfo = new ReturnProduct({
       product_id: findreturn[0].product_id, 

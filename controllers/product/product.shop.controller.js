@@ -148,6 +148,7 @@ exports.preorderProduct = async (req, res) => {
   try {
     const { product_detail } = req.body;
     const { product_id, product_amount } = product_detail[0];
+    console.log(product_detail)
     
     // ทำตรวจสอบจำนวนสินค้าที่มีอยู่ โดยใช้ตรวจสอบจากฐานข้อมูลเช่นกัน
     const availableProduct = await Products.findOne({ _id: product_id });
@@ -364,7 +365,8 @@ exports.PreorderEmpShall = async (req, res) => {
         } else {
           amount = item.product_amount * pack.amount;
         }
-
+        const productInfo = await Products.findOne({ _id: item.product_id });
+        const category = productInfo ? productInfo.category : null;
         const product_shall = await ProductShall.findOne({
           product_id: item.product_id,
           shop_id: preorders.shop_id,
@@ -378,12 +380,14 @@ exports.PreorderEmpShall = async (req, res) => {
             shop_id: preorders.shop_id,
             logo:item.product_logo,
             name: item.product_name,
+            category:category,
             barcode: item.barcode,
             ProductAmount: amount,
             price_cost: item.price_cost,
           };
 
           await new ProductShall(new_product).save();
+          console.log(product_shall)
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
 
