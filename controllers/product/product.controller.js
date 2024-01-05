@@ -478,7 +478,9 @@ exports.createEcelProduct = async (req, res) => {
       category = await Categorys.create({ name: req.body.category });
     }
     let bands = await Bands.findOne({ name: req.body.bands })
-    console.log(bands)
+    if (!bands) {
+      category = await Bands.create({ name: req.body.bands });
+    }
     let supplier = await Suppliers.findOne({ supplier_company_name: req.body.supplier_id });
     let productgroup = await ProductGroup.findOne({name:req.body.productgroup})
     if (!productgroup) {

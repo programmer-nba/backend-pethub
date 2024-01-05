@@ -468,9 +468,6 @@ exports.getDetailsStock = async (req, res) => {
   }
 };
 
-
-
-
 exports.getStock = async (req, res) => {
   try {
     const id = req.params.id;
