@@ -289,6 +289,9 @@ exports.ImportStockShop = async (req, res) => {
             ProductAmount: item.product_amount,
             price_cost: product.price_cost,
             retailprice:product.retailprice,
+            wholesaleprice:product.wholesaleprice,
+            memberretailprice:product.memberretailprice,
+            memberwholesaleprice:product.memberwholesaleprice,
           };
           await new ProductShops(new_product).save();
           
