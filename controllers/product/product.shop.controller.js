@@ -274,7 +274,6 @@ exports.ImportStockShop = async (req, res) => {
           product_id: item.product_id,
           shop_id: preorders.shop_id,
         });
-       
         const product = await Products.findOne({_id: item.product_id});
         console.log(product)
         if (!product_shop) {
@@ -294,7 +293,6 @@ exports.ImportStockShop = async (req, res) => {
             memberwholesaleprice:product.memberwholesaleprice,
           };
           await new ProductShops(new_product).save();
-          
         } else {
           console.log("สินค้ามีในระบบแล้ว (เพิ่มจำนวนสินค้า)");
           const updatedAmount =
@@ -309,9 +307,6 @@ exports.ImportStockShop = async (req, res) => {
           //ลบจำนวนสินค้า
           products.quantity -= item.product_amount;
           await products.save();
-
-
-
           if (!updatedAmount) {
             return res
               .status(403)
