@@ -16,6 +16,7 @@ router.delete("/DeletPackAndOne/:id",authAdmin, admins.DeletPackAndOne)
 router.put("/confirmRTProduct/:id",authAdmin,admins.confirmRTProduct)
 //router.post("/stock/:id", authAdmin, productShops.PreorderStock);
 //router.get("/stock//:id", authAdmin, productShops.getStockById);
+router.get("/chk/productShell/:shop_id",authAdmin, admins.fildProductShell)
 
 router.get("/ProductReturn/admin",authAdmin , admins.fildAllProductReturnAdmin)
 router.get("/ProductReturnfindOne/admin/:id",authAdmin,admins.fildOneProductReturnAdmin)

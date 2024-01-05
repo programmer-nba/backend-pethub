@@ -7,6 +7,7 @@ const {PackProducts} = require("../../models/product/productpack.model")
 const {Products} = require("../../models/product/product.model")
 const {ReturnProduct} = require("../../models/product/return.product.model")
 const {ReturnProductShall} = require("../../models/product/return.product.shell.model")
+const {ProductShall} = require("../../models/product/product.shall.model")
 
 exports.create = async (req, res) => {
   try {
@@ -306,3 +307,22 @@ exports.fildOneProductReturnShallAdmin = async (req, res) => {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
+
+exports.fildProductShell = async(req,res)=>{
+  try {
+    const shop_id = req.params.shop_id
+    const shell = await ProductShall.find({shop_id:shop_id});
+    console.log(shop_id)
+    if (shell) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลสินค้าจากคลังเซลฟ์สำเร็จ",
+        data: shell,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบสินค้าจากเชลฟ์", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
