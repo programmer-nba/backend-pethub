@@ -10,6 +10,38 @@ const ProductShopSchema = new mongoose.Schema({
   barcode: {type: String, required: false}, // บาร์โค๊ดสินค้า
   ProductAmount: {type: Number, required: false},
   price_cost: {type: Number, required: false}, //ราคาต้นทุน
+  retailprice:
+    {
+      level1: { type: Number, required: false },
+      level2: { type: Number, required: false },
+      level3: { type: Number, required: false },
+      level4: { type: Number, required: false },
+      level5: { type: Number, required: false },
+    },//ราคาปลีก
+  wholesaleprice:
+    {
+      level1: { type: Number, required: false },
+      level2: { type: Number, required: false },
+      level3: { type: Number, required: false },
+      level4: { type: Number, required: false },
+      level5: { type: Number, required: false },
+    },//ราคาส่ง
+  memberretailprice:
+    {
+      level1: { type: Number, required: false },
+      level2: { type: Number, required: false },
+      level3: { type: Number, required: false },
+      level4: { type: Number, required: false },
+      level5: { type: Number, required: false },
+    },//ราคาปลีกสมาชิก
+  memberwholesaleprice:
+      {
+        level1: { type: Number, required: false },
+        level2: { type: Number, required: false },
+        level3: { type: Number, required: false },
+        level4: { type: Number, required: false },
+        level5: { type: Number, required: false },
+      },//ราคาส่งสมาชิก
   price: {type: Number, required: false}, //ราคาสินค้า
 });
 
