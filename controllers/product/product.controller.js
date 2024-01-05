@@ -481,6 +481,7 @@ exports.createEcelProduct = async (req, res) => {
     if (!bands) {
       bands = await Bands.create({ name: req.body.bands });
     }
+    console.log(bands)
     let supplier = await Suppliers.findOne({ supplier_company_name: req.body.supplier_id });
     let productgroup = await ProductGroup.findOne({name:req.body.productgroup})
     if (!productgroup) {
@@ -491,7 +492,7 @@ exports.createEcelProduct = async (req, res) => {
       barcode: req.body.barcode,
       category: category._id,
       supplier_id: (supplier !=null? supplier._id: 'ไม่มีซัพพลายเออร์ตัวนี้'),
-      bands: (bands !=null? bands._id:"ไม่มีเเบรนด์ตัวนี้"),
+      bands: bands._id,
       productgroup:productgroup._id,
       size:req.body.size,
       taste:req.body.taste,
