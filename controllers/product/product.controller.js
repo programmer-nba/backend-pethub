@@ -492,7 +492,7 @@ exports.createEcelProduct = async (req, res) => {
       barcode: req.body.barcode,
       category: category._id,
       supplier_id: (supplier !=null? supplier._id: 'ไม่มีซัพพลายเออร์ตัวนี้'),
-      bands: bands._id,
+      bands: (bands !=null? bands._id:"ไม่มีเเบรนด์ตัวนี้"),
       productgroup:productgroup._id,
       size:req.body.size,
       taste:req.body.taste,
