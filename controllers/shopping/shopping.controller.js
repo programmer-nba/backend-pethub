@@ -320,7 +320,6 @@ const calculateProductPrice = async (item) => {
   let discount = 0;
   let discountdetail = "";
   let normaltotal = 0;
-
   const product = await ProductShall.findOne({ product_id: item.product_id });
 
   if (product.ProductAmount < item.product_amount) {
@@ -328,38 +327,32 @@ const calculateProductPrice = async (item) => {
   } else {
     // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
     if (product.promotion !== "") {
-      const normalPrice = product.price * item.product_amount;
+      const normalPrice = calculateNormalPrice(product.retailprice.level1, item.product_amount); // คำนวณราคาปกติ
       // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
       const promotion = await Promotion.findOne({ _id: product.promotion });
-
       const price =
         promotion && promotion.discountPercentage
-          ? (product.price - (product.price * promotion.discountPercentage) / 100) * item.product_amount
-          : product.price * item.product_amount;
-
+          ? calculateDiscountedPrice(product.retailprice.level1, promotion.discountPercentage, item.product_amount)
+          : product.retailprice.level1 * item.product_amount;
       normaltotal = normalPrice;
       total += price;
       discount = promotion.name;
       discountdetail = promotion.description;
-
       // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
       product.ProductAmount -= item.product_amount;
       await product.save();
     } else {
       console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
       // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
-      const price = product.price * item.product_amount;
+      const price = product.retailprice.level1 * item.product_amount;
       normaltotal = price;
       total += price;
-
       // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
       product.ProductAmount -= item.product_amount;
       await product.save();
     }
   }
-
   const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
-
   return {
     product_id: product.product_id,
     amount: item.product_amount,
@@ -369,4 +362,12 @@ const calculateProductPrice = async (item) => {
     discount,
     discountdetail,
   };
+};
+// ฟังก์ชันคำนวณราคาปกติ
+const calculateNormalPrice = (retailprice, quantity) => {
+  return retailprice * quantity;
+};
+// ฟังก์ชันคำนวณราคาที่ลดหลังจากส่วนลด
+const calculateDiscountedPrice = (retailprice, discountPercentage, quantity) => {
+  return (retailprice - (retailprice * discountPercentage) / 100) * quantity;
 };
