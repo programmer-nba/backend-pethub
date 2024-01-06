@@ -8,6 +8,7 @@
   const {typeMember} = require("../../models/user/type.model")
   const {Categorys} = require("../../models/product/category.model.js")
   const {ReturnProductShall} = require("../../models/product/return.product.shell.model.js")
+  const {ProductShall} =require("../../models/product/product.shall.model.js")
   
   exports.create = async (req, res) => {
     try {
@@ -391,5 +392,26 @@ exports.fildOneProducShalltReturn = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+
+exports.ShowProductAll = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const product = await ProductShall.find();
+    if (product) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลสินค้าสำเร็จ",
+        data: product,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };

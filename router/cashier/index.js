@@ -23,4 +23,7 @@ router.put("/UpdateProductAmount/:id",cashier.UpdateProductAmount)
 
 router.get("/fildAllProducShalltReturn",authCashier,cashier.fildAllProducShalltReturn)
 router.get("/fildOne/ProducShalltReturn/:id",authCashier,cashier.fildOneProducShalltReturn)
+
+//เเสดงสินค้าหน้าสั่งชื้อสินค้า
+router.get("/ShowProductAll/BuyProduct",authCashier,cashier.ShowProductAll)
 module.exports = router; 

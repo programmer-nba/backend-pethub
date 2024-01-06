@@ -16,7 +16,6 @@ router.get("/ShowReceipt/:id",shopping.ShowReceiptById)
 router.get("/ShowReceiptAll", authCashier,shopping.ShowReceiptAll)
 router.get("/getbarcode/:shop_id/:barcode",shopping.getByBarcode)
 
-//เเสดงสินค้าหน้าสั่งชื้อสินค้า
-router.get("/ShowProductAll",authCashier,shopping.ShowProductAll)
+
 
 module.exports = router;

@@ -251,27 +251,6 @@ exports.ShowReceiptAll = async (req, res) => {
   }
 };
 
-exports.ShowProductAll = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const product = await ProductShall.find();
-    if (product) {
-      return res.status(200).send({
-        status: true,
-        message: "ดึงข้อมูลสินค้าสำเร็จ",
-        data: product,
-      });
-    } else {
-      return res.status(500).send({
-        message: "มีบางอย่างผิดพลาด",
-        status: false,
-      });
-    }
-  } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
-  }
-};
-
 exports.getByBarcode = async (req,res)=>{
   try {
     const shop_id = req.params.shop_id;
