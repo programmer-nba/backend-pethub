@@ -446,24 +446,23 @@ exports.updateProduct = async (req, res) => {
         }
       }
       const new_product = await Products.findByIdAndUpdate(req.params.id, data, { new: true });
-    
-        const updatedLogo = new_product.logo; // สมมุติว่า logo อยู่ในฟิลด์ logo
-        console.log(updatedLogo)
-        const updatedPackProduct = await PackProducts.findOneAndUpdate(
-          { product_id: req.params.id }, // ค้นหาด้วย product_id
-          { logo: updatedLogo }, // อัปเดตฟิลด์ logo
-          { new: true }
-        );
-
-        if (updatedPackProduct) {
-          return res.status(200).send({
-            status: true,
-            message: "แก้ไขข้อมูลสินค้าและ Logo สำเร็จ",
-            data: { product: new_product, packProduct: updatedPackProduct },
-          });
-        } else {
-          return res.status(403).send({ status: false, message: "ไม่สามารถบันทึกได้" });
-        }
+      const updatedLogo = new_product.logo; // สมมุติว่า logo อยู่ในฟิลด์ logo
+      const updatedPackProduct = await PackProducts.findOneAndUpdate(
+        { product_id: req.params.id }, // ค้นหาด้วย product_id
+        { $set: { logo: updatedLogo } }, // ใช้ $set เพื่ออัปเดตฟิลด์ logo
+        { new: true }
+      );
+      
+      if (updatedPackProduct) {
+        return res.status(200).send({
+          status: true,
+          message: "แก้ไขข้อมูลสินค้าและ Logo สำเร็จ",
+          data: { product: new_product, packProduct: updatedPackProduct },
+        });
+      } else {
+        return res.status(403).send({ status: false, message: "ไม่สามารถบันทึกได้" });
+      }
+      
     });
 
   } catch (err) {
