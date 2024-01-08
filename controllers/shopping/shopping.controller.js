@@ -170,8 +170,11 @@ exports.preorder = async (req, res) => {
       normalTotal += result.normaltotal;
       totalDiscount += result.discountAmountPerItem;
       grandTotal += result.total;
+      await ProductShall.updateOne(
+        { _id: item.productId },
+        { $inc: { product_amount: -item.ProductAmount } }
+      );
     }
-
     const customer_total = normalTotal;
     const invoiceshoppingnumber = await invoiceShoppingNumber();
 
