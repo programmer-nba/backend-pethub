@@ -437,32 +437,18 @@ exports.updateProduct = async (req, res) => {
           // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };
         const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
+        const newlogo_product = await PackProducts.findByIdAndUpdate(req.params.id,data,{new:true});
         if (new_product) {
-          return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: new_product});
+          return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ",
+          data: new_product  ,
+          newlogo_product
+        });
         } else {
           return res
             .status(403)
             .send({status: false, message: "ไม่สามารถบันทึกได้"});
         }
       }
-      const new_product = await Products.findByIdAndUpdate(req.params.id, data, { new: true });
-      const updatedLogo = new_product.logo; // สมมุติว่า logo อยู่ในฟิลด์ logo
-      const updatedPackProduct = await PackProducts.findOneAndUpdate(
-        { product_id: req.params.id }, // ค้นหาด้วย product_id
-        { $set: { logo: updatedLogo } }, // ใช้ $set เพื่ออัปเดตฟิลด์ logo
-        { new: true }
-      );
-      
-      if (updatedPackProduct) {
-        return res.status(200).send({
-          status: true,
-          message: "แก้ไขข้อมูลสินค้าและ Logo สำเร็จ",
-          data: { product: new_product, packProduct: updatedPackProduct },
-        });
-      } else {
-        return res.status(403).send({ status: false, message: "ไม่สามารถบันทึกได้" });
-      }
-      
     });
 
   } catch (err) {
@@ -529,6 +515,7 @@ exports.createEcelProduct = async (req, res) => {
       // let packProduct = await PackProducts.findOne({ name_pack: req.body.name_pack});
       // if (packProduct) {
     const packProduct = await PackProducts.create({ product_id: productId, logo, name, barcode, amount: req.body.amount, name_pack: req.body.name_pack });
+
       // }
     // }
     return res.status(200).send({
