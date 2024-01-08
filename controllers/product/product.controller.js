@@ -437,12 +437,8 @@ exports.updateProduct = async (req, res) => {
           // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };
         const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
-        const newlogo_product = await PackProducts.findByIdAndUpdate(req.params.id,data,{new:true});
-        if (new_product && newlogo_product) {
-          return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ",
-          data: new_product  ,
-          newlogo_product,
-        });
+        if (new_product) {
+          return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: new_product});
         } else {
           return res
             .status(403)
