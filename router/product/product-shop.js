@@ -17,9 +17,7 @@ router.get("/shop-id/:id", auth, ProductShops.findByShopId);
 router.get("/admin/shop-id/:id", authAdmin, ProductShops.findByShopId);
 
 
-
 //เพิ่มเข้าสต๊อกสินค้า
-
 //ยกเลิก
 router.put("/preorder/employee/cancel/:id", auth, ProductShops.candelPreorderEmyee);
 //พนักงานพรีออเดอร์สินค้า

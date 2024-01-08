@@ -528,6 +528,43 @@ exports.createEcelProduct = async (req, res) => {
   }
 };
 
+exports.getProductAlldozen = async (req, res) => {
+  try {
+    const { name_pack } = req.query; // ดึงค่า name_pack จาก query parameters
+    // ใช้ findOne เพื่อดึงข้อมูลสินค้าตาม name_pack
+    const product = await PackProducts.find({ name_pack });
+    if (product) {
+      return res
+        .status(200)
+        .send({message: "ดึงข้อมูลสินค้าแบบเป็นโหลสำเร็จ", status: true, data: product});
+    } else {
+      return res
+        .status(500)
+        .send({message: "ดึงข้อมูลสินค้าแบบเป็นโหลไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+
+exports.getProductAllenvelope = async (req, res) => {
+  try {
+    const { name_pack } = req.query; // ดึงค่า name_pack จาก query parameters
+    // ใช้ findOne เพื่อดึงข้อมูลสินค้าตาม name_pack
+    const product = await PackProducts.find({ name_pack });
+    if (product) {
+      return res
+        .status(200)
+        .send({message: "ดึงข้อมูลสินค้าแบบเป็นซองสำเร็จ", status: true, data: product});
+    } else {
+      return res
+        .status(500)
+        .send({message: "ดึงข้อมูลสินค้าแบบเป็นซองไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
 
 
 
