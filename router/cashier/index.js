@@ -25,5 +25,5 @@ router.get("/fildAllProducShalltReturn",authCashier,cashier.fildAllProducShalltR
 router.get("/fildOne/ProducShalltReturn/:id",authCashier,cashier.fildOneProducShalltReturn)
 
 //เเสดงสินค้าหน้าสั่งชื้อสินค้า
-router.get("/ShowProductAll/BuyProduct",authCashier,cashier.ShowProductAll)
+router.get("/ShowProductAll/BuyProduct/:id",authCashier,cashier.ShowProductAll)
 module.exports = router; 

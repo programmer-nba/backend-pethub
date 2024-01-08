@@ -397,8 +397,9 @@ exports.fildOneProducShalltReturn = async (req, res) => {
 
 exports.ShowProductAll = async (req, res) => {
   try {
-    const id = req.params.id;
-    const product = await ProductShall.find();
+    const shop_id = req.params.id;
+    console.log(shop_id)
+    const product = await ProductShall.find({shop_id:shop_id});
     if (product) {
       return res.status(200).send({
         status: true,
