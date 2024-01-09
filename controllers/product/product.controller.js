@@ -432,7 +432,7 @@ exports.updateProduct = async (req, res) => {
         const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
         if (new_product) {
           // อัพเดตโมเดล ProductShall ด้วย logo ใหม่
-          const updatedProductShall = await PackProducts.findOneAndUpdate(
+          const updatedProductShall = await PackProducts.findByIdAndUpdate(
             { /* สมมติว่าคุณต้องการหา ProductShall ที่เกี่ยวข้อง */ },
             { $set: { logo: reqFiles[0] } },
             { new: true }
