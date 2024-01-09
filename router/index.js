@@ -5,18 +5,20 @@ require("dotenv").config();
 const {Admins} = require("../models/user/admin.model.js");
 const {Employees} = require("../models/user/employee.model.js");
 const {Shops} = require("../models/shop/shop.model.js");
-const {Cashier} = require("../models/user/cashier.model.js")
-const {Member} = require("../models/user/member.model.js")
-const {Manager} = require("../models/user/manager.model.js")
+const {Cashier} = require("../models/user/cashier.model.js");
+const {Member} = require("../models/user/member.model.js");
+const {Manager} = require("../models/user/manager.model.js");
 
 router.post("/login", async (req, res) => {
   try {
     const admin = await Admins.findOne({
       admin_username: req.body.username,
     });
-    if (!admin) {
-      await checkManager(req, res);
-    }
+    if (!admin) return await checkManager(req, res);
+    // if (!admin) {
+    //   // await checkManager(req, res);
+    //   console.log("Manager");
+    // }
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
       admin.admin_password
@@ -44,36 +46,44 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).send({ status: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .send({status: false, message: "Internal Server Error"});
   }
 });
 
 router.get("/me", authMe, async (req, res) => {
   try {
-    const { decoded } = req;
+    const {decoded} = req;
     if (!decoded) {
-      return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+      return res
+        .status(400)
+        .send({message: "มีบางอย่างผิดพลาด", status: false});
     }
     let userDetails;
     const id = decoded._id;
     switch (decoded.row) {
       case "admin":
-        userDetails = await Admins.findOne({ _id: id });
+        userDetails = await Admins.findOne({_id: id});
         break;
       case "manager":
-        userDetails = await Manager.findOne({ _id: id });
+        userDetails = await Manager.findOne({_id: id});
         break;
       case "employee":
-        userDetails = await Employees.findOne({ _id: id });
+        userDetails = await Employees.findOne({_id: id});
         break;
       case "cashier":
-        userDetails = await Cashier.findOne({ _id: id });
+        userDetails = await Cashier.findOne({_id: id});
         break;
       default:
-        return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
     }
     if (!userDetails) {
-      return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+      return res
+        .status(400)
+        .send({message: "มีบางอย่างผิดพลาด", status: false});
     }
     const responsePayload = {
       name: userDetails.name,
@@ -84,19 +94,22 @@ router.get("/me", authMe, async (req, res) => {
     return res.status(200).send(responsePayload);
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ message: "Internal Server Error", status: false });
+    return res
+      .status(500)
+      .send({message: "Internal Server Error", status: false});
   }
 });
-
 
 const checkManager = async (req, res) => {
   try {
     const manager = await Manager.findOne({
       manager_password: req.body.username,
     });
-    if (!manager) {
-      await checkEmployee(req, res);
-    }
+    if (!manager) return await checkEmployee(req, res);
+    // if (!manager) {
+    //   // await checkEmployee(req, res);
+    //   console.log("123456");
+    // }
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
       manager.manager_password
@@ -124,7 +137,9 @@ const checkManager = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({ message: "Internal Server Error", status: false });
+    return res
+      .status(500)
+      .send({message: "Internal Server Error", status: false});
   }
 };
 
@@ -133,14 +148,15 @@ const checkEmployee = async (req, res) => {
     const employee = await Employees.findOne({
       employee_username: req.body.username,
     });
-    if (!employee) {
-      await checkCashier(req, res);
-    }
-    const validPasswordAdmin = await bcrypt.compare(
+    if (!employee) return console.log("แคชเชีย");
+    // if (!employee) {
+    //   await checkCashier(req, res);
+    // }
+    const validPasswordEmployee = await bcrypt.compare(
       req.body.password,
       employee.employee_password
     );
-    if (!validPasswordAdmin) {
+    if (!validPasswordEmployee) {
       // รหัสไม่ตรง
       return res.status(401).send({
         message: "password is not find",
@@ -163,9 +179,12 @@ const checkEmployee = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({ message: "Internal Server Error", status: false });
+    return res
+      .status(500)
+      .send({message: "Internal Server Error", status: false});
   }
 };
+
 const checkCashier = async (req, res) => {
   try {
     const cashier = await Cashier.findOne({
@@ -203,14 +222,11 @@ const checkCashier = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({ message: "Internal Server Error", status: false });
+    return res
+      .status(500)
+      .send({message: "Internal Server Error", status: false});
   }
 };
-
-
-
-
-
 
 //ไม่ใช้งานเเล้ว
 // const checkMember = async (req,res)=>{
@@ -252,8 +268,5 @@ const checkCashier = async (req, res) => {
 //   }
 
 // }
-
-
-
 
 module.exports = router;
