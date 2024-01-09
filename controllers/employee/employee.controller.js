@@ -181,7 +181,7 @@ exports.update = async (req, res) => {
     if (!req.body.employee_password) {
       const employee = await Employees.findByIdAndUpdate(id, req.body);
       if (employee) {
-        if (product) {
+        if (employee) {
           return res
             .status(200)
             .send({message: "แก้ไขผู้ใช้งานนี้เรียบร้อยเเล้ว", status: true});
