@@ -178,10 +178,12 @@ exports.preorder = async (req, res) => {
     const customer_total = normalTotal;
     const invoiceshoppingnumber = await invoiceShoppingNumber();
 
+    const shop = await Shops.findOne({ _id: req.body.shop_id });
+
     const order_product = await new preorder_shopping({
       ...req.body,
       invoiceShoppingNumber:invoiceshoppingnumber,
-      customer_shop_id: req.body.shop_id,
+      customer_shop_id:shop ? shop.shop_name : "ไม่พบชื่อร้าน",
       customer_detail: order,
       total: customer_total,
       discount: totalDiscount,
