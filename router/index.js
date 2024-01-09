@@ -145,37 +145,34 @@ const checkManager = async (req, res) => {
 
 const checkEmployee = async (req, res) => {
   try {
-    const employee = await Employees.findOne({
-      employee_username: req.body.username,
+    const manager = await Manager.findOne({
+      manager_password: req.body.username,
     });
-    if (!employee) return console.log("แคชเชีย");
-    // if (!employee) {
-    //   await checkCashier(req, res);
-    // }
-    const validPasswordEmployee = await bcrypt.compare(
+    if (!manager) return await checkCashier(req, res);
+    const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
-      employee.employee_password
+      manager.manager_password
     );
-    if (!validPasswordEmployee) {
+    if (!validPasswordAdmin) {
       // รหัสไม่ตรง
       return res.status(401).send({
         message: "password is not find",
         status: false,
       });
     } else {
-      const token = employee.generateAuthToken();
+      const token = manager.generateAuthToken();
       const ResponesData = {
-        name: employee.employee_name,
-        username: employee.employee_username,
-        shop_id: employee.employee_shop_id,
+        name: manager.manager_username,
+        username: manager.manager_password,
+        // shop_id: cashier.cashier_shop_id,
       };
       return res.status(200).send({
         status: true,
         token: token,
         message: "เข้าสู่ระบบสำเร็จ",
         result: ResponesData,
-        level: "employee",
-        position: employee.employee_role,
+        level: "manager",
+        position: manager.manager_role,
       });
     }
   } catch (error) {
