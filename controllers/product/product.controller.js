@@ -430,22 +430,30 @@ exports.updateProduct = async (req, res) => {
           // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };
         const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
+     
         if (new_product) {
-          // อัพเดตโมเดล ProductShall ด้วย logo ใหม่
-          const updatedProductShall = await PackProducts.findByIdAndUpdate(
-            { /* สมมติว่าคุณต้องการหา ProductShall ที่เกี่ยวข้อง */ },
-            { $set: { logo: reqFiles[0] } },
-            { new: true }
-          );
-        if (new_product) {
-          return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: new_product});
+          // ตรวจสอบว่ามีการอัปเดต logo ใน Products หรือไม่
+          if (reqFiles[0]) {
+            // อัปเดต PackProducts ด้วย logo ใหม่
+            const updatedPackProduct = await PackProducts.findOneAndUpdate(
+              { product_id: new_product._id }, // ใช้ _id จาก Products โมเดลเป็น product_id ใน PackProducts
+              { $set: { logo: reqFiles[0] } },
+              { new: true }
+            );
+        
+            if (updatedPackProduct) {
+              return res.status(200).send({ status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: updatedPackProduct });
+            } else {
+              return res.status(403).send({ status: false, message: "ไม่สามารถอัปเดต PackProducts ได้" });
+            }
+          } else {
+            return res.status(200).send({ status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: new_product });
+          }
         } else {
-          return res
-            .status(403)
-            .send({status: false, message: "ไม่สามารถบันทึกได้"});
+          return res.status(403).send({ status: false, message: "ไม่สามารถบันทึกได้" });
         }
       }
-    }
+    
     });
   } catch (err) {
 
