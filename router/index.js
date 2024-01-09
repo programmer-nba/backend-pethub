@@ -178,78 +178,81 @@ const checkCashier = async (req, res) => {
 };
 
 router.get("/me", authMe, async (req, res) => {
-  const { decoded } = req;
   try {
-    console.log("call me", decoded);
+    const {decoded} = req;
     if (decoded && decoded.row === "admin") {
       const id = decoded._id;
-      Admins.findOne({ _id: id })
-        .then((item) => {
-          console.log(item);
-          return res.status(200).send({
-            name: item.admin_name,
-            username: item.admin_username,
-            level: "admin",
-            position: item.admin_position,
-          });
-        })
-        .catch(() =>
-          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false })
-        );
-    } else if (decoded && decoded.row === "manager") {
-      const id = decoded._id;
-      console.log(id);
-      Manager.findOne({ _id: id })
-        .then((item) => {
-          console.log(item);
-          return res.status(200).send({
-            _id: item._id,
-            name: item.manager_name,
-            username: item.manager_username,
-            position: item.manager_position,
-            level: "manager",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+      const admin = await Admins.findOne({_id: id});
+      if (!admin) {
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
+      } else {
+        return res.status(200).send({
+          name: admin.admin_name,
+          username: admin.admin_username,
+          position: "admin",
+          level: admin.admin_position,
         });
-    } else if (decoded && decoded.row === "employee") {
-      const id = decoded._id;
-      console.log(id);
-      Employees.findOne({ _id: id })
-        .then((item) => {
-          console.log(item);
-          return res.status(200).send({
-            _id: item._id,
-            name: item.employee_name,
-            username: item.employee_username,
-            position: item.employee_position,
-            level: "employee",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
-        });
-    } else {
-      const id = decoded._id;
-      Cashier.findOne({ _id: id })
-        .then((item) => {
-          console.log(item);
-          return res.status(200).send({
-            name: item.cashier_name,
-            username: item.cashier_username,
-            level: "cashier",
-            position: item.cashier_position,
-          });
-        })
-        .catch(() =>
-          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false })
-        );
+      }
     }
+    if (decoded && decoded.row === "manager") {
+      const id = decoded._id;
+      const manager = await Manager.findOne({_id: id});
+      if (!manager) {
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
+      } else {
+        return res.status(200).send({
+          shop_id: manager.manager_shop_id,
+          name: manager.manager_name,
+          username: manager.manager_username,
+          position: manager.manager_position,
+          level: manager.manager_role,
+        });
+      }
+      manager;
+    }
+    if (decoded && decoded.row === "employee") {
+      const id = decoded._id;
+      const employee = await Employees.findOne({_id: id});
+      if (!employee) {
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
+      } else {
+        return res.status(200).send({
+          shop_id: employee.employee_shop_id,
+          name: employee.employee_name,
+          username: employee.employee_username,
+          position: employee.employee_position,
+          level: employee.employee_role,
+        });
+      }
+      employee;
+    }
+    if (decoded && decoded.row === "cashier") {
+      const id = decoded._id;
+      const cashier = await Cashier.findOne({_id: id});
+      if (!cashier) {
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
+      } else {
+        return res.status(200).send({
+          shop_id:cashier.cashier_shop_id,
+          name: cashier.cashier_name,
+          username: cashier.cashier_username,
+          position: cashier.cashier_position,
+          level: cashier.cashier_role,
+        });
+      }
+      cashier;
+    }
+    
   } catch (error) {
-    res.status(500).send({ message: "Internal Server Error", status: false });
+    res.status(500).send({message: "Internal Server Error", status: false});
   }
 });
 //ไม่ใช้งานเเล้ว
