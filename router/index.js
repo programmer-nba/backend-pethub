@@ -52,58 +52,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/me", authMe, async (req, res) => {
-  try {
-    const {decoded} = req;
-    if (!decoded) {
-      return res
-        .status(400)
-        .send({message: "มีบางอย่างผิดพลาด", status: false});
-    }
-    let userDetails;
-    const id = decoded._id;
-    switch (decoded.row) {
-      case "admin":
-        userDetails = await Admins.findOne({_id: id});
-        break;
-      case "manager":
-        userDetails = await Manager.findOne({_id: id});
-        break;
-      case "employee":
-        userDetails = await Employees.findOne({_id: id});
-        break;
-      case "cashier":
-        userDetails = await Cashier.findOne({_id: id});
-        break;
-      default:
-        return res
-          .status(400)
-          .send({message: "มีบางอย่างผิดพลาด", status: false});
-    }
-    if (!userDetails) {
-      return res
-        .status(400)
-        .send({message: "มีบางอย่างผิดพลาด", status: false});
-    }
-    const responsePayload = {
-      name: userDetails.name,
-      username: userDetails.username,
-      position: userDetails.position,
-      level: userDetails.role,
-    };
-    return res.status(200).send(responsePayload);
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({message: "Internal Server Error", status: false});
-  }
-});
-
 const checkManager = async (req, res) => {
   try {
     const manager = await Manager.findOne({
-      manager_password: req.body.username,
+      manager_username: req.body.username,
     });
     if (!manager) return await checkEmployee(req, res);
     // if (!manager) {
@@ -145,13 +97,13 @@ const checkManager = async (req, res) => {
 
 const checkEmployee = async (req, res) => {
   try {
-    const manager = await Manager.findOne({
-      manager_password: req.body.username,
+    const employees = await Employees.findOne({
+      employee_username: req.body.username,
     });
-    if (!manager) return await checkCashier(req, res);
+    if (!employees) return await checkCashier(req, res);
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
-      manager.manager_password
+      employees.employee_password
     );
     if (!validPasswordAdmin) {
       // รหัสไม่ตรง
@@ -160,10 +112,10 @@ const checkEmployee = async (req, res) => {
         status: false,
       });
     } else {
-      const token = manager.generateAuthToken();
+      const token = employees.generateAuthToken();
       const ResponesData = {
-        name: manager.manager_username,
-        username: manager.manager_password,
+        name: employees.employee_username,
+        username: employees.employee_password,
         // shop_id: cashier.cashier_shop_id,
       };
       return res.status(200).send({
@@ -171,8 +123,8 @@ const checkEmployee = async (req, res) => {
         token: token,
         message: "เข้าสู่ระบบสำเร็จ",
         result: ResponesData,
-        level: "manager",
-        position: manager.manager_role,
+        level: "employee",
+        position: Employees.employee_role,
       });
     }
   } catch (error) {
@@ -225,6 +177,53 @@ const checkCashier = async (req, res) => {
   }
 };
 
+router.get("/me", authMe, async (req, res) => {
+  try {
+    const {decoded} = req;
+    if (!decoded) {
+      return res
+        .status(400)
+        .send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+    let userDetails;
+    const id = decoded._id;
+    switch (decoded.row) {
+      case "admin":
+        userDetails = await Admins.findOne({_id: id});
+        break;
+      case "manager":
+        userDetails = await Manager.findOne({_id: id});
+        break;
+      case "employee":
+        userDetails = await Employees.findOne({_id: id});
+        break;
+      case "cashier":
+        userDetails = await Cashier.findOne({_id: id});
+        break;
+      default:
+        return res
+          .status(400)
+          .send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+    if (!userDetails) {
+      return res
+        .status(400)
+        .send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+    const responsePayload = {
+      name: userDetails.name,
+      username: userDetails.username,
+      position: userDetails.position,
+      level: userDetails.role,
+    };
+    return res.status(200).send(responsePayload);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .send({message: "Internal Server Error", status: false});
+  }
+});
 //ไม่ใช้งานเเล้ว
 // const checkMember = async (req,res)=>{
 //   try {

@@ -4,6 +4,6 @@ const authAdmin = require("../../lib/auth.manager")
 const manager = require("../../controllers/manager/manager.controller")
 
 
-router.post("/create",manager.create);
+router.post("/create",authManager,manager.create);
 
 module.exports = router; 
