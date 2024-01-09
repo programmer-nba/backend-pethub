@@ -430,7 +430,6 @@ exports.updateProduct = async (req, res) => {
           // is_pack:productpack.is_pack,//เพิ่มตรงส่วนนี้มา
         };
         const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
-     
         if (new_product) {
           // ตรวจสอบว่ามีการอัปเดต logo ใน Products หรือไม่
           if (reqFiles[0]) {
