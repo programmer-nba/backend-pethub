@@ -12,6 +12,7 @@ router.put("/editPackProduct/:id",product.UpdateProduckPack)
 router.delete("/deletePackproduct/:id",product.deleteProductPack )
 router.get("/getProductAlldozen/all" ,authAdmin,product.getProductAlldozen)
 router.get("/getProductAllenvelope/all",authAdmin,product.getProductAllenvelope)
+router.get("/getProductAllcrate/all",authAdmin,product.crateProductAll)
 
 router.get("/",authAdmin, product.getProductAll);
 router.get("/:id",authAdmin, product.getProductById);
