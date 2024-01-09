@@ -439,7 +439,6 @@ exports.updateProduct = async (req, res) => {
               { $set: { logo: reqFiles[0] } },
               { new: true }
             );
-        
             if (updatedPackProduct) {
               return res.status(200).send({ status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: updatedPackProduct });
             } else {

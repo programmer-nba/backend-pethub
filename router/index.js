@@ -7,6 +7,7 @@ const {Employees} = require("../models/user/employee.model.js");
 const {Shops} = require("../models/shop/shop.model.js");
 const {Cashier} = require("../models/user/cashier.model.js")
 const {Member} = require("../models/user/member.model.js")
+const {Manager} = require("../models/user/manager.model.js")
 
 router.post("/login", async (req, res) => {
   try {
@@ -14,107 +15,136 @@ router.post("/login", async (req, res) => {
       admin_username: req.body.username,
     });
     if (!admin) {
-      await Promise.all([checkEmployee(req, res), checkCashier(req, res) ]);
-    } 
-    else {
+      // หากไม่พบ admin, ทำการเรียก Promise.all ร่วมกับ checkEmployee, checkCashier, และ checkManager
+      await Promise.all([
+        checkEmployee(req, res),
+        checkCashier(req, res),
+        checkManager(req, res),
+      ]);
+      // หลังจากที่ทำการตรวจสอบบทบาทอื่นๆแล้ว, หากไม่พบผู้ใช้ ให้ส่งคำตอบ
+      return res.status(401).send({ status: false, message: "ไม่พบผู้ใช้" });
+    }
+    // พบ admin, ตรวจสอบรหัสผ่าน
+    const validPasswordAdmin = await bcrypt.compare(
+      req.body.password,
+      admin.admin_password
+    );
+
+    if (!validPasswordAdmin) {
+      return res.status(401).send({
+        status: false,
+        message: "รหัสผ่านไม่ถูกต้อง",
+      });
+    }
+    // Admin ทำการยืนยันตัวตน, สร้าง token และส่งคำตอบ
+    const token = admin.generateAuthToken();
+    const responseData = {
+      name: admin.admin_name,
+      username: admin.admin_username,
+      position: admin.admin_position,
+    };
+    return res.status(200).send({
+      status: true,
+      token: token,
+      message: "เข้าสู่ระบบสำเร็จ",
+      result: responseData,
+      level: "admin",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ status: false, message: "Internal Server Error" });
+  }
+});
+router.get("/me", authMe, async (req, res) => {
+  try {
+    const { decoded } = req;
+
+    if (!decoded) {
+      return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+    }
+
+    let userDetails;
+    const id = decoded._id;
+
+    switch (decoded.row) {
+      case "admin":
+        userDetails = await Admins.findOne({ _id: id });
+        break;
+
+      case "manager":
+        userDetails = await Manager.findOne({ _id: id });
+        break;
+
+      case "employee":
+        userDetails = await Employees.findOne({ _id: id });
+        break;
+
+      case "cashier":
+        userDetails = await Cashier.findOne({ _id: id });
+        break;
+
+      default:
+        return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+    }
+
+    if (!userDetails) {
+      return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+    }
+
+    const responsePayload = {
+      name: userDetails.name,
+      username: userDetails.username,
+      position: userDetails.position,
+      level: userDetails.role,
+    };
+
+    return res.status(200).send(responsePayload);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error", status: false });
+  }
+});
+
+
+const checkManager = async (req, res) => {
+  try {
+    const manager = await Manager.findOne({
+      manager_password: req.body.username,
+    });
+    if (!manager) {
+      console.log("ไม่พบข้อมูลผู้จัดการ");
+    } else {
       const validPasswordAdmin = await bcrypt.compare(
         req.body.password,
-        admin.admin_password
+        manager.manager_password
       );
       if (!validPasswordAdmin) {
+        // รหัสไม่ตรง
         return res.status(401).send({
-          status: false,
           message: "password is not find",
+          status: false,
         });
-      }
-      const token = admin.generateAuthToken();
-      const ResponesData = {
-        name: admin.admin_name,
-        username: admin.admin_username,
-        position: admin.admin_position,
-      };
-      if (token) {
+      } else {
+        const token = manager.generateAuthToken();
+        const ResponesData = {
+          name: manager.manager_username,
+          username: manager.manager_password,
+          // shop_id: cashier.cashier_shop_id,
+        };
         return res.status(200).send({
           status: true,
           token: token,
           message: "เข้าสู่ระบบสำเร็จ",
           result: ResponesData,
-          level: "admin",
-        });
-      } else {
-        return res.status(401).send({
-          status: false,
-          message: "เข้าสู่ระบบไม่สำเร็จ",
+          level: "manager",
+          position: manager.manager_role,
         });
       }
     }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({status: false, message: "Internal Server Error"});
-  }
-});
-
-router.get("/me", authMe, async (req, res) => {
-  try {
-    const {decoded} = req;
-    if (decoded && decoded.row === "admin") {
-      const id = decoded._id;
-      const admin = await Admins.findOne({_id: id});
-      if (!admin) {
-        return res
-          .status(400)
-          .send({message: "มีบางอย่างผิดพลาด", status: false});
-      } else {
-        return res.status(200).send({
-          name: admin.admin_name,
-          username: admin.admin_username,
-          position: "admin",
-          level: admin.admin_position,
-        });
-      }
-    }
-    if (decoded && decoded.row === "employee") {
-      const id = decoded._id;
-      const employee = await Employees.findOne({_id: id});
-      if (!employee) {
-        return res
-          .status(400)
-          .send({message: "มีบางอย่างผิดพลาด", status: false});
-      } else {
-        return res.status(200).send({
-          shop_id: employee.employee_shop_id,
-          name: employee.employee_name,
-          username: employee.employee_username,
-          position: employee.employee_position,
-          level: employee.employee_role,
-        });
-      }
-      employee;
-    }
-    if (decoded && decoded.row === "cashier") {
-      const id = decoded._id;
-      const cashier = await Cashier.findOne({_id: id});
-      if (!cashier) {
-        return res
-          .status(400)
-          .send({message: "มีบางอย่างผิดพลาด", status: false});
-      } else {
-        return res.status(200).send({
-          shop_id:cashier.cashier_shop_id,
-          name: cashier.cashier_name,
-          username: cashier.cashier_username,
-          position: cashier.cashier_position,
-          level: cashier.cashier_role,
-        });
-      }
-      cashier;
-    }
-    
   } catch (error) {
-    res.status(500).send({message: "Internal Server Error", status: false});
+    return res.status(500).send({message: "Internal Server Error", status: false});
   }
-});
+};
 
 const checkEmployee = async (req, res) => {
   try {
@@ -152,7 +182,7 @@ const checkEmployee = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(500).send({message: "Internal Server Error", status: false});
+    return res.status(500).send({message: "Internal Server Error", status: false});
   }
 };
 
@@ -193,9 +223,13 @@ const checkCashier = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(500).send({message: "Internal Server Error", status: false});
+   return res.status(500).send({message: "Internal Server Error", status: false});
   }
 };
+
+
+
+
 
 //ไม่ใช้งานเเล้ว
 // const checkMember = async (req,res)=>{

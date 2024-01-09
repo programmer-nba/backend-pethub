@@ -13,7 +13,7 @@ app.use(cors());
 app.use("/pethub", require("./router"));
 
 app.use("/pethub/admin", require("./router/admin"));
-
+app.use("/pethub/manager", require("./router/manager"));
 app.use("/pethub/product", require("./router/product/index"));
 app.use("/pethub/product/category", require("./router/product/category"));
 app.use("/pethub/product/productgroup", require("./router/product/productGroup"))
