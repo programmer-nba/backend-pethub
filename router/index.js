@@ -51,47 +51,36 @@ router.post("/login", async (req, res) => {
 router.get("/me", authMe, async (req, res) => {
   try {
     const { decoded } = req;
-
     if (!decoded) {
       return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
     }
-
     let userDetails;
-
     const id = decoded._id;
-
     switch (decoded.row) {
       case "admin":
         userDetails = await Admins.findOne({ _id: id });
         break;
-
       case "manager":
         userDetails = await Manager.findOne({ _id: id });
         break;
-
       case "employee":
         userDetails = await Employees.findOne({ _id: id });
         break;
-
       case "cashier":
         userDetails = await Cashier.findOne({ _id: id });
         break;
-
       default:
         return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
     }
-
     if (!userDetails) {
       return res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
     }
-
     const responsePayload = {
       name: userDetails.name,
       username: userDetails.username,
       position: userDetails.position,
       level: userDetails.role,
     };
-
     return res.status(200).send(responsePayload);
   } catch (error) {
     console.error(error);
@@ -106,8 +95,7 @@ const checkManager = async (req, res) => {
       manager_password: req.body.username,
     });
     if (!manager) {
-      console.log("ไม่พบข้อมูลผู้จัดการ");
-      return; // ให้ return ทันทีหลังการ log
+      await checkEmployee(req, res);
     }
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
@@ -146,11 +134,8 @@ const checkEmployee = async (req, res) => {
       employee_username: req.body.username,
     });
     if (!employee) {
-      console.log("ไม่พบข้อมูลพนักงาน shop");
-      return;
+      await checkCashier(req, res);
     }
-
-    // ตรวจสอบรหัสผ่าน
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
       employee.employee_password
@@ -181,8 +166,6 @@ const checkEmployee = async (req, res) => {
     return res.status(500).send({ message: "Internal Server Error", status: false });
   }
 };
-
-
 const checkCashier = async (req, res) => {
   try {
     const cashier = await Cashier.findOne({
@@ -192,7 +175,6 @@ const checkCashier = async (req, res) => {
       console.log("ไม่พบข้อมูลพนักงาน เเคชเชียร์");
       return;
     }
-
     // ตรวจสอบรหัสผ่าน
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
