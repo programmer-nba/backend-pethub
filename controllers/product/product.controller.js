@@ -362,12 +362,6 @@ exports.getProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    // const {error} = validateproduct(req.body);
-    // if (error) {
-    //   return res
-    //     .status(400)
-    //     .send({status: false, message: error.details[0].message});
-    // }
     let upload = multer({storage: storage}).array("imgCollection", 20);
     upload(req, res, async function (err) {
       if (err) {
@@ -382,7 +376,6 @@ exports.updateProduct = async (req, res) => {
         });
       } else {
         const url = req.protocol + "://" + req.get("host");
-        // const productpack = await PackProducts.findOne({product_id:req.body.product_id})//เพิ่มตรงส่วนนี้มา
         for (var i = 0; i < req.files.length; i++) {
           await uploadFileCreate(req.files, res, {i, reqFiles});
         }
@@ -438,6 +431,13 @@ exports.updateProduct = async (req, res) => {
         };
         const new_product = await Products.findByIdAndUpdate(req.params.id,data,{new:true});
         if (new_product) {
+          // อัพเดตโมเดล ProductShall ด้วย logo ใหม่
+          const updatedProductShall = await PackProducts.findOneAndUpdate(
+            { /* สมมติว่าคุณต้องการหา ProductShall ที่เกี่ยวข้อง */ },
+            { $set: { logo: reqFiles[0] } },
+            { new: true }
+          );
+        if (new_product) {
           return res.status(200).send({status: true, message: "แก้ไขข้อมูลสินค้าสำเร็จ", data: new_product});
         } else {
           return res
@@ -445,8 +445,8 @@ exports.updateProduct = async (req, res) => {
             .send({status: false, message: "ไม่สามารถบันทึกได้"});
         }
       }
+    }
     });
-
   } catch (err) {
 
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
