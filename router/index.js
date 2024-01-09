@@ -15,16 +15,8 @@ router.post("/login", async (req, res) => {
       admin_username: req.body.username,
     });
     if (!admin) {
-      // หากไม่พบ admin, ทำการเรียก Promise.all ร่วมกับ checkEmployee, checkCashier, และ checkManager
-      await Promise.all([
-        checkEmployee(req, res),
-        checkCashier(req, res),
-        checkManager(req, res),
-      ]);
-      // หลังจากที่ทำการตรวจสอบบทบาทอื่นๆแล้ว, หากไม่พบผู้ใช้ ให้ส่งคำตอบ
-      return res.status(401).send({ status: false, message: "ไม่พบผู้ใช้" });
+      await checkManager(req, res);
     }
-    // พบ admin, ตรวจสอบรหัสผ่าน
     const validPasswordAdmin = await bcrypt.compare(
       req.body.password,
       admin.admin_password
@@ -36,13 +28,13 @@ router.post("/login", async (req, res) => {
         message: "รหัสผ่านไม่ถูกต้อง",
       });
     }
-    // Admin ทำการยืนยันตัวตน, สร้าง token และส่งคำตอบ
     const token = admin.generateAuthToken();
     const responseData = {
       name: admin.admin_name,
       username: admin.admin_username,
       position: admin.admin_position,
     };
+
     return res.status(200).send({
       status: true,
       token: token,
@@ -55,6 +47,7 @@ router.post("/login", async (req, res) => {
     return res.status(500).send({ status: false, message: "Internal Server Error" });
   }
 });
+
 router.get("/me", authMe, async (req, res) => {
   try {
     const { decoded } = req;
@@ -64,6 +57,7 @@ router.get("/me", authMe, async (req, res) => {
     }
 
     let userDetails;
+
     const id = decoded._id;
 
     switch (decoded.row) {
@@ -101,7 +95,7 @@ router.get("/me", authMe, async (req, res) => {
     return res.status(200).send(responsePayload);
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: "Internal Server Error", status: false });
+    return res.status(500).send({ message: "Internal Server Error", status: false });
   }
 });
 
@@ -113,36 +107,36 @@ const checkManager = async (req, res) => {
     });
     if (!manager) {
       console.log("ไม่พบข้อมูลผู้จัดการ");
+      return; // ให้ return ทันทีหลังการ log
+    }
+    const validPasswordAdmin = await bcrypt.compare(
+      req.body.password,
+      manager.manager_password
+    );
+    if (!validPasswordAdmin) {
+      // รหัสไม่ตรง
+      return res.status(401).send({
+        message: "password is not find",
+        status: false,
+      });
     } else {
-      const validPasswordAdmin = await bcrypt.compare(
-        req.body.password,
-        manager.manager_password
-      );
-      if (!validPasswordAdmin) {
-        // รหัสไม่ตรง
-        return res.status(401).send({
-          message: "password is not find",
-          status: false,
-        });
-      } else {
-        const token = manager.generateAuthToken();
-        const ResponesData = {
-          name: manager.manager_username,
-          username: manager.manager_password,
-          // shop_id: cashier.cashier_shop_id,
-        };
-        return res.status(200).send({
-          status: true,
-          token: token,
-          message: "เข้าสู่ระบบสำเร็จ",
-          result: ResponesData,
-          level: "manager",
-          position: manager.manager_role,
-        });
-      }
+      const token = manager.generateAuthToken();
+      const ResponesData = {
+        name: manager.manager_username,
+        username: manager.manager_password,
+        // shop_id: cashier.cashier_shop_id,
+      };
+      return res.status(200).send({
+        status: true,
+        token: token,
+        message: "เข้าสู่ระบบสำเร็จ",
+        result: ResponesData,
+        level: "manager",
+        position: manager.manager_role,
+      });
     }
   } catch (error) {
-    return res.status(500).send({message: "Internal Server Error", status: false});
+    return res.status(500).send({ message: "Internal Server Error", status: false });
   }
 };
 
@@ -153,36 +147,38 @@ const checkEmployee = async (req, res) => {
     });
     if (!employee) {
       console.log("ไม่พบข้อมูลพนักงาน shop");
+      return;
+    }
+
+    // ตรวจสอบรหัสผ่าน
+    const validPasswordAdmin = await bcrypt.compare(
+      req.body.password,
+      employee.employee_password
+    );
+    if (!validPasswordAdmin) {
+      // รหัสไม่ตรง
+      return res.status(401).send({
+        message: "password is not find",
+        status: false,
+      });
     } else {
-      const validPasswordAdmin = await bcrypt.compare(
-        req.body.password,
-        employee.employee_password
-      );
-      if (!validPasswordAdmin) {
-        // รหัสไม่ตรง
-        return res.status(401).send({
-          message: "password is not find",
-          status: false,
-        });
-      } else {
-        const token = employee.generateAuthToken();
-        const ResponesData = {
-          name: employee.employee_name,
-          username: employee.employee_username,
-          shop_id: employee.employee_shop_id,
-        };
-        return res.status(200).send({
-          status: true,
-          token: token,
-          message: "เข้าสู่ระบบสำเร็จ",
-          result: ResponesData,
-          level: "employee",
-          position: employee.employee_role,
-        });
-      }
+      const token = employee.generateAuthToken();
+      const ResponesData = {
+        name: employee.employee_name,
+        username: employee.employee_username,
+        shop_id: employee.employee_shop_id,
+      };
+      return res.status(200).send({
+        status: true,
+        token: token,
+        message: "เข้าสู่ระบบสำเร็จ",
+        result: ResponesData,
+        level: "employee",
+        position: employee.employee_role,
+      });
     }
   } catch (error) {
-    return res.status(500).send({message: "Internal Server Error", status: false});
+    return res.status(500).send({ message: "Internal Server Error", status: false });
   }
 };
 
@@ -194,38 +190,41 @@ const checkCashier = async (req, res) => {
     });
     if (!cashier) {
       console.log("ไม่พบข้อมูลพนักงาน เเคชเชียร์");
+      return;
+    }
+
+    // ตรวจสอบรหัสผ่าน
+    const validPasswordAdmin = await bcrypt.compare(
+      req.body.password,
+      cashier.cashier_password
+    );
+    if (!validPasswordAdmin) {
+      // รหัสไม่ตรง
+      return res.status(401).send({
+        message: "password is not find",
+        status: false,
+      });
     } else {
-      const validPasswordAdmin = await bcrypt.compare(
-        req.body.password,
-        cashier.cashier_password
-      );
-      if (!validPasswordAdmin) {
-        // รหัสไม่ตรง
-        return res.status(401).send({
-          message: "password is not find",
-          status: false,
-        });
-      } else {
-        const token = cashier.generateAuthToken();
-        const ResponesData = {
-          name: cashier.cashier_name,
-          username: cashier.cashier_username,
-          // shop_id: cashier.cashier_shop_id,
-        };
-        return res.status(200).send({
-          status: true,
-          token: token,
-          message: "เข้าสู่ระบบสำเร็จ",
-          result: ResponesData,
-          level: "cashier",
-          position: cashier.cashier_role,
-        });
-      }
+      const token = cashier.generateAuthToken();
+      const ResponesData = {
+        name: cashier.cashier_name,
+        username: cashier.cashier_username,
+        // shop_id: cashier.cashier_shop_id,
+      };
+      return res.status(200).send({
+        status: true,
+        token: token,
+        message: "เข้าสู่ระบบสำเร็จ",
+        result: ResponesData,
+        level: "cashier",
+        position: cashier.cashier_role,
+      });
     }
   } catch (error) {
-   return res.status(500).send({message: "Internal Server Error", status: false});
+    return res.status(500).send({ message: "Internal Server Error", status: false });
   }
 };
+
 
 
 
