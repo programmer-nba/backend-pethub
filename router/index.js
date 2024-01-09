@@ -178,50 +178,78 @@ const checkCashier = async (req, res) => {
 };
 
 router.get("/me", authMe, async (req, res) => {
+  const { decoded } = req;
   try {
-    const {decoded} = req;
-    if (!decoded) {
-      return res
-        .status(400)
-        .send({message: "มีบางอย่างผิดพลาด", status: false});
+    console.log("call me", decoded);
+    if (decoded && decoded.row === "admin") {
+      const id = decoded._id;
+      Admins.findOne({ _id: id })
+        .then((item) => {
+          console.log(item);
+          return res.status(200).send({
+            name: item.admin_name,
+            username: item.admin_username,
+            level: "admin",
+            position: item.admin_position,
+          });
+        })
+        .catch(() =>
+          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false })
+        );
+    } else if (decoded && decoded.row === "manager") {
+      const id = decoded._id;
+      console.log(id);
+      Manager.findOne({ _id: id })
+        .then((item) => {
+          console.log(item);
+          return res.status(200).send({
+            _id: item._id,
+            name: item.manager_name,
+            username: item.manager_username,
+            position: item.manager_position,
+            level: "manager",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+        });
+    } else if (decoded && decoded.row === "employee") {
+      const id = decoded._id;
+      console.log(id);
+      Employees.findOne({ _id: id })
+        .then((item) => {
+          console.log(item);
+          return res.status(200).send({
+            _id: item._id,
+            name: item.employee_name,
+            username: item.employee_username,
+            position: item.employee_position,
+            level: "employee",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false });
+        });
+    } else {
+      const id = decoded._id;
+      Cashier.findOne({ _id: id })
+        .then((item) => {
+          console.log(item);
+          return res.status(200).send({
+            name: item.cashier_name,
+            username: item.cashier_username,
+            level: "cashier",
+            position: item.cashier_position,
+          });
+        })
+        .catch(() =>
+          res.status(400).send({ message: "มีบางอย่างผิดพลาด", status: false })
+        );
     }
-    let userDetails;
-    const id = decoded._id;
-    switch (decoded.row) {
-      case "admin":
-        userDetails = await Admins.findOne({_id: id});
-        break;
-      case "manager":
-        userDetails = await Manager.findOne({_id: id});
-        break;
-      case "employee":
-        userDetails = await Employees.findOne({_id: id});
-        break;
-      case "cashier":
-        userDetails = await Cashier.findOne({_id: id});
-        break;
-      default:
-        return res
-          .status(400)
-          .send({message: "มีบางอย่างผิดพลาด", status: false});
-    }
-    if (!userDetails) {
-      return res
-        .status(400)
-        .send({message: "มีบางอย่างผิดพลาด", status: false});
-    }
-    const responsePayload = {
-      name: userDetails.name,
-      username: userDetails.username,
-      position: userDetails.position,
-      level: userDetails.role,
-    };
-    return res.status(200).send(responsePayload);
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({message: "Internal Server Error", status: false});
+    res.status(500).send({ message: "Internal Server Error", status: false });
   }
 });
 //ไม่ใช้งานเเล้ว
