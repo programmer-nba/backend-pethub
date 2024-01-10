@@ -18,10 +18,10 @@ const ManagerSchema = new mongoose.Schema({
   manager_username: {type: String, required: true}, //เลขบัตร
   manager_password: {type: String, required: true}, //รหัส
   manager_position: {type: String, required: true},
-  employee_phone: {type: String, required: true},
-  employee_position: {type: String, required: false, default: "manager"},
-  employee_role: {type: String, required: false},
-  employee_date_start: {type: Date, required: false, default: Date.now()},
+  manager_phone: {type: String, required: true},
+  manager_position: {type: String, required: false, default: "manager"},
+  manager_role: {type: String, required: false},
+  manager_date_start: {type: Date, required: false, default: Date.now()},
 });
 
 ManagerSchema.methods.generateAuthToken = function () {
@@ -44,6 +44,7 @@ const validateManager = (data) => {
     manager_password: passwordComplexity(complexityOptions)
       .required()
       .label("admin_password"),
+    manager_phone: Joi.string().required().label("กรุณากรอกเบอร์โทร"),
     manager_position: Joi.string().required().label("กรุณากรอกเลเวลผู้ใช้ด้วย"),
   });
   return schema.validate(data);
