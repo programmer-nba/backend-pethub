@@ -6,6 +6,7 @@ const {
 } = require("../../models/product/preordershell.model.js");
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const {ProductShops,validateProduct} = require("../../models/product/product.shop.model.js")
+const {ReturnProduct} = require("../../models/product/return.product.model.js")
 const dayjs = require("dayjs");
 
 
@@ -414,6 +415,66 @@ exports.fildManagerOne = async (req, res) => {
     } catch (err) {
       console.error(err);
       return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด", errorDetails: err });
+    }
+  };
+  exports.ProductbackManager = async (req, res) => {
+    try {
+      const ordernumber = req.params.id;
+      const productDetailsToRemove = req.body.product_detail;
+      // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
+      if (!productDetailsToRemove || !productDetailsToRemove.length) {
+        return res.status(400).send({
+          message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการส่งคืน",
+          status: false,
+        });
+      }
+      const preorder = await PreOrderProducts.findOne({ ordernumber: ordernumber });
+      if (!preorder) {
+        return res.status(500).send({
+          message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
+          status: false,
+        });
+      }
+      const productdetail =  preorder.product_detail
+      const findreturn = productdetail.filter((item)=> item.product_id == req.body.product_detail[0].product_id)
+      console.log(preorder)
+      //บันทึกข้อมูลส่งสินค้ากลับ
+      const returnProductInfo = new ReturnProduct({
+        product_id: findreturn[0].product_id, 
+        product_name: findreturn[0].product_name,
+        product_amount: req.body.product_detail[0].product_amount, 
+        product_logo: findreturn[0].product_logo,
+        barcode:findreturn[0].barcode
+      });
+      const add = await returnProductInfo.save(); 
+      // //ลบจำนวนที่หาย
+      const dataedit ={
+        product_id: findreturn[0].product_id, 
+        product_name: findreturn[0].product_name,
+        product_amount: findreturn[0].product_amount -req.body.product_detail[0].product_amount, 
+        product_logo: findreturn[0].product_logo,
+        barcode:findreturn[0].barcode
+      }
+      const filerpreorder = preorder.product_detail.filter((item)=> item.product_id != req.body.product_detail[0].product_id)
+      if(findreturn[0].product_amount -req.body.product_detail[0].product_amount>0)
+      {
+        filerpreorder.push(dataedit)
+      }
+      await PreOrderProducts.updateOne(
+        { ordernumber: ordernumber },
+        { product_detail: filerpreorder}
+      );
+      return res.status(200).send({
+        status: true,
+        message: "ลบสินค้าสำเร็จ",
+        data:filerpreorder
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({
+        message: error.message,
+        status: false,
+      });
     }
   };
 
