@@ -21,6 +21,7 @@ router.post("/ImportStockShopManager/:id",authManager,manager.ImportStockShopMan
 router.put("/updateProductManager/:id",authManager,manager.updateProductManager)
 router.get("/ProductShopManager/:id",authManager,manager.ProductShopManager)
 router.put("/editProductManager/:id",authManager,manager.editProductManager)
+router.post("/ProductbackManager/:id",authManager,manager.ProductbackManager)
 
 
 module.exports = router; 
