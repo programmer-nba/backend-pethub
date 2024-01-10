@@ -4,12 +4,12 @@ const {Products,validateproduct} = require("../../models/product/product.model.j
 const {
   PreOrderProductShell,
 } = require("../../models/product/preordershell.model.js");
+const {Categorys,validatecategory} = require("../../models/product/category.model.js")
 const {PreOrderProducts} = require("../../models/product/preorder.model");
 const {ProductShops,validateProduct} = require("../../models/product/product.shop.model.js")
 const {ReturnProduct} = require("../../models/product/return.product.model.js")
+const {ProductShall,validateProductShall} =require("../../models/product/product.shall.model.js")
 const dayjs = require("dayjs");
-
-
 
 
 exports.create = async (req, res) => {
@@ -41,7 +41,6 @@ exports.create = async (req, res) => {
       return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
     }
   };
-
 exports.fildManagerAll = async (req, res) => {
  
     try {
@@ -60,7 +59,6 @@ exports.fildManagerAll = async (req, res) => {
       res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
-
 exports.fildManagerOne = async (req, res) => {
     try {
       const id = req.params.id
@@ -78,7 +76,6 @@ exports.fildManagerOne = async (req, res) => {
       res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
-
   exports.updateManager = async (req, res) => {
     try {
       if (!req.body) {
@@ -121,7 +118,6 @@ exports.fildManagerOne = async (req, res) => {
       res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
-
   exports.deleteManager = async (req, res) => {
     try {
       const id = req.params.id;
@@ -139,7 +135,6 @@ exports.fildManagerOne = async (req, res) => {
       return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
     }
   };
-
   exports.preorderManager = async (req, res) => {
     console.log(req.body);
     try {
@@ -477,6 +472,293 @@ exports.fildManagerOne = async (req, res) => {
       });
     }
   };
+  exports.getStockManager = async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      const mystock = await ProductShops.find({shop_id:id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+  
+      return res.send(mystock);
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.getPreorderStoreAllMager = async (req, res) => {
+    try {
+      const shop_id = req.params.id; 
+  
+      if (!shop_id) {
+        return res.status(400).send({
+          message: "กรุณาระบุ shop_id",
+          status: false,
+        });
+      }
+  
+      const preorder_list = await PreOrderProductShell.find({ shop_id: shop_id });
+  
+      if (preorder_list) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+          data: preorder_list,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  };
+  exports.confirmMabager = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const updateStatus = await PreOrderProductShell.findOne({_id: id});
+      console.log(updateStatus);
+      if (updateStatus) {
+        updateStatus.status.push({
+          name: "ยืนยันการสั่งซื้อ",
+          timestamps: dayjs(Date.now()).format(""),
+        });
+        updateStatus.save();
+        return res.status(200).send({
+          status: true,
+          message: "ยืนยันการสั่งซื้อสำเร็จ",
+          data: updateStatus,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.cancelMabager = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const updateStatus = await PreOrderProductShell.findOne({_id: id});
+      console.log(updateStatus);
+      if (updateStatus) {
+        updateStatus.status.push({
+          name: "ยืนยันการยกเลิกสั่งซื้อ",
+          timestamps: dayjs(Date.now()).format(""),
+        });
+        updateStatus.save();
+        return res.status(200).send({
+          status: true,
+          message: "ยืนยันการยกเลิกสั่งซื้อสำเร็จ",
+          data: updateStatus,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.ShippingManager= async (req, res) => {
+    try {
+      const id = req.params.id;
+      const updateStatus = await PreOrderProductShell.findOne({_id: id});
+      console.log(updateStatus);
+      if (updateStatus) {
+        updateStatus.status.push({
+          name: "สถาณะกำลังจัดส่งสินค้า",
+          timestamps: dayjs(Date.now()).format(""),
+        });
+        updateStatus.save();
+        return res.status(200).send({
+          status: true,
+          message: "ยืนยันการจัดส่งสินค้า",
+          data: updateStatus,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.fildAllProductReturnManager = async (req, res) => {
+    try {
+      const employee = await ReturnProduct.find();
+      if (employee) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+          data: employee,
+        });
+      } else {
+        return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+      }
+    } catch (err) {
+      res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.fildOneProductReturnManager = async (req, res) => {
+    try {
+      const id = req.params.id
+      const employee = await ReturnProduct.findById(id);
+      if (employee) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+          data: employee,
+        });
+      } else {
+        return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+      }
+    } catch (err) {
+      res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.DetailsStockManager = async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      const mystock = await ProductShops.find({ shop_id: id }); //{shop_id:id} เอาใส่ไว้ใน() findOne
+  
+      return res.send(mystock);
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.ShowProductAllManager = async (req, res) => {
+    try {
+      const shop_id = req.params.id;
+      console.log(shop_id)
+      const product = await ProductShall.find({shop_id:shop_id});
+      if (product) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลสินค้าสำเร็จ",
+          data: product,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.getCategoryAllManager = async (req, res) => {
+    try {
+      const category = await Categorys.find();
+      if (category) {
+        return res
+          .status(200)
+          .send({message: "ดึงประเภทสินค้าสำเร็จ", status: true, data: category});
+      } else {
+        return res
+          .status(500)
+          .send({message: "ดึงประเภทสินค้าไม่สำเร็จ", status: false});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  exports.preorderProductShallManager = async (req, res) => {
+    console.log(req.body)
+     try {
+       const { product_detail } = req.body;
+       const { product_id, product_amount } = product_detail[0];
+       // ทำตรวจสอบจำนวนสินค้าที่มีอยู่ โดยใช้ตรวจสอบจากฐานข้อมูลเช่นกัน
+       const availableProduct = await ProductShops.findOne({ product_id });
+       if (!availableProduct || product_amount > availableProduct.ProductAmount) {
+         return res.status(400).send({
+           status: false,
+           message: "สินค้าไม่พอสำหรับการสั่งชื้อ",
+         });
+       }
+       // ถ้าจำนวนพอเพียง ก็ทำการสร้างคำสั่งซื้อ
+       const status = {
+         name: "รอตรวจสอบ",
+         timestamps: dayjs(Date.now()).format(""),
+       };
+       const ordernumbershell = await orderNumberShell();
+       const invoice = await invoiceShellNumber();
+       const order_product = await new PreOrderProductShell({
+         ...req.body,
+         invoice: invoice,
+         ordernumbershell: ordernumbershell,
+         status: status,
+         timestamps: dayjs(Date.now()).format(""),
+       }).save();
+   
+       if (order_product) {
+         return res.status(200).send({
+           status: true,
+           message: "สั่งซื้อสินค้าทำเสร็จ",
+           data: order_product,
+         });
+       } else {
+         return res.status(500).send({
+           message: order_product,
+           status: false,
+         });
+       }
+     } catch (error) {
+       console.log(error);
+       return res.status(500).send({
+         message: "มีบางอย่างผิดพลาด",
+         status: false,
+         error: error.message,
+       });
+     }
+   };
+  exports.getPreorderStoreAllManager = async (req, res) => {
+    try {
+      const shop_id = req.params.id; 
+  
+      if (!shop_id) {
+        return res.status(400).send({
+          message: "กรุณาระบุ shop_id",
+          status: false,
+        });
+      }
+  
+      const preorder_list = await PreOrderProductShell.find({ shop_id: shop_id });
+  
+      if (preorder_list) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+          data: preorder_list,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  };
+
+
+  
+
 
   async function invoiceNumber(date) {
     const order = await PreOrderProducts.find();
@@ -522,4 +804,48 @@ exports.fildManagerOne = async (req, res) => {
         `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
     }
     return order_number;
+  }
+  async function orderNumberShell(date) {
+    const order = await PreOrderProductShell.find();
+    let store_number = null;
+    if (order.length !== 0) {
+      let data = "";
+      let num = 0;
+      let check = null;
+      do {
+        num = num + 1;
+        data = `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(11, "0") + num;
+        check = await PreOrderProductShell.find({ordernumbershell: data});
+        if (check.length === 0) {
+          store_number =
+            `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(11, "0") + num;
+        }
+      } while (check.length !== 0);
+    } else {
+      store_number =
+        `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+    }
+    return store_number;
+  }
+  async function invoiceShellNumber(date) {
+    const order = await PreOrderProductShell.find();
+    let invoice_shell = null;
+    if (order.length !== 0) {
+      let data = "";
+      let num = 0;
+      let check = null;
+      do {
+        num = num + 1;
+        data = `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(14, "0") + num;
+        check = await PreOrderProductShell.find({invoice: data});
+        if (check.length === 0) {
+          invoice_shell =
+            `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(14, "0") + num;
+        }
+      } while (check.length !== 0);
+    } else {
+      invoice_shell =
+        `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+    }
+    return invoice_shell;
   }

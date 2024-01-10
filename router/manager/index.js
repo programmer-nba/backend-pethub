@@ -22,6 +22,27 @@ router.put("/updateProductManager/:id",authManager,manager.updateProductManager)
 router.get("/ProductShopManager/:id",authManager,manager.ProductShopManager)
 router.put("/editProductManager/:id",authManager,manager.editProductManager)
 router.post("/ProductbackManager/:id",authManager,manager.ProductbackManager)
+router.get("/getStockManager/:id",authManager,manager.getStockManager)
+
+//อนุมัติการสั่งชื้อสินค้าเเละดูออเดอร์จาก sall
+router.get("/getPreorderStoreAllMager/:id",authManager,manager.getPreorderStoreAllMager)
+router.put("/confirmMabager/:id",authManager,manager.confirmMabager)
+router.put("/cancelMabager/:id",authManager,manager.cancelMabager)
+router.put("/ShippingManager/:id",authManager,manager.ShippingManager)
+
+//ส่งคืนสินค้า
+router.get("/fildAllProductReturnManager",authManager,manager.fildAllProductReturnManager)
+router.get("/fildOneProductReturnManager/:id",authManager,manager.fildOneProductReturnManager)
+
+//ดูสินค้าจาก shop
+router.get("/DetailsStockManager/:id",authManager,manager.DetailsStockManager)
+router.get("/ShowProductAllManager/:id",authManager,manager.ShowProductAllManager)
+router.get("/getCategoryAllManager",authManager,manager.getCategoryAllManager)
+
+//พรีออเดอร์สินค้าจาก shall โดยเมเนเจอร์
+router.post("/preorderProductShallManager",authManager,manager.preorderProductShallManager)
+router.get("/getPreorderStoreAllManager/:id",authManager,manager.getPreorderStoreAllManager)
+
 
 
 module.exports = router; 
