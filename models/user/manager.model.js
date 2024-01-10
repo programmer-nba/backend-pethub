@@ -14,7 +14,7 @@ const complexityOptions = {
 };
 
 const ManagerSchema = new mongoose.Schema({
-  employee_shop_id: {type: String, required: true},
+  manager_shop_id: {type: String, required: true},
   manager_name: {type: String, required: true}, //ชื่อ
   manager_username: {type: String, required: true}, //เลขบัตร
   manager_password: {type: String, required: true}, //รหัส
