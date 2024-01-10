@@ -2,7 +2,6 @@ const router = require("express").Router();
 const authManager = require("../../lib/auth.manager")
 const authAdmin = require("../../lib/auth.manager")
 const manager = require("../../controllers/manager/manager.controller");
-const { route } = require("..");
 
 //สร้างเมเนเจอร์
 router.post("/create",authAdmin,manager.create);
@@ -13,6 +12,6 @@ router.delete("/deleteManager/:id",authAdmin,manager.deleteManager)
 
 //พรีออเดอร์
 router.post("/preorderManager" ,authManager,manager.preorderManager)
-router.get("",authManager,manager.getPreorderAllManager)
+router.get("/getPreorderAllManager",authManager,manager.getPreorderAllManager)
 
 module.exports = router; 
