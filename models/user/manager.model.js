@@ -39,6 +39,7 @@ const Manager = mongoose.model("manager", ManagerSchema);
 
 const validateManager = (data) => {
   const schema = Joi.object({
+    manager_shop_id:Joi.string().required().label("กรุณากรอกไอดี Shop ด้วย"),
     manager_name: Joi.string().required().label("กรุณากรอกชื่อผู้ใช้ด้วย"),
     manager_username: Joi.string().required().label("กรุณากรอกเลขบัตรผู้ใช้ด้วย"),
     manager_password: passwordComplexity(complexityOptions)
