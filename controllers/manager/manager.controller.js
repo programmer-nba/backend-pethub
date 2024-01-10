@@ -41,8 +41,10 @@ exports.create = async (req, res) => {
   };
 
 exports.fildManagerAll = async (req, res) => {
+ 
     try {
       const manager = await Manager.find();
+      console.log("..............test...........")
       if (manager) {
         return res.status(200).send({
           status: true,
@@ -197,6 +199,56 @@ exports.fildManagerOne = async (req, res) => {
           status: true,
           message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
           data: preorder_list,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.getPreorderByIdManager = async (req, res) => {
+    try {
+      const shopId = req.params.id;
+      const preorderList = await PreOrderProducts.find({ shop_id: shopId });
+  
+      if (preorderList && preorderList.length > 0) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+          data: preorderList,
+        });
+      } else {
+        return res.status(404).send({
+          message: "ไม่พบข้อมูลรายการสั่งซื้อสำหรับ shop_id ที่ระบุ",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาดในการดึงข้อมูล",
+        status: false,
+      });
+    }
+  }
+  exports.candelPreorderManager = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const updateStatus = await PreOrderProducts.findOne({_id: id});
+      console.log(updateStatus);
+      if (updateStatus) {
+        updateStatus.status.push({
+          name: "ยกเลิกการสั่งซื้อ",
+          timestamps: dayjs(Date.now()).format(""),
+        });
+        updateStatus.save();
+        return res.status(200).send({
+          status: true,
+          message: "ยกเลิกการสั่งซื้อสำเร็จ",
+          data: updateStatus,
         });
       } else {
         return res.status(500).send({
