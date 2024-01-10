@@ -11,6 +11,7 @@ router.put("/updateManager/:id",authAdmin,manager.updateManager)
 router.delete("/deleteManager/:id",authAdmin,manager.deleteManager)
 
 //พรีออเดอร์
+router.get("/getProductAllManager",authManager,manager.getProductAllManager)
 router.post("/preorderManager" ,authManager,manager.preorderManager)
 router.get("/getPreorderAllManager",authManager,manager.getPreorderAllManager)
 router.get("/getPreorderByIdManager/:id",authManager,manager.getPreorderByIdManager)
@@ -42,7 +43,10 @@ router.get("/getCategoryAllManager",authManager,manager.getCategoryAllManager)
 //พรีออเดอร์สินค้าจาก shall โดยเมเนเจอร์
 router.post("/preorderProductShallManager",authManager,manager.preorderProductShallManager)
 router.get("/getPreorderStoreAllManager/:id",authManager,manager.getPreorderStoreAllManager)
+router.put("/PreorderCancelManager/:id",authManager,manager.PreorderCancelManager)
 
-
+//เพิ่มสินค้าเข้าคลังโดย manager
+router.post("/InsertManagerShall/:id",authManager,manager.PreorderManagerShall)
+router.get("/DetailsProductManager/:id",authManager,manager.DetailsProductManager)
 
 module.exports = router; 
