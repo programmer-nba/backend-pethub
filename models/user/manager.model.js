@@ -18,6 +18,10 @@ const ManagerSchema = new mongoose.Schema({
   manager_username: {type: String, required: true}, //เลขบัตร
   manager_password: {type: String, required: true}, //รหัส
   manager_position: {type: String, required: true},
+  employee_phone: {type: String, required: true},
+  employee_position: {type: String, required: false, default: "manager"},
+  employee_role: {type: String, required: false},
+  employee_date_start: {type: Date, required: false, default: Date.now()},
 });
 
 ManagerSchema.methods.generateAuthToken = function () {
