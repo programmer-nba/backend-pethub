@@ -24,16 +24,22 @@ const ManagerSchema = new mongoose.Schema({
   manager_date_start: {type: Date, required: false, default: Date.now()},
 });
 
-ManagerSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign(
-    {_id: this._id, name: this.manager_name, row: "manager"},
-    process.env.JWTPRIVATEKEY,
-    {
-      expiresIn: "4h",
-    }
-  );
-  return token;
-};
+  ManagerSchema.methods.generateAuthToken = function () {
+    const token = jwt.sign(
+      {
+        _id: this._id,
+        name: this.manager_name,
+        shop_id: this.manager_shop_id,
+        phone: this.manager_phone,
+        row: "manager",
+      },
+      process.env.JWTPRIVATEKEY,
+      {
+        expiresIn: "4h",
+      }
+    );
+    return token;
+  };
 
 const Manager = mongoose.model("manager", ManagerSchema);
 
