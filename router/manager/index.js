@@ -4,11 +4,15 @@ const authAdmin = require("../../lib/auth.manager")
 const manager = require("../../controllers/manager/manager.controller");
 const { route } = require("..");
 
+//สร้างเมเนเจอร์
+router.post("/create",authAdmin,manager.create);
+router.get("/fildManagerAll",authAdmin,manager.fildManagerAll)
+router.get("/fildManagerOne/:id",authAdmin,manager.fildManagerOne)
+router.put("/updateManager/:id",authAdmin,manager.updateManager)
+router.delete("/deleteManager/:id",authAdmin,manager.deleteManager)
 
-router.post("/create",authManager,manager.create);
-router.get("/fildManagerAll",authManager,manager.fildManagerAll)
-router.get("/fildManagerOne/:id",authManager,manager.fildManagerOne)
-router.put("/updateManager/:id",authManager,manager.updateManager)
-router.delete("/deleteManager/:id",authManager,manager.deleteManager)
+//พรีออเดอร์
+router.post("/preorderManager" ,authManager,manager.preorderManager)
+router.get("",authManager,manager.getPreorderAllManager)
 
 module.exports = router; 

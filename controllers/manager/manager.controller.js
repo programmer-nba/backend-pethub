@@ -1,5 +1,10 @@
 const bcrypt = require("bcrypt");
 const {Manager,validateManager} = require("../../models/user/manager.model")
+const {Products,validateproduct} = require("../../models/product/product.model.js")
+const {
+  PreOrderProductShell,
+} = require("../../models/product/preordershell.model.js");
+const {PreOrderProducts} = require("../../models/product/preorder.model");
 const dayjs = require("dayjs");
 
 
@@ -130,3 +135,122 @@ exports.fildManagerOne = async (req, res) => {
       return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
     }
   };
+
+  exports.preorderManager = async (req, res) => {
+    console.log(req.body);
+    try {
+      const { product_detail } = req.body;
+      const { product_id, product_amount } = product_detail[0];
+      console.log(product_detail)
+      
+      // ทำตรวจสอบจำนวนสินค้าที่มีอยู่ โดยใช้ตรวจสอบจากฐานข้อมูลเช่นกัน
+      const availableProduct = await Products.findOne({ _id: product_id });
+      if (!availableProduct || product_amount > availableProduct.quantity) {
+        return res.status(400).send({
+          status: false,
+          message: "สินค้าไม่พอสำหรับการสั่งชื้อ",
+        });
+      }
+      
+      const status = {
+        name: "รอตรวจสอบ",
+        timestamps: dayjs(Date.now()).format(""),
+      };
+      
+      const invoice = await invoiceNumber();
+      const preordernumber = await orderNumber();
+  
+      const order_product = await new PreOrderProducts({
+        ...req.body,
+        invoice: invoice,
+        ordernumber: preordernumber,
+        status: status,
+        timestamps: dayjs(Date.now()).format(""),
+      }).save();
+      
+      if (order_product) {
+        return res.status(200).send({
+          status: true,
+          message: "สั่งซื้อสินค้าทำเสร็จ",
+          data: order_product,
+        });
+      } else {
+        return res.status(500).send({
+          message: order_product,
+          status: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด222",
+        status: false,
+        error: error.message,
+      });
+    }
+  };
+  exports.getPreorderAllManager = async (req, res) => {
+    try {
+      const preorder_list = await PreOrderProducts.find();
+      if (preorder_list) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+          data: preorder_list,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+
+  async function invoiceNumber(date) {
+    const order = await PreOrderProducts.find();
+    let invoice_number = null;
+    if (order.length !== 0) {
+      let data = "";
+      let num = 0;
+      let check = null;
+      do {
+        num = num + 1;
+        data = `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+        check = await PreOrderProducts.find({invoice: data});
+        if (check.length === 0) {
+          invoice_number =
+            `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+        }
+      } while (check.length !== 0);
+    } else {
+      invoice_number =
+        `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+    }
+    return invoice_number;
+  }
+  //ค้นหาเเละสร้างเลข ordernumber คือเลขนำเข้าสินค้า
+  async function orderNumber(date) {
+    const order = await PreOrderProducts.find();
+    let order_number = null;
+    if (order.length !== 0) {
+      let data = "";
+      let num = 0;
+      let check = null;
+      do {
+        num = num + 1;
+        data = `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+        check = await PreOrderProducts.find({ordernumber: data});
+        if (check.length === 0) {
+          order_number =
+            `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+        }
+      } while (check.length !== 0);
+    } else {
+      order_number =
+        `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+    }
+    return order_number;
+  }
