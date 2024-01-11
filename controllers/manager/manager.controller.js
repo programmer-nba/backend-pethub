@@ -565,7 +565,7 @@ exports.fildManagerOne = async (req, res) => {
       console.log(updateStatus);
       if (updateStatus) {
         updateStatus.status.push({
-          name: "ยืนยันการยกเลิกสั่งซื้อ",
+          name: "ยกเลิกสั่งซื้อ",
           timestamps: dayjs(Date.now()).format(""),
         });
         updateStatus.save();
