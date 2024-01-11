@@ -12,7 +12,7 @@ router.delete("/deleteManager/:id",authAdmin,manager.deleteManager)
 
 //พรีออเดอร์
 router.get("/getProductAllManager",authManager,manager.getProductAllManager)
-router.post("/preorderManager" ,authManager,manager.preorderManager)
+router.post("/shop/preorderManager" ,authManager,manager.preorderManager)
 router.get("/getPreorderAllManager",authManager,manager.getPreorderAllManager)
 router.get("/getPreorderByIdManager/:id",authManager,manager.getPreorderByIdManager)
 router.put("/candelPreorderManager/:id",authManager,manager.candelPreorderManager)
