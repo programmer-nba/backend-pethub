@@ -57,5 +57,7 @@ router.put("/confirmProductReturnManager/:id",authManager,manager.confirmProduct
 router.post("/createMember",authManager,manager.createMember)
 router.get("/ManagerfindOneMember/:id",authManager,manager.ManagerfindOneMember)
 router.get("/findTypememberManager",authManager,manager.findTypememberManager)
+router.put("/ManagerupdateMember/:id",authManager,manager.ManagerupdateMember)
+router.delete("/ManagerdeleteMember/:member_phone",authManager,manager.ManagerdeleteMember)
 
 module.exports = router; 

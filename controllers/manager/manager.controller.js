@@ -1049,6 +1049,72 @@ exports.fildManagerOne = async (req, res) => {
       res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   }
+  exports.ManagerupdateMember = async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!req.body) {
+        return res
+          .status(400)
+          .send({status: false, message: error.details[0].message});
+      }
+      if (!req.body.admin_password) {
+        const member_new = await Member.findByIdAndUpdate(id, req.body);
+        if (!member_new) {
+          return res
+            .status(400)
+            .send({status: false, message: "ไม่สามารถแก้ไขผู้ใช้งานนี้ได้"});
+        } else {
+          return res.send({
+            status: true,
+            message: "แก้ไขข้อมูลผู้ใช้งานเรียบร้อย",
+          });
+        }
+      } else {
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        const hashPassword = await bcrypt.hash(req.body.admin_password, salt);
+        const new_password = await Member.findByIdAndUpdate(id, {
+          ...req.body,
+          admin_password: hashPassword,
+        });
+        if (!new_password) {
+          return res.status(400).send({
+            status: false,
+            message: "ไม่สามารถแก้ไขรหัสผ่านผู้ใช้งานนี้ได้",
+          });
+        } else {
+          return res.send({
+            status: true,
+            message: "แก้ไขข้อมูลผู้ใช้งานเรียบร้อย",
+          });
+        }
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  exports.ManagerdeleteMember = async (req, res) => {
+    try {
+      const memberPhone = req.params.member_phone;
+      const member = await Member.findOneAndDelete({ member_phone: memberPhone });
+  
+      if (!member) {
+        return res.status(404).send({
+          status: false,
+          message: `ไม่พบข้อมูลลูกค้าสำหรับหมายเลขโทรศัพท์ ${memberPhone}`,
+        });
+      } else {
+        return res.status(200).send({
+          status: true,
+          message: "ลบข้อมูลลูกค้าสำเร็จ",
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({
+        status: false,
+        message: "มีบางอย่างผิดพลาด",
+      });
+    }
+  };
 
   
 
