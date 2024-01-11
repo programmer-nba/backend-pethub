@@ -53,4 +53,7 @@ router.get("/DetailsProductManager/:id",authManager,manager.DetailsProductManage
 router.get("/DetailsProductManager",authManager,manager.ProducShalltReturnManager)
 router.put("/confirmProductReturnManager/:id",authManager,manager.confirmProductReturnManager)
 
+//สมัครสมาชิก
+router.post("/createMember",authManager,manager.createMember)
+
 module.exports = router; 
