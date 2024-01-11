@@ -1115,6 +1115,109 @@ exports.fildManagerOne = async (req, res) => {
       });
     }
   };
+  exports.UpdateProductAmountManager = async (req,res) =>{
+    try {
+      const ordernumbershell = req.params.id // เปลี่ยน id เป็น ordernumber
+      const productCount = await PreOrderProductShell.findOne({ "ordernumbershell": ordernumbershell });
+      if (!productCount) {
+        return res.status(400).send({ message: "กรุณากรอก ordernumber ก่อน", status: false });
+      }
+      const productDetails = req.body.product_detail;
+      console.log("จำนวนสินค้าที่ต้องการอัพเดดใหม่:", productDetails);
+      const productIds = productDetails.map(product => product.product_id);
+  
+      for (let product of productDetails) {
+        const result = await PreOrderProductShell.updateMany(
+          { "ordernumbershell": ordernumbershell, "product_detail.product_id": product.product_id },
+          { $set: { "product_detail.$.product_amount": product.product_amount } }
+        );
+        if (result.nModified === 0) {
+          return res.status(404).send({
+            message: "ไม่พบข้อมูลสินค้าที่ต้องการแก้ไขหรือข้อมูลสินค้านั้นอาจจะไม่ถูกอัปเดต",
+            status: false
+          });
+        }
+      }
+      return res.status(200).send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
+    } catch (err) {
+      console.error(err);
+      ret
+  }
+  
+  }
+  exports.ManagerProductReturn = async (req, res) => {
+    try {
+      const ordernumbershell = req.params.id;
+      const productDetailsToRemove = req.body.product_detail;
+      // ตรวจสอบว่ามีรายละเอียดสินค้าที่ต้องการลบหรือไม่
+      if (!productDetailsToRemove || !productDetailsToRemove.length) {
+        return res.status(400).send({
+          message: "กรุณาระบุรายละเอียดสินค้าที่ต้องการส่งคืน",
+          status: false,
+        });
+      }
+      const preorder = await PreOrderProductShell.findOne({ ordernumbershell: ordernumbershell });
+      if (!preorder) {
+        return res.status(500).send({
+          message: "ไม่พบข้อมูลสินค้าจากการส่งกลับ",
+          status: false,
+        });
+      }
+      const productdetail =  preorder.product_detail
+      const findreturn = productdetail.filter((item)=> item.product_id == req.body.product_detail[0].product_id)
+      console.log(findreturn[0].product_name)
+      //บันทึกข้อมูลส่งสินค้ากลับ
+      const returnProductInfo = new ReturnProductShall({
+        product_id: findreturn[0].product_id, 
+        product_name: findreturn[0].product_name,
+        product_amount: req.body.product_detail[0].product_amount, 
+        product_logo: findreturn[0].product_logo,
+        barcode:findreturn[0].barcode
+      });
+      const add = await returnProductInfo.save(); 
+      // //ลบจำนวนที่หาย
+      const dataedit ={
+        product_id: findreturn[0].product_id, 
+        product_name: findreturn[0].product_name,
+        product_amount: findreturn[0].product_amount -req.body.product_detail[0].product_amount, 
+        product_logo: findreturn[0].product_logo,
+        barcode:findreturn[0].barcode
+      }
+      const filerpreorder = preorder.product_detail.filter((item)=> item.product_id != req.body.product_detail[0].product_id)
+      if(findreturn[0].product_amount -req.body.product_detail[0].product_amount>0)
+      {
+        filerpreorder.push(dataedit)
+      }
+      await PreOrderProductShell.updateOne(
+        { ordernumbershell: ordernumbershell },
+        { product_detail: filerpreorder}
+      );
+      return res.status(200).send({
+        status: true,
+        message: "ลบสินค้าสำเร็จ",
+        data:filerpreorder
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({
+        message: error.message,
+        status: false,
+      });
+    }
+  };
+  exports.getStockShallByManager = async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      const mystock = await ProductShall.find({shop_id:id}); // เอาใส่ไว้ใน() findOne
+  
+      return res.send(mystock);
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  
+
 
   
 

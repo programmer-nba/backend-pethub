@@ -48,6 +48,9 @@ router.put("/PreorderCancelManager/:id",authManager,manager.PreorderCancelManage
 //เพิ่มสินค้าเข้าคลังโดย manager
 router.post("/InsertManagerShall/:id",authManager,manager.PreorderManagerShall)
 router.get("/DetailsProductManager/:id",authManager,manager.DetailsProductManager)
+router.put("/UpdateProductAmountManager/:id",authManager,manager.UpdateProductAmountManager)
+router.post("/ManagerProductReturn/:id",authManager,manager.ManagerProductReturn)
+router.get("/getStockShallByManager/:id",authManager,manager.getStockShallByManager)
 
 //อนุมัติส่งคืนสินค้าจาก user cashier
 router.get("/DetailsProductManager",authManager,manager.ProducShalltReturnManager)
