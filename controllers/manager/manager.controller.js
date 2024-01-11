@@ -10,6 +10,7 @@ const {ProductShops,validateProduct} = require("../../models/product/product.sho
 const {ReturnProduct} = require("../../models/product/return.product.model.js")
 const {ProductShall,validateProductShall} =require("../../models/product/product.shall.model.js")
 const {PackProducts} = require("../../models/product/productpack.model.js")
+const {ReturnProductShall} = require("../../models/product/return.product.shell.model.js")
 const dayjs = require("dayjs");
 
 
@@ -920,6 +921,48 @@ exports.fildManagerOne = async (req, res) => {
       });
     }
   };
+  exports.ProducShalltReturnManager = async (req, res) => {
+    try {
+      const employee = await ReturnProductShall.find();
+      if (employee) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการส่งคืนสินค้าสำเร็จ",
+          data: employee,
+        });
+      } else {
+        return res.status(404).send({message: "ไม่พบรายการส่งคืนสินค้า", status: false});
+      }
+    } catch (err) {
+      res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+  exports.confirmProductReturnManager = async (req,res) =>{
+    try {
+      const id = req.params.id;
+      const updateStatus = await ReturnProductShall.findOne({_id: id});
+      console.log(updateStatus);
+      if (updateStatus) {
+        updateStatus.status.push({
+          name: "ยืนยันการส่งสินค้าคืน",
+          timestamps: dayjs(Date.now()).format(""),
+        });
+        updateStatus.save();
+        return res.status(200).send({
+          status: true,
+          message: "ส่งสืนค้าคืนสำเร็จ",
+          data: updateStatus,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: error.message, status: false});
+    }
+  }
 
 
 

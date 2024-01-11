@@ -49,4 +49,8 @@ router.put("/PreorderCancelManager/:id",authManager,manager.PreorderCancelManage
 router.post("/InsertManagerShall/:id",authManager,manager.PreorderManagerShall)
 router.get("/DetailsProductManager/:id",authManager,manager.DetailsProductManager)
 
+//อนุมัติส่งคืนสินค้าจาก user cashier
+router.get("/DetailsProductManager",authManager,manager.ProducShalltReturnManager)
+router.put("/confirmProductReturnManager/:id",authManager,manager.confirmProductReturnManager)
+
 module.exports = router; 
