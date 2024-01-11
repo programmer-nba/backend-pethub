@@ -152,6 +152,7 @@ exports.calcelProduct = async (req, res) => {
 };
 
 exports.preorder = async (req, res) => {
+  console.log(req.body);
   try {
     const status = {
       name: "รอตรวจสอบ",
@@ -161,20 +162,29 @@ exports.preorder = async (req, res) => {
     let grandTotal = 0;
     let normalTotal = 0;
     let totalDiscount = 0;
-
     const product_detail = req.body.product_detail;
-
     for (let item of product_detail) {
+      const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
+      if (!product) {
+        return res.status(400).send({
+          message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
+          status: false,
+        });
+      }
       const result = await calculateProductPrice(item);
-      order.push(result);
+      order.push({
+        ...result,
+        product_id: product.name || "ไม่พบชื่อสินค้า",
+      });
       normalTotal += result.normaltotal;
       totalDiscount += result.discountAmountPerItem;
       grandTotal += result.total;
       await ProductShall.updateOne(
-        { _id: item.productId },
+        { _id: item.product_id },
         { $inc: { product_amount: -item.ProductAmount } }
       );
     }
+
     const customer_total = normalTotal;
     const invoiceshoppingnumber = await invoiceShoppingNumber();
 
@@ -182,8 +192,8 @@ exports.preorder = async (req, res) => {
 
     const order_product = await new preorder_shopping({
       ...req.body,
-      invoiceShoppingNumber:invoiceshoppingnumber,
-      customer_shop_id:shop ? shop.shop_name : "ไม่พบชื่อร้าน",
+      invoiceShoppingNumber: invoiceshoppingnumber,
+      customer_shop_id: shop ? shop.shop_name : "ไม่พบชื่อร้าน",
       customer_detail: order,
       total: customer_total,
       discount: totalDiscount,
@@ -212,6 +222,7 @@ exports.preorder = async (req, res) => {
     });
   }
 };
+
 
 
 exports.ShowReceiptById = async (req, res) => {
