@@ -55,5 +55,6 @@ router.put("/confirmProductReturnManager/:id",authManager,manager.confirmProduct
 
 //สมัครสมาชิก
 router.post("/createMember",authManager,manager.createMember)
+router.get("/ManagerfindOneMember/:id",authManager,manager.ManagerfindOneMember)
 
 module.exports = router; 

@@ -12,6 +12,7 @@ const {ProductShall,validateProductShall} =require("../../models/product/product
 const {PackProducts} = require("../../models/product/productpack.model.js")
 const {ReturnProductShall} = require("../../models/product/return.product.shell.model.js")
 const {Member,validatemember} = require("../../models/user/member.model.js")
+const {typeMember} =require("../../models/user/type.model.js")
 const dayjs = require("dayjs");
 
 
@@ -1007,6 +1008,32 @@ exports.fildManagerOne = async (req, res) => {
       res.status(500).send({ message: error.message, status: false });
     }
   };
+  exports.ManagerfindOneMember = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const member = await Member.findOne({ member_phone: id });
+      console.log(member)
+      if (member) {
+  
+        const type = await typeMember.findById(member.member_type);
+  
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลลูกค้าสำเร็จ",
+          data: member,
+        });
+      } else {
+        return res.status(404).send({ message: "ไม่พบข้อมูลลูกค้า", status: false });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  };
+  
 
 
 
