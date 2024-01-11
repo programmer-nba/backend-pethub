@@ -5,7 +5,8 @@ const PreOrderSchema = new mongoose.Schema({
   shop_id: {type: String, required: true},
   invoice : {type: String, required: false,},
   ordernumber : {type :String, required:true},
-  employee_name: {type: String, required: true},
+  employee_name: {type: String, required: false},
+  manager_name: {type: String, required: false},
   product_detail: {
     type: [
       {
