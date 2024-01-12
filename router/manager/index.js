@@ -45,6 +45,7 @@ router.get("/getCategoryAllManager",authManager,manager.getCategoryAllManager)
 router.post("/preorderProductShallManager",authManager,manager.preorderProductShallManager)
 router.get("/getPreorderStoreAllManager/:id",authManager,manager.getPreorderStoreAllManager)
 router.put("/PreorderCancelManager/:id",authManager,manager.PreorderCancelManager)
+router.get("/getProducttockManager/:id",authManager,manager.getProductstockManager)
 
 //เพิ่มสินค้าเข้าคลังโดย manager
 router.post("/InsertManagerShall/:id",authManager,manager.PreorderManagerShall)
@@ -57,6 +58,7 @@ router.get("/getStockShallByManager/:id",authManager,manager.getStockShallByMana
 router.get("/DetailsProductManager",authManager,manager.ProducShalltReturnManager)
 router.put("/confirmProductReturnManager/:id",authManager,manager.confirmProductReturnManager)
 router.put("/cancelReturnPrdMabager/:id",authManager,manager.cancelReturnPrdMabager)
+router.get("/CategoryAllManager",authManager,manager.CategoryAllManager)
 
 //สมัครสมาชิก
 router.post("/createMember",authManager,manager.createMember)
@@ -64,5 +66,12 @@ router.get("/ManagerfindOneMember/:id",authManager,manager.ManagerfindOneMember)
 router.get("/findTypememberManager",authManager,manager.findTypememberManager)
 router.put("/ManagerupdateMember/:id",authManager,manager.ManagerupdateMember)
 router.delete("/ManagerdeleteMember/:member_phone",authManager,manager.ManagerdeleteMember)
+
+//ชื้อสินค้า
+router.get("/Shoppng/findProductManager",authManager,manager.findProductManager)
+router.get("/getByBarcodeManager/:shop_id/:barcode",authManager,manager.getByBarcodeManager)
+router.post("/preorderShopManager",authManager,manager.preorderShopManager)
+router.get("/ShowReceiptAllManager",authManager,manager.ShowReceiptAllManager)
+
 
 module.exports = router; 

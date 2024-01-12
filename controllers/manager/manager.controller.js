@@ -13,6 +13,9 @@ const {PackProducts} = require("../../models/product/productpack.model.js")
 const {ReturnProductShall} = require("../../models/product/return.product.shell.model.js")
 const {Member,validatemember} = require("../../models/user/member.model.js")
 const {typeMember} =require("../../models/user/type.model.js")
+const {Promotion} = require("../../models/promotion/promotion.model.js")
+const {preorder_shopping} = require("../../models/ิbuy_product/buyproduct.model.js")
+const {Shops,validateShop} =require("../../models/shop/shop.model.js")
 const dayjs = require("dayjs");
 
 
@@ -743,6 +746,17 @@ exports.fildManagerOne = async (req, res) => {
        });
      }
   };
+  exports.getProductstockManager = async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      const mystock = await ProductShops.find({ shop_id: id }); //{shop_id:id} เอาใส่ไว้ใน() findOne
+  
+      return res.send(mystock);
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
   exports.getPreorderStoreAllManager = async (req, res) => {
     try {
       const shop_id = req.params.id; 
@@ -1268,16 +1282,233 @@ exports.fildManagerOne = async (req, res) => {
       return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
+  exports.CategoryAllManager = async (req, res) => {
+    try {
+      const category = await Categorys.find();
+      if (category) {
+        return res
+          .status(200)
+          .send({message: "ดึงประเภทสินค้าสำเร็จ", status: true, data: category});
+      } else {
+        return res
+          .status(500)
+          .send({message: "ดึงประเภทสินค้าไม่สำเร็จ", status: false});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  exports.findProductManager = async (req, res) => {
+    try {
+      const shop = await ProductShall.find();
+      if (!shop) {
+        return res
+          .status(404)
+          .send({status: false, message: "ไม่พบข้อมูลช็อปในระบบ"});
+      } else {
+        return res
+          .status(200)
+          .send({status: true, message: "ดึงข้อมูลสำเร็จ", data: shop});
+      }
+    } catch (err) {
+      return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    }
+  };
+  exports.getByBarcodeManager = async (req,res)=>{
+    try {
+      const shop_id = req.params.shop_id;
+      const barcode = req.params.barcode;
+      const product = await ProductShall.find({
+        shop_id: shop_id,
+        barcode: barcode,
+      });
+      if (product) {
+        return res.status(200).send({status: true, data: product});
+      } else {
+        return res
+          .status(400)
+          .send({status: false, message: "ดึงข้อมูลไม่สำเร็จ"});
+      }
+    } catch (err) {
+      res.status(500).send({message: "มีบางอย่างผิดพลาด"});
+    }
+  }
+  exports.preorderShopManager = async (req, res) => {
+    console.log(req.body);
+    try {
+      const status = {
+        name: "รอตรวจสอบ",
+        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      };
+      let order = [];
+      let grandTotal = 0;
+      let normalTotal = 0;
+      let totalDiscount = 0;
+      const product_detail = req.body.product_detail;
+      for (let item of product_detail) {
+        const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
+        if (!product) {
+          return res.status(400).send({
+            message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
+            status: false,
+          });
+        }
+        const result = await calculateProductPrice(item);
+        order.push({
+          ...result,
+          product_id: product.name || "ไม่พบชื่อสินค้า",
+        });
+        normalTotal += result.normaltotal;
+        totalDiscount += result.discountAmountPerItem;
+        grandTotal += result.total;
+        await ProductShall.updateOne(
+          { _id: item.product_id },
+          { $inc: { product_amount: -item.ProductAmount } }
+        );
+      }
+  
+      const customer_total = normalTotal;
+      const invoiceshoppingnumber = await invoiceShoppingNumber();
+  
+      const shop = await Shops.findOne({ _id: req.body.shop_id });
+  
+      const order_product = await new preorder_shopping({
+        ...req.body,
+        invoiceShoppingNumber: invoiceshoppingnumber,
+        customer_shop_id: shop ? shop.shop_name : "ไม่พบชื่อร้าน",
+        customer_detail: order,
+        total: customer_total,
+        discount: totalDiscount,
+        net: grandTotal,
+        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      }).save();
+  
+      if (order_product) {
+        return res.status(200).send({
+          status: true,
+          message: "สั่งซื้อสินค้าทำเสร็จ",
+          data: order_product,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด222",
+        status: false,
+        error: error.message,
+      });
+    }
+  };
+  exports.ShowReceiptAllManager = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const preorder_list = await preorder_shopping.find();
+      if (preorder_list) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+          data: preorder_list,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+
   
 
 
-  
-
-
 
 
   
-
+  const calculateProductPrice = async (item) => {
+    let total = 0;
+    let discount = 0;
+    let discountdetail = "";
+    let normaltotal = 0;
+    const product = await ProductShall.findOne({ product_id: item.product_id });
+  
+    if (product.ProductAmount < item.product_amount) {
+      console.log("จำนวนสินค้าไม่เพียงพอ");
+    } else {
+      // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
+      if (product.promotion !== "") {
+        const normalPrice = calculateNormalPrice(product.retailprice.level1, item.product_amount); // คำนวณราคาปกติ
+        // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
+        const promotion = await Promotion.findOne({ _id: product.promotion });
+        const price =
+          promotion && promotion.discountPercentage
+            ? calculateDiscountedPrice(product.retailprice.level1, promotion.discountPercentage, item.product_amount)
+            : product.retailprice.level1 * item.product_amount;
+        normaltotal = normalPrice;
+        total += price;
+        discount = promotion.name;
+        discountdetail = promotion.description;
+        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+        product.ProductAmount -= item.product_amount;
+        await product.save();
+      } else {
+        console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
+        // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
+        const price = product.retailprice.level1 * item.product_amount;
+        normaltotal = price;
+        total += price;
+        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+        product.ProductAmount -= item.product_amount;
+        await product.save();
+      }
+    }
+    const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
+    return {
+      product_id: product.product_id,
+      amount: item.product_amount,
+      normaltotal,
+      discountAmountPerItem,
+      total,
+      discount,
+      discountdetail,
+    };
+  };
+  // ฟังก์ชันคำนวณราคาปกติ
+  const calculateNormalPrice = (retailprice, quantity) => {
+    return retailprice * quantity;
+  };
+  // ฟังก์ชันคำนวณราคาที่ลดหลังจากส่วนลด
+  const calculateDiscountedPrice = (retailprice, discountPercentage, quantity) => {
+    return (retailprice - (retailprice * discountPercentage) / 100) * quantity;
+  };
+  async function invoiceShoppingNumber(date) {
+    const order = await preorder_shopping.find();
+    let invoice_sheopping = null;
+    if (order.length !== 0) {
+      let data = "";
+      let num = 0;
+      let check = null;
+      do {
+        num = num + 1;
+        data = `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+        check = await preorder_shopping.find({invoice: data});
+        if (check.length === 0) {
+          invoice_sheopping =
+            `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+        }
+      } while (check.length !== 0);
+    } else {
+      invoice_sheopping =
+        `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+    }
+    return invoice_sheopping;
+  }
 
   async function invoiceNumber(date) {
     const order = await PreOrderProducts.find();
