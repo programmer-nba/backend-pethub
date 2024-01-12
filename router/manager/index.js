@@ -56,6 +56,7 @@ router.get("/getStockShallByManager/:id",authManager,manager.getStockShallByMana
 //อนุมัติส่งคืนสินค้าจาก user cashier
 router.get("/DetailsProductManager",authManager,manager.ProducShalltReturnManager)
 router.put("/confirmProductReturnManager/:id",authManager,manager.confirmProductReturnManager)
+router.put("/cancelReturnPrdMabager/:id",authManager,manager.cancelReturnPrdMabager)
 
 //สมัครสมาชิก
 router.post("/createMember",authManager,manager.createMember)
