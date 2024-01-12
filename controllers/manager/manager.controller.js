@@ -1405,7 +1405,7 @@ exports.fildManagerOne = async (req, res) => {
     }
   };
   exports.preorderShopManagerGetPhone = async (req, res) => {
-    console.log(req.body);
+    console.log(".......test.......",req.body);
     try {
       const status = {
         name: "รอตรวจสอบ",
