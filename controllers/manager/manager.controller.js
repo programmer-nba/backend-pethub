@@ -1416,8 +1416,11 @@ exports.fildManagerOne = async (req, res) => {
       let totalDiscount = 0;
       const product_detail = req.body.product_detail;
       const customer_phone = req.body.customer_phone
-      const memberphone = await Member.findOne({ _id: customer_phone });
-      console.log("................test.........",memberphone)
+      console.log("Customer Phone from req.body:", req.body.customer_phone);
+      const memberphone = await Member.findOne({ member_phone: customer_phone });
+      console.log(memberphone)
+      const memberType = memberphone.member_type;
+      console.log(memberType)
       for (let item of product_detail) {
         const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
         if (!product) {
