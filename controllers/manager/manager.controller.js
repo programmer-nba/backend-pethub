@@ -1424,6 +1424,27 @@ exports.fildManagerOne = async (req, res) => {
       return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
+  exports.ShowReceiptAllManagerById = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const preorder_list = await preorder_shopping.findById(id);
+      if (preorder_list) {
+        return res.status(200).send({
+          status: true,
+          message: "ดึงข้อมูลรายการสั่งซื้อสำเร็จ",
+          data: preorder_list,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    }
+  };
+
 
   
 

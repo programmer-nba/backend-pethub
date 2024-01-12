@@ -72,6 +72,7 @@ router.get("/Shoppng/findProductManager",authManager,manager.findProductManager)
 router.get("/getByBarcodeManager/:shop_id/:barcode",authManager,manager.getByBarcodeManager)
 router.post("/preorderShopManager",authManager,manager.preorderShopManager)
 router.get("/ShowReceiptAllManager",authManager,manager.ShowReceiptAllManager)
+router.get("/ShowReceiptAllManager/:id",authManager,manager.ShowReceiptAllManagerById)
 
 
 module.exports = router; 
