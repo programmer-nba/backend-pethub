@@ -70,7 +70,8 @@ router.delete("/ManagerdeleteMember/:member_phone",authManager,manager.Managerde
 //ชื้อสินค้า
 router.get("/Shoppng/findProductManager",authManager,manager.findProductManager)
 router.get("/getByBarcodeManager/:shop_id/:barcode",authManager,manager.getByBarcodeManager)
-router.post("/preorderShopManager",authManager,manager.preorderShopManager)
+router.post("/preorderShopManager",authManager,manager.preorderShopManager)//ชื้อแบบไม่มีสมาชิก
+router.post("/preorderShopManager/GetPhone",authManager,manager.preorderShopManagerGetPhone)//ชื้อแบบมีสมาชิก
 router.get("/ShowReceiptAllManager",authManager,manager.ShowReceiptAllManager)
 router.get("/ShowReceiptAllManager/:id",authManager,manager.ShowReceiptAllManagerById)
 

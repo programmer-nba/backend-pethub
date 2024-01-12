@@ -1404,6 +1404,78 @@ exports.fildManagerOne = async (req, res) => {
       });
     }
   };
+  exports.preorderShopManagerGetPhone = async (req, res) => {
+    console.log(req.body);
+    try {
+      const status = {
+        name: "รอตรวจสอบ",
+        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      };
+      let order = [];
+      let grandTotal = 0;
+      let normalTotal = 0;
+      let totalDiscount = 0;
+      const { customer_phone, product_detail, shop_id } = req.body;
+      for (let item of product_detail) {
+        const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
+        if (!product) {
+          return res.status(400).send({
+            message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
+            status: false,
+          });
+        }
+        const result = await calculateProductPrice(item);
+        order.push({
+          ...result,
+          product_id: product.name || "ไม่พบชื่อสินค้า",
+        });
+        normalTotal += result.normaltotal;
+        totalDiscount += result.discountAmountPerItem;
+        grandTotal += result.total;
+        await ProductShall.updateOne(
+          { _id: item.product_id },
+          { $inc: { product_amount: -item.ProductAmount } }
+        );
+      }
+  
+      const customer_total = normalTotal;
+      const invoiceshoppingnumber = await invoiceShoppingNumber();
+  
+      const shop = await Shops.findOne({ _id: req.body.shop_id });
+  
+      const order_product = await new preorder_shopping({
+        ...req.body,
+        invoiceShoppingNumber: invoiceshoppingnumber,
+        customer_shop_id: shop ? shop.shop_name : "ไม่พบชื่อร้าน",
+        customer_detail: order,
+        total: customer_total,
+        discount: totalDiscount,
+        net: grandTotal,
+        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      }).save();
+  
+      if (order_product) {
+        return res.status(200).send({
+          status: true,
+          message: "สั่งซื้อสินค้าทำเสร็จ",
+          data: order_product,
+        });
+      } else {
+        return res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด222",
+        status: false,
+        error: error.message,
+      });
+    }
+  };
+  
   exports.ShowReceiptAllManager = async (req, res) => {
     try {
       const id = req.params.id;
