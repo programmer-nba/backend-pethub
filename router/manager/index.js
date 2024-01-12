@@ -34,6 +34,7 @@ router.put("/ShippingManager/:id",authManager,manager.ShippingManager)
 //ส่งคืนสินค้า
 router.get("/fildAllProductReturnManager",authManager,manager.fildAllProductReturnManager)
 router.get("/fildOneProductReturnManager/:id",authManager,manager.fildOneProductReturnManager)
+router.put("/ProductReturnManagerApprove/:id",authManager,manager.ProductReturnManagerApprove)
 
 //ดูสินค้าจาก shop
 router.get("/DetailsStockManager/:id",authManager,manager.DetailsStockManager)
