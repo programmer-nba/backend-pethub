@@ -326,7 +326,8 @@ exports.ProductReturn = async (req, res) => {
       product_name: findreturn[0].product_name,
       product_amount: req.body.product_detail[0].product_amount, 
       product_logo: findreturn[0].product_logo,
-      barcode:findreturn[0].barcode
+      barcode:findreturn[0].barcode,
+      timestamps:findreturn[0].timestamps
     });
     const add = await returnProductInfo.save(); 
     // //ลบจำนวนที่หาย
@@ -335,7 +336,8 @@ exports.ProductReturn = async (req, res) => {
       product_name: findreturn[0].product_name,
       product_amount: findreturn[0].product_amount -req.body.product_detail[0].product_amount, 
       product_logo: findreturn[0].product_logo,
-      barcode:findreturn[0].barcode
+      barcode:findreturn[0].barcode,
+      timestamps:findreturn[0].timestamps
     }
     const filerpreorder = preorder.product_detail.filter((item)=> item.product_id != req.body.product_detail[0].product_id)
     if(findreturn[0].product_amount -req.body.product_detail[0].product_amount>0)
