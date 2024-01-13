@@ -1420,7 +1420,9 @@ exports.fildManagerOne = async (req, res) => {
       const memberphone = await Member.findOne({ member_phone: customer_phone });
       console.log(memberphone)
       const memberType = memberphone.member_type;
-      console.log(memberType)
+      const typemember = await typeMember.findById(memberType)
+      console.log("พี่กี้........",typemember.typeMember)
+      const level = typemember.typeMember
       for (let item of product_detail) {
         const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
         if (!product) {
@@ -1429,7 +1431,7 @@ exports.fildManagerOne = async (req, res) => {
             status: false,
           });
         }
-        const result = await calculateProductPrice(item);
+        const result = await calculateProductPrice(item,level);
         order.push({
           ...result,
           product_id: product.name || "ไม่พบชื่อสินค้า",
@@ -1529,25 +1531,24 @@ exports.fildManagerOne = async (req, res) => {
 
 
   
-  const calculateProductPrice = async (item) => {
+  const calculateProductPrice = async (item,level) => {
     let total = 0;
     let discount = 0;
     let discountdetail = "";
     let normaltotal = 0;
     const product = await ProductShall.findOne({ product_id: item.product_id });
-  
     if (product.ProductAmount < item.product_amount) {
       console.log("จำนวนสินค้าไม่เพียงพอ");
     } else {
       // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
       if (product.promotion !== "") {
-        const normalPrice = calculateNormalPrice(product.retailprice.level1, item.product_amount); // คำนวณราคาปกติ
+        const normalPrice = calculateNormalPrice(product.retailprice[`${level}`], item.product_amount); // คำนวณราคาปกติ
         // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
         const promotion = await Promotion.findOne({ _id: product.promotion });
         const price =
           promotion && promotion.discountPercentage
-            ? calculateDiscountedPrice(product.retailprice.level1, promotion.discountPercentage, item.product_amount)
-            : product.retailprice.level1 * item.product_amount;
+            ? calculateDiscountedPrice(product.retailprice[`${level}`], promotion.discountPercentage, item.product_amount)
+            : product.retailprice[`${level}`] * item.product_amount;
         normaltotal = normalPrice;
         total += price;
         discount = promotion.name;
@@ -1558,7 +1559,7 @@ exports.fildManagerOne = async (req, res) => {
       } else {
         console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
         // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
-        const price = product.retailprice.level1 * item.product_amount;
+        const price = product.retailprice[`${level}`] * item.product_amount;
         normaltotal = price;
         total += price;
         // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
