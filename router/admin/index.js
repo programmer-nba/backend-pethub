@@ -24,4 +24,8 @@ router.get("/ProductReturnfindOne/admin/:id",authAdmin,admins.fildOneProductRetu
 router.get("/ProductReturnShall/admin",authAdmin , admins.fildAllProductReturnShallAdmin)
 router.get("/ProductReturnShallfindOne/admin/:id",authAdmin,admins.fildOneProductReturnShallAdmin)
 
+//กำหนดลำดับให้พนัก
+router.post()
+
+
 module.exports = router; 
