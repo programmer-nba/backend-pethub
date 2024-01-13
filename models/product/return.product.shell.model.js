@@ -10,6 +10,7 @@ const returnproductshall = new mongoose.Schema( {
         barcode: {type: String, required: false},
         price_cost: {type: Number, required: false}, //ราคาต้นทุน //บาร์โค๊ดสินค้
         status: {type: Array, required: false},
+        timestamps: {type: Date, required: false, default: Date.now()},
 });
   const ReturnProductShall = mongoose.model("ReturnProductShall",returnproductshall);
   module.exports={ReturnProductShall};
