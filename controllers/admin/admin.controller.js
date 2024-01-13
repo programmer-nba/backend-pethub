@@ -8,6 +8,7 @@ const {Products} = require("../../models/product/product.model")
 const {ReturnProduct} = require("../../models/product/return.product.model")
 const {ReturnProductShall} = require("../../models/product/return.product.shell.model")
 const {ProductShall} = require("../../models/product/product.shall.model")
+const {lavels,validatelavels} = require("../../models/product/level.model")
 
 exports.create = async (req, res) => {
   try {
@@ -176,8 +177,6 @@ exports.getMemberByAll = async (req, res) => {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 };
-
-
 exports.DeletPackAndOne = async (req,res) =>{
   try {
     const id = req.params.id;
@@ -326,3 +325,90 @@ exports.fildProductShell = async(req,res)=>{
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 }
+exports.createLevel = async (req, res) => {
+  try {
+    const {error} = validatelavels(req.body);
+    if (error) {
+      return res
+        .status(400)
+        .send({status: false, message: error.details[0].message});
+    }
+    const data =   await new lavels({
+      name: req.body.name,
+    }).save();
+    res.status(200).send({message: "เพิ่มระดับของพนักงานสำเร็จ", status: true , data:data});
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+exports.getLevelByAll = async (req, res) => {
+  try {
+    const level = await lavels.find();
+    if (level) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลละดับผู้ใช้งานสำเร็จ",
+        data: level,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลระดับผู้ใช้งาน", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+exports.getLevelByID = async (req, res) => {
+  console.log("test")
+  try {
+    const id = req.params.id
+    const level = await lavels.findById(id);
+    if (level) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลละดับผู้ใช้งานสำเร็จ",
+        data: level,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลระดับผู้ใช้งาน", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+};
+exports.deleteLevel = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const level = await lavels.findByIdAndDelete(id);
+    if (!level) {
+      return res
+        .status(404)
+        .send({status: false, message: "ไม่พบระดับของผู้ใช้ในระบบ"});
+    } else {
+      return res.status(200).send({status: true, message: "ลบข้อผู้ระดับของผู้ใช้งานสำเร็จ"});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};
+exports.updateLevelById = async (req, res) => {
+  try {
+    // const {error} = validateproduct(req.body);
+    // if (error) {
+    //   return res
+    //     .status(400)
+    //     .send({status: false, message: error.details[0].message});
+    // }
+    const level = await lavels.findByIdAndUpdate(req.params.id, req.body);
+    if (level) {
+      return res
+        .status(200)
+        .send({message: "แก้ไขข้อมูลระดับของผู้ใช้สำเร็จ", status: true});
+    } else {
+      return res
+        .status(500)
+        .send({message: "แก้ไขข้อมูลระดับของผู้ใช้ไม่สำเร็จ", status: false});
+    }
+  } catch (err) {
+    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+  }
+};

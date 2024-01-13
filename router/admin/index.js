@@ -25,7 +25,10 @@ router.get("/ProductReturnShall/admin",authAdmin , admins.fildAllProductReturnSh
 router.get("/ProductReturnShallfindOne/admin/:id",authAdmin,admins.fildOneProductReturnShallAdmin)
 
 //กำหนดลำดับให้พนัก
-router.post()
-
+router.post("/createLevel",authAdmin,admins.createLevel)
+router.get("/getLevelAll/by",authAdmin,admins.getLevelByAll)
+router.get("/getLevelByID/:id",authAdmin,admins.getLevelByID)
+router.delete("/deleteLevel/:id",authAdmin,admins.deleteLevel)
+router.put("/updateLevelBy/:id",authAdmin,admins.updateLevelById)
 
 module.exports = router; 
