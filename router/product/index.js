@@ -23,5 +23,4 @@ router.delete("/:id",authAdmin, product.deleteProduct);
 
 
 
-
 module.exports = router; 
