@@ -50,15 +50,26 @@ exports.ReportPriceCost  = async (req,res) =>{
             }
           });
         });
+    
         // สร้าง Object จาก Map โดยให้ product_costs เป็น Array ของ Object
         const product_costs = Array.from(productCostMap, ([product_id, totalCost]) => ({ product_id, totalCost }));
-        console.log(product_costs)
-        const reportPriceCost = new PciceCost({
-            product_costs: product_costs
-          });
-      
-          await reportPriceCost.save();
+        console.log(product_costs);
     
+        // บันทึกข้อมูลลงใน PciceCost
+        for (const product of product_costs) {
+          const existingProduct = await PciceCost.findOne({ product_id: product.product_id });
+          if (existingProduct) {
+            // ถ้าพบ product_id ใน PciceCost ให้เพิ่มค่า totalCost เข้าไป
+            await PciceCost.updateOne({ product_id: product.product_id }, { $inc: { totalCost: product.totalCost } });
+          } else {
+            // ถ้าไม่พบ product_id ใน PciceCost ให้สร้างข้อมูลใหม่
+            const newProductCost = new PciceCost({
+              product_id: product.product_id,
+              totalCost: product.totalCost,
+            });
+            await newProductCost.save();
+          }
+        }
         return res.status(200).send({
           message: "ดึงข้อมูลรายการสั่งชื้อสินค้าสำเร็จ",
           status: true,

@@ -1421,24 +1421,12 @@ exports.fildManagerOne = async (req, res) => {
       const product_detail = req.body.product_detail;
       const customer_phone = req.body.customer_phone
       const memberphone = await Member.findOne({ member_phone: customer_phone });
-      console.log("1111111111111111111",memberphone)
       const memberType =(memberphone)? memberphone.member_type : null;
-      console.log("22222222222222222222",memberType)
       const typemember =(memberType) ? await typeMember.findById(memberType) : null
       const level =(memberType && typemember ) ? typemember.typeMember : 'level1';
       for (let item of product_detail) {
-        const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
-        if (!product) {
-          return res.status(400).send({
-            message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
-            status: false,
-          });
-        }
         const result = await calculateProductPrice(item,level);
-        order.push({
-          ...result,
-          product_id: product.name || "ไม่พบชื่อสินค้า",
-        });
+        order.push(result);
         normalTotal += result.normaltotal;
         totalDiscount += result.discountAmountPerItem;
         grandTotal += result.total;
