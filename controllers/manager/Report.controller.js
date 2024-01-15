@@ -32,61 +32,39 @@ exports.GetPreOrderShopping  = async (req,res) =>{
     return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
   }
 };
-exports.ReportPriceCost  = async (req,res) =>{
-    console.log("test...")
+exports.ReportPriceCost = async (req, res) => {
     try {
-        const orders = await preorder_shopping.find();
-        let productCostMap = new Map();
-    
-        orders.forEach(order => {
-          order.customer_detail.forEach(product => {
-            const productId = product.product_id;
-            const productCost = product.price_cost * product.amount;
-    
-            if (productCostMap.has(productId)) {
-              productCostMap.set(productId, productCostMap.get(productId) + productCost);
-            } else {
-              productCostMap.set(productId, productCost);
-            }
-          });
+        const preorders = await preorder_shopping.find();
+        console.log(preorders);
+
+        // สร้าง array เพื่อเก็บข้อมูลจาก customer_detail
+        const customerDetails = [];
+        preorders.forEach(order => {
+            customerDetails.push(order.customer_detail);
         });
-    
-        // สร้าง Object จาก Map โดยให้ product_costs เป็น Array ของ Object
-        const product_costs = Array.from(productCostMap, ([product_id, totalCost]) => ({ product_id, totalCost }));
-        console.log(product_costs);
-    
-        // บันทึกข้อมูลลงใน PciceCost
-        for (const product of product_costs) {
-          const existingProduct = await PciceCost.findOne({ product_id: product.product_id });
-          if (existingProduct) {
-            // ถ้าพบ product_id ใน PciceCost ให้เพิ่มค่า totalCost เข้าไป
-            await PciceCost.updateOne({ product_id: product.product_id }, { $inc: { totalCost: product.totalCost } });
-          } else {
-            // ถ้าไม่พบ product_id ใน PciceCost ให้สร้างข้อมูลใหม่
-            const newProductCost = new PciceCost({
-              product_id: product.product_id,
-              totalCost: product.totalCost,
-            });
-            await newProductCost.save();
-          }
-        }
+
         return res.status(200).send({
-          message: "ดึงข้อมูลรายการสั่งชื้อสินค้าสำเร็จ",
-          status: true,
-          data: {
-            product_costs: product_costs,
-          },
+            status: true,
+            message: "รายงานราคาทุนสำเร็จ",
+            data: customerDetails,
         });
-    
-      } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.log(error);
         return res.status(500).send({
-          status: false,
-          message: "มีบางอย่างผิดพลาด",
-          error: err.message,
+            message: "มีบางอย่างผิดพลาด",
+            status: false,
+            error: error.message,
         });
-      }
+    }
 };
+
+
+
+
+
+
+
+
 
 
 
