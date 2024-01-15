@@ -1337,77 +1337,77 @@ exports.fildManagerOne = async (req, res) => {
       res.status(500).send({message: "มีบางอย่างผิดพลาด"});
     }
   }
-  exports.preorderShopManager = async (req, res) => {
-    console.log(req.body);
-    try {
-      const status = {
-        name: "รอตรวจสอบ",
-        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      };
-      let order = [];
-      let grandTotal = 0;
-      let normalTotal = 0;
-      let totalDiscount = 0;
-      const product_detail = req.body.product_detail;
-      for (let item of product_detail) {
-        const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
-        if (!product) {
-          return res.status(400).send({
-            message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
-            status: false,
-          });
-        }
-        const result = await calculateProductPrice(item);
-        order.push({
-          ...result,
-          product_id: product.name || "ไม่พบชื่อสินค้า",
-        });
-        normalTotal += result.normaltotal;
-        totalDiscount += result.discountAmountPerItem;
-        grandTotal += result.total;
-        await ProductShall.updateOne(
-          { _id: item.product_id },
-          { $inc: { product_amount: -item.ProductAmount } }
-        );
-      }
+  // exports.preorderShopManager = async (req, res) => {
+  //   console.log(req.body);
+  //   try {
+  //     const status = {
+  //       name: "รอตรวจสอบ",
+  //       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+  //     };
+  //     let order = [];
+  //     let grandTotal = 0;
+  //     let normalTotal = 0;
+  //     let totalDiscount = 0;
+  //     const product_detail = req.body.product_detail;
+  //     for (let item of product_detail) {
+  //       const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
+  //       if (!product) {
+  //         return res.status(400).send({
+  //           message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
+  //           status: false,
+  //         });
+  //       }
+  //       const result = await calculateProductPrice(item);
+  //       order.push({
+  //         ...result,
+  //         product_id: product.name || "ไม่พบชื่อสินค้า",
+  //       });
+  //       normalTotal += result.normaltotal;
+  //       totalDiscount += result.discountAmountPerItem;
+  //       grandTotal += result.total;
+  //       await ProductShall.updateOne(
+  //         { _id: item.product_id },
+  //         { $inc: { product_amount: -item.ProductAmount } }
+  //       );
+  //     }
   
-      const customer_total = normalTotal;
-      const invoiceshoppingnumber = await invoiceShoppingNumber();
+  //     const customer_total = normalTotal;
+  //     const invoiceshoppingnumber = await invoiceShoppingNumber();
   
-      const shop = await Shops.findOne({ _id: req.body.shop_id });
+  //     const shop = await Shops.findOne({ _id: req.body.shop_id });
   
-      const order_product = await new preorder_shopping({
-        ...req.body,
-        invoiceShoppingNumber: invoiceshoppingnumber,
-        customer_shop_id: shop ? shop.shop_name : "ไม่พบชื่อร้าน",
-        customer_detail: order,
-        total: customer_total,
-        discount: totalDiscount,
-        net: grandTotal,
-        timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-      }).save();
+  //     const order_product = await new preorder_shopping({
+  //       ...req.body,
+  //       invoiceShoppingNumber: invoiceshoppingnumber,
+  //       customer_shop_id: shop ? shop.shop_name : "ไม่พบชื่อร้าน",
+  //       customer_detail: order,
+  //       total: customer_total,
+  //       discount: totalDiscount,
+  //       net: grandTotal,
+  //       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+  //     }).save();
   
-      if (order_product) {
-        return res.status(200).send({
-          status: true,
-          message: "สั่งซื้อสินค้าทำเสร็จ",
-          data: order_product,
-        });
-      } else {
-        return res.status(500).send({
-          message: "มีบางอย่างผิดพลาด",
-          status: false,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send({
-        message: "มีบางอย่างผิดพลาด222",
-        status: false,
-        error: error.message,
-      });
-    }
-  };
+  //     if (order_product) {
+  //       return res.status(200).send({
+  //         status: true,
+  //         message: "สั่งซื้อสินค้าทำเสร็จ",
+  //         data: order_product,
+  //       });
+  //     } else {
+  //       return res.status(500).send({
+  //         message: "มีบางอย่างผิดพลาด",
+  //         status: false,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     return res.status(500).send({
+  //       message: "มีบางอย่างผิดพลาด222",
+  //       status: false,
+  //       error: error.message,
+  //     });
+  //   }
+  // };
   exports.preorderShopManagerGetPhone = async (req, res) => {
     try {
       const status = {
@@ -1420,13 +1420,12 @@ exports.fildManagerOne = async (req, res) => {
       let totalDiscount = 0;
       const product_detail = req.body.product_detail;
       const customer_phone = req.body.customer_phone
-      console.log("Customer Phone from req.body:", req.body.customer_phone);
       const memberphone = await Member.findOne({ member_phone: customer_phone });
-      console.log(memberphone)
-      const memberType = memberphone.member_type;
-      const typemember = await typeMember.findById(memberType)
-      console.log("พี่กี้........",typemember.typeMember)
-      const level = typemember.typeMember
+      console.log("1111111111111111111",memberphone)
+      const memberType =(memberphone)? memberphone.member_type : null;
+      console.log("22222222222222222222",memberType)
+      const typemember =(memberType) ? await typeMember.findById(memberType) : null
+      const level =(memberType && typemember ) ? typemember.typeMember : 'level1';
       for (let item of product_detail) {
         const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
         if (!product) {
@@ -1527,10 +1526,10 @@ exports.fildManagerOne = async (req, res) => {
       return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
+  
 
 
   
-
 
 
 

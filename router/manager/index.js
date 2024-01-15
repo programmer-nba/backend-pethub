@@ -2,6 +2,7 @@ const router = require("express").Router();
 const authManager = require("../../lib/auth.manager")
 const authAdmin = require("../../lib/auth.admin")
 const manager = require("../../controllers/manager/manager.controller");
+const Report = require("../../controllers/manager/Report.controller")
 
 //สร้างเมเนเจอร์
 router.post("/create",authAdmin,manager.create);
@@ -70,10 +71,12 @@ router.delete("/ManagerdeleteMember/:member_phone",authManager,manager.Managerde
 //ชื้อสินค้า
 router.get("/Shoppng/findProductManager",authManager,manager.findProductManager)
 router.get("/getByBarcodeManager/:shop_id/:barcode",authManager,manager.getByBarcodeManager)
-router.post("/preorderShopManager",authManager,manager.preorderShopManager)//ชื้อแบบไม่มีสมาชิก
+// router.post("/preorderShopManager",authManager,manager.preorderShopManager)//ชื้อแบบไม่มีสมาชิก
 router.post("/preorderShopBuyManager/GetPhone",authManager,manager.preorderShopManagerGetPhone)//ชื้อแบบมีสมาชิก
 router.get("/ShowReceiptAllManager",authManager,manager.ShowReceiptAllManager)
 router.get("/ShowReceiptAllManager/:id",authManager,manager.ShowReceiptAllManagerById)
+
+//
 
 
 module.exports = router; 
