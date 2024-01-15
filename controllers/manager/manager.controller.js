@@ -1527,13 +1527,6 @@ exports.fildManagerOne = async (req, res) => {
     }
   };
   
-
-
-  
-
-
-
-  
   const calculateProductPrice = async (item,level) => {
     let total = 0;
     let discount = 0;
@@ -1574,6 +1567,7 @@ exports.fildManagerOne = async (req, res) => {
     return {
       product_id: product.product_id,
       amount: item.product_amount,
+      price_cost:product.price_cost,
       normaltotal,
       discountAmountPerItem,
       total,
@@ -1599,7 +1593,7 @@ exports.fildManagerOne = async (req, res) => {
       do {
         num = num + 1;
         data = `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-        check = await preorder_shopping.find({invoice: data});
+        check = await preorder_shopping.find({invoiceShoppingNumber: data});
         if (check.length === 0) {
           invoice_sheopping =
             `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
