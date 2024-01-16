@@ -167,24 +167,12 @@ exports.preorder = async (req, res) => {
     const product_detail = req.body.product_detail;
     const customer_phone = req.body.customer_phone
     const memberphone = await Member.findOne({ member_phone: customer_phone });
-    console.log("1111111111111111111",memberphone)
     const memberType =(memberphone)? memberphone.member_type : null;
-    console.log("22222222222222222222",memberType)
     const typemember =(memberType) ? await typeMember.findById(memberType) : null
     const level =(memberType && typemember ) ? typemember.typeMember : 'level1';
     for (let item of product_detail) {
-      const product = await ProductShall.findOne({ product_id: item.product_id }); // ให้ใช้ _id ในการค้นหา
-      if (!product) {
-        return res.status(400).send({
-          message: `ไม่พบข้อมูลสินค้าสำหรับ ID: ${item.product_id}`,
-          status: false,
-        });
-      }
       const result = await calculateProductPrice(item,level);
-      order.push({
-        ...result,
-        product_id: product.name || "ไม่พบชื่อสินค้า",
-      });
+      order.push(result);
       normalTotal += result.normaltotal;
       totalDiscount += result.discountAmountPerItem;
       grandTotal += result.total;
@@ -193,7 +181,17 @@ exports.preorder = async (req, res) => {
         { $inc: { product_amount: -item.ProductAmount } }
       );
     }
-
+    const totalPricePerProduct = order.map(item => {
+      const totalPrice = item.price_cost * item.amount;
+      const totalFromDetail = item.total; // ค่า total ภายใน customer_detail
+      const net = totalFromDetail ? totalFromDetail - totalPrice : 0;
+      return {
+          product_id: item.product_id,
+          totalPriceCost: totalPrice,
+          totalNet: net, // เพิ่มค่า totalNet ในรายการ
+      };
+  });
+    console.log(totalPricePerProduct)
     const customer_total = normalTotal;
     const invoiceshoppingnumber = await invoiceShoppingNumber();
 
@@ -207,6 +205,7 @@ exports.preorder = async (req, res) => {
       total: customer_total,
       discount: totalDiscount,
       net: grandTotal,
+      total_price_cost: totalPricePerProduct,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     }).save();
 
@@ -325,7 +324,7 @@ async function invoiceShoppingNumber(date) {
     do {
       num = num + 1;
       data = `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await preorder_shopping.find({invoice: data});
+      check = await preorder_shopping.find({invoiceShoppingNumber: data});
       if (check.length === 0) {
         invoice_sheopping =
           `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
@@ -341,50 +340,52 @@ async function invoiceShoppingNumber(date) {
 // ฟังก์ชันคำนวณราคาสินค้า
 const calculateProductPrice = async (item,level) => {
   let total = 0;
-  let discount = 0;
-  let discountdetail = "";
-  let normaltotal = 0;
-  const product = await ProductShall.findOne({ product_id: item.product_id });
-  if (product.ProductAmount < item.product_amount) {
-    console.log("จำนวนสินค้าไม่เพียงพอ");
-  } else {
-    // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
-    if (product.promotion !== "") {
-      const normalPrice = calculateNormalPrice(product.retailprice[`${level}`], item.product_amount); // คำนวณราคาปกติ
-      // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
-      const promotion = await Promotion.findOne({ _id: product.promotion });
-      const price =
-        promotion && promotion.discountPercentage
-          ? calculateDiscountedPrice(product.retailprice[`${level}`], promotion.discountPercentage, item.product_amount)
-          : product.retailprice[`${level}`] * item.product_amount;
-      normaltotal = normalPrice;
-      total += price;
-      discount = promotion.name;
-      discountdetail = promotion.description;
-      // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-      product.ProductAmount -= item.product_amount;
-      await product.save();
+    let discount = 0;
+    let discountdetail = "";
+    let normaltotal = 0;
+    const product = await ProductShall.findOne({ product_id: item.product_id });
+    if (product.ProductAmount < item.product_amount) {
+      console.log("จำนวนสินค้าไม่เพียงพอ");
     } else {
-      console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
-      // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
-      const price = product.retailprice[`${level}`] * item.product_amount;
-      normaltotal = price;
-      total += price;
-      // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-      product.ProductAmount -= item.product_amount;
-      await product.save();
+      // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
+      if (product.promotion !== "") {
+        const normalPrice = calculateNormalPrice(product.retailprice[`${level}`], item.product_amount); // คำนวณราคาปกติ
+        // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
+        const promotion = await Promotion.findOne({ _id: product.promotion });
+        const price =
+          promotion && promotion.discountPercentage
+            ? calculateDiscountedPrice(product.retailprice[`${level}`], promotion.discountPercentage, item.product_amount)
+            : product.retailprice[`${level}`] * item.product_amount;
+        normaltotal = normalPrice;
+        total += price;
+        discount = promotion.name;
+        discountdetail = promotion.description;
+        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+        product.ProductAmount -= item.product_amount;
+        await product.save();
+      } else {
+        console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
+        // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
+        const price = product.retailprice[`${level}`] * item.product_amount;
+        normaltotal = price;
+        total += price;
+        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+        product.ProductAmount -= item.product_amount;
+        await product.save();
+      }
     }
-  }
-  const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
-  return {
-    product_id: product.product_id,
-    amount: item.product_amount,
-    normaltotal,
-    discountAmountPerItem,
-    total,
-    discount,
-    discountdetail,
-  };
+    const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
+    return {
+      product_id: product.product_id,
+      amount: item.product_amount,
+      price_cost:product.price_cost,
+      retailprice:product.retailprice.level1,
+      normaltotal,
+      discountAmountPerItem,
+      total,
+      discount,
+      discountdetail,
+    };
 };
 // ฟังก์ชันคำนวณราคาปกติ
 const calculateNormalPrice = (retailprice, quantity) => {
