@@ -27,6 +27,7 @@ const {
 } = require("../../models/ิbuy_product/buyproduct.model.js");
 const { Shops, validateShop } = require("../../models/shop/shop.model.js");
 const { PciceCost } = require("../../models/report/report.price.cost.model.js");
+const {ProditAndLoss} = require("../../models/report/report.profit_loss.model.js")
 const dayjs = require("dayjs");
 
 exports.GetPreOrderShopping = async (req, res) => {
@@ -114,6 +115,7 @@ exports.PeportProFitandLoss = async (req, res) => {
       productDetails[product_id].profit_loss = productDetails[product_id].total - productDetails[product_id].total_price_cost;
     });
     const resultArray = Object.values(productDetails);
+    await ProditAndLoss.create({ product_costs: resultArray });
     return res.status(200).send({
       status: true,
       message: "รายงานกำไร-ขาดทุนสำเร็จ",
