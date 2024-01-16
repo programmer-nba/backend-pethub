@@ -1567,6 +1567,7 @@ exports.fildManagerOne = async (req, res) => {
       product_id: product.product_id,
       amount: item.product_amount,
       price_cost:product.price_cost,
+      retailprice:product.retailprice.level1,
       normaltotal,
       discountAmountPerItem,
       total,
