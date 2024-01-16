@@ -78,6 +78,7 @@ router.get("/ShowReceiptAllManager/:id",authManager,manager.ShowReceiptAllManage
 
 //Report 
 router.get("/GetPreOrderShopping/All",authManager,Report.GetPreOrderShopping)//ดึงรายการชื้อขายสินค้า
-router.post("/ReportPriceCost/All",authManager,Report.ReportPriceCost)
+router.post("/ReportPriceCost/All",authManager,Report.ReportPriceCost)//รีพอตต้นทุน
+router.post("/PeportProFitandLoss/all",authManager,Report.PeportProFitandLoss)
 
 module.exports = router; 
