@@ -1435,10 +1435,20 @@ exports.fildManagerOne = async (req, res) => {
           { $inc: { product_amount: -item.ProductAmount } }
         );
       }
-  
+      const totalPricePerProduct = order.map(item => {
+        const totalPrice = item.price_cost * item.amount;
+        const totalFromDetail = item.total; // ค่า total ภายใน customer_detail
+        const net = totalFromDetail ? totalFromDetail - totalPrice : 0;
+        return {
+            product_id: item.product_id,
+            totalPriceCost: totalPrice,
+            totalNet: net, // เพิ่มค่า totalNet ในรายการ
+        };
+    });
+      console.log(totalPricePerProduct)
       const customer_total = normalTotal;
       const invoiceshoppingnumber = await invoiceShoppingNumber();
-  
+
       const shop = await Shops.findOne({ _id: req.body.shop_id });
   
       const order_product = await new preorder_shopping({
@@ -1449,6 +1459,7 @@ exports.fildManagerOne = async (req, res) => {
         total: customer_total,
         discount: totalDiscount,
         net: grandTotal,
+        total_price_cost: totalPricePerProduct,
         timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       }).save();
   
