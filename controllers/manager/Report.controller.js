@@ -147,7 +147,7 @@ exports.GetReportAllPriceCost = async (req, res) =>{
         data: manager,
       });
     } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมดสำเร็จ", status: false});
+      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุน", status: false});
     }
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
@@ -165,10 +165,43 @@ exports.GetReportAllPriceCostById = async (req, res) =>{
         data: manager,
       });
     } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมดสำเร็จ", status: false});
+      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมด", status: false});
     }
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
 }
-
+//ใบเสร็จกำไรขาดทุน
+exports.ProditAndLossAll = async (req, res) =>{
+  try {
+    const manager = await ProditAndLoss.find();
+    if (manager) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลใบเสร็จกำไรขาดทุนทั้งหมดสำเร็จ",
+        data: manager,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลใบเสร็จกำไรขาดทุนทั้งหมด", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+exports.GetProditAndLossById = async (req, res) =>{
+  try {
+    const id = req.params.id
+    const manager = await ProditAndLoss.findById(id);
+    if (manager) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลใบเสร็จกำไรขาดทุนทั้งหมดสำเร็จ",
+        data: manager,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลใบเสร็จกำไรขาดทุนทั้งหมด", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
