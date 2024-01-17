@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const ProfitAndLossSchema = new mongoose.Schema({
+  porfitnumber : {type :String, required:true},
   product_costs: [
     {
       product_id: { type: String, required: false }, //ไอดีสินค้า

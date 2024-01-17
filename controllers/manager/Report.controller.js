@@ -54,6 +54,7 @@ exports.GetPreOrderShopping = async (req, res) => {
 exports.ReportPriceCost = async (req, res) => {
   try {
     const preorders = await preorder_shopping.find();
+    const reportnumberValue = await reportnumber();
     const flattenedDetails = preorders.flatMap(
       (order) => order.customer_detail
     );
@@ -75,9 +76,7 @@ exports.ReportPriceCost = async (req, res) => {
       }
     });
     const resultArray = Object.values(productDetails);
-    await PciceCost.create({ product_costs: resultArray });
-    console.log(resultArray);
-
+    await PciceCost.create({ reportnumber: reportnumberValue,product_costs: resultArray });
     return res.status(200).send({
       status: true,
       message: "รายงานราคาทุนสำเร็จ",
@@ -95,6 +94,7 @@ exports.ReportPriceCost = async (req, res) => {
 exports.PeportProFitandLoss = async (req, res) => {
   try {
     const preorders = await preorder_shopping.find();
+    const porfitnumbers = await porfitnumber();
     const flattenedDetails = preorders.flatMap(
       (order) => order.customer_detail
     );
@@ -118,7 +118,7 @@ exports.PeportProFitandLoss = async (req, res) => {
       productDetails[product_id].profit_loss = productDetails[product_id].total - productDetails[product_id].total_price_cost;
     });
     const resultArray = Object.values(productDetails);
-    await ProditAndLoss.create({ product_costs: resultArray });
+    await ProditAndLoss.create({ porfitnumber : porfitnumbers, product_costs: resultArray });
     return res.status(200).send({
       status: true,
       message: "รายงานกำไร-ขาดทุนสำเร็จ",
@@ -204,4 +204,48 @@ exports.GetProditAndLossById = async (req, res) =>{
   } catch (err) {
     res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
   }
+}
+async function reportnumber(date) {
+  const order = await PciceCost.find();
+  let reportnumber = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `REPORT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      check = await PciceCost.find({reportnumber: data});
+      if (check.length === 0) {
+        reportnumber =
+          `REPORT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    reportnumber =
+      `REPORT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+  }
+  return reportnumber;
+}
+async function porfitnumber(date) {
+  const order = await ProditAndLoss.find();
+  let porfitnumber = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `PORFIT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      check = await ProditAndLoss.find({porfitnumber: data});
+      if (check.length === 0) {
+        porfitnumber =
+          `PORFIT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    porfitnumber =
+      `PORFIT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+  }
+  return porfitnumber;
 }

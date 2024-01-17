@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const PciceCostSchema = new mongoose.Schema({
+  reportnumber : {type :String, required:true},
   product_costs: [
     {
       product_id: { type: String, required: false },
