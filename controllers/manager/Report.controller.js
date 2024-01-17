@@ -136,4 +136,39 @@ exports.PeportProFitandLoss = async (req, res) => {
 exports.ClosetheTops = async (req,res) =>{
   
 };
+exports.GetReportAllPriceCost = async (req, res) =>{
+  try {
+    const manager = await PciceCost.find();
+    console.log("..............test...........")
+    if (manager) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลราคาตุนทุนทั้งหมดสำเร็จ",
+        data: manager,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมดสำเร็จ", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
+exports.GetReportAllPriceCostById = async (req, res) =>{
+  try {
+    const id = req.params.id
+    const manager = await PciceCost.findById(id);
+    console.log("..............test...........")
+    if (manager) {
+      return res.status(200).send({
+        status: true,
+        message: "ดึงข้อมูลราคาตุนทุนทั้งหมดสำเร็จ",
+        data: manager,
+      });
+    } else {
+      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมดสำเร็จ", status: false});
+    }
+  } catch (err) {
+    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+  }
+}
 

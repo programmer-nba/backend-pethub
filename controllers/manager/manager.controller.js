@@ -13,10 +13,12 @@ const {PackProducts} = require("../../models/product/productpack.model.js")
 const {ReturnProductShall} = require("../../models/product/return.product.shell.model.js")
 const {Member,validatemember} = require("../../models/user/member.model.js")
 const {typeMember} =require("../../models/user/type.model.js")
+const {PciceCost} = require("../../models/report/report.price.cost.model.js")
 const {Promotion} = require("../../models/promotion/promotion.model.js")
 const {preorder_shopping} = require("../../models/ิbuy_product/buyproduct.model.js")
 const {Shops,validateShop} =require("../../models/shop/shop.model.js")
 const dayjs = require("dayjs");
+const req = require("express/lib/request.js");
 
 
 exports.create = async (req, res) => {
@@ -49,7 +51,6 @@ exports.create = async (req, res) => {
     }
   };
 exports.fildManagerAll = async (req, res) => {
- 
     try {
       const manager = await Manager.find();
       console.log("..............test...........")
@@ -1526,7 +1527,7 @@ exports.fildManagerOne = async (req, res) => {
       return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
     }
   };
-  
+
   const calculateProductPrice = async (item,level) => {
     let total = 0;
     let discount = 0;
