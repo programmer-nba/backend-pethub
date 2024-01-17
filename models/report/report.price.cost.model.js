@@ -5,6 +5,7 @@ const PciceCostSchema = new mongoose.Schema({
   product_costs: [
     {
       product_id: { type: String, required: false },
+      name: { type: String, required: false },
       total_price_cost: { type: String, required: false },
     },
   ],

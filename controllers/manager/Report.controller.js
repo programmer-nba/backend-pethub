@@ -58,9 +58,9 @@ exports.ReportPriceCost = async (req, res) => {
       (order) => order.customer_detail
     );
     const productDetails = {};
-
     flattenedDetails.forEach((detail) => {
       const product_id = detail.product_id;
+      const name = detail.name;
       const price_cost = detail.price_cost;
       const amount = detail.amount;
 
@@ -69,6 +69,7 @@ exports.ReportPriceCost = async (req, res) => {
       } else {
         productDetails[product_id] = {
           product_id,
+          name,
           total_price_cost: price_cost * amount,
         };
       }
@@ -100,12 +101,14 @@ exports.PeportProFitandLoss = async (req, res) => {
     const productDetails = {};
     flattenedDetails.forEach((detail) => {
       const product_id = detail.product_id;
+      const name = detail.name;
       const price_cost = detail.price_cost;
       const amount = detail.amount;
       const total = detail.total;
       if (!productDetails[product_id]) {
         productDetails[product_id] = {
           product_id,
+          name,
           total_price_cost: 0,
           total: 0,
         };
@@ -131,6 +134,6 @@ exports.PeportProFitandLoss = async (req, res) => {
   }
 };
 exports.ClosetheTops = async (req,res) =>{
-
+  
 };
 
