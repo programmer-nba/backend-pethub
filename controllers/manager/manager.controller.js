@@ -1441,6 +1441,7 @@ exports.fildManagerOne = async (req, res) => {
         const net = totalFromDetail ? totalFromDetail - totalPrice : 0;
         return {
             product_id: item.product_id,
+            name:item.name,
             totalPriceCost: totalPrice,
             totalNet: net, // เพิ่มค่า totalNet ในรายการ
         };

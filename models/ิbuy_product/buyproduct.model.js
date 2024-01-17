@@ -14,6 +14,7 @@ const PreOrderShoppingSchema = new mongoose.Schema({
   total_price_cost:[
     {
       product_id: { type: String, required: false },//ไอดีของสินค้า
+      name: { type: String, required: false },//ชื่อสินค้า
       totalPriceCost: { type: Number, default: 0 },//ราคารวมต้นทุนของสินค้า
       totalNet:{ type: Number, default: 0},//ราคารวมสุทธิ์
     }
