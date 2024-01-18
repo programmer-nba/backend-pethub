@@ -377,6 +377,7 @@ const calculateProductPrice = async (item,level) => {
     const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
     return {
       product_id: product.product_id,
+      name:product.name,
       amount: item.product_amount,
       price_cost:product.price_cost,
       retailprice:product.retailprice.level1,
