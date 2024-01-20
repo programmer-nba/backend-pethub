@@ -1,158 +1,144 @@
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const order = require("../../models/order/order.model");
-const {Admins, validateAdmin} = require("../../models/user/admin.model");
-const {PreOrderProducts} = require("../../models/product/preorder.model");
+const { Admins, validateAdmin } = require("../../models/user/admin.model");
+const { PreOrderProducts } = require("../../models/product/preorder.model");
 const req = require("express/lib/request");
 
 //เรียกสินค้าจากหน้าพรีออเดอร์มาดู
-exports.postPreorder = async(req,res) =>{
-    const productId = req.body.productId
+exports.postPreorder = async (req, res) => {
+  const productId = req.body.productId;
 
-        try{
-            // const preorders = await PreOrderProducts.find({status: productId})
-            console.log(preorders)
-            res.status(200).send(preorders) 
-            if(!preorders){
-                res.send("ไม่เจอ")
-                
-            }
-            console.log(preorders)
-            res.send({
-                
-            })
-            
-        
-        }catch(error){
-            console.log(error)
-         res.status(500).send("ไม่สามารถเซฟได้")
-        }
+  try {
+    // const preorders = await PreOrderProducts.find({status: productId})
+    console.log(preorders);
+    res.status(200).send(preorders);
+    if (!preorders) {
+      res.send("ไม่เจอ");
     }
+    console.log(preorders);
+    res.send({});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("ไม่สามารถเซฟได้");
+  }
+};
 
-    // exports.addProducts = async(req,res) =>{
-    //     try{
-    //     //   let data = {
-    //     //     order_id: "2",
-    //     //     orderItem: "['asd':'sssssssssss']",
-    //     //     name: "Not Not",
-    //     //     status: "Single",
-    //     //     timestamps: Date.now()
+// exports.addProducts = async(req,res) =>{
+//     try{
+//     //   let data = {
+//     //     order_id: "2",
+//     //     orderItem: "['asd':'sssssssssss']",
+//     //     name: "Not Not",
+//     //     status: "Single",
+//     //     timestamps: Date.now()
 
-    //     //   }
-    //     //   const createOrder = new order(data);
-    //     //   const createOrderData = await createOrder.save()
-    //     var getID = req.body.data_id;
-    //     var getPreproduct = await PreOrderProducts.find({_id:"655c77c30490f895afc057d9"});
-         
-    //     //    console.log("Status : ", getPreproduct[0].status)
-    //     //  console.log("Status : ", getPreproduct[0].status.length)
-    //      var indexLast = getPreproduct[0].status.length - 1;
-    //      var chk_status = getPreproduct[0].status[indexLast].name;
-    //       console.log(chk_status)
-    //     const teatid = await PreOrderProducts.find({id: req.body._id})
-    //     if(teatid.length > 0) {
-    //         console.log("มีการสร้างไอดีนี้ไปแล้ว")
-    //         return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
-    //     }
-    //     console.log("teatid", teatid )
-    //     if(chk_status == "รอตรวจสอบ"){
+//     //   }
+//     //   const createOrder = new order(data);
+//     //   const createOrderData = await createOrder.save()
+//     var getID = req.body.data_id;
+//     var getPreproduct = await PreOrderProducts.find({_id:"655c77c30490f895afc057d9"});
 
-    //     }else if (chk_status == "ยืนยันการสั่งชื้อ") {
-            
-    //         let data = {
-    //                 shop_id: req.body._id,
-    //                 invoice: getPreproduct[0].invoice,
-    //                 employee_name: getPreproduct[0].employee_name,
-    //                 product_detail:product_detailproduct_detail,
-    //                 timestamps: Date.now()
-        
-    //               }
-    //                const createOrder = new order(data);
-    //                const createOrderData = await createOrder.save()
-    //     }
-    //     console.log(getPreproduct[0].invoice)
-    //     return res.status(200).send({message:"Create Data Successfully", data: getID })
-    //     }catch(error){
-    //         console.log(error)
-    //      res.status(500).send("ไม่สามารถเซฟได้")
-    //     }
+//     //    console.log("Status : ", getPreproduct[0].status)
+//     //  console.log("Status : ", getPreproduct[0].status.length)
+//      var indexLast = getPreproduct[0].status.length - 1;
+//      var chk_status = getPreproduct[0].status[indexLast].name;
+//       console.log(chk_status)
+//     const teatid = await PreOrderProducts.find({id: req.body._id})
+//     if(teatid.length > 0) {
+//         console.log("มีการสร้างไอดีนี้ไปแล้ว")
+//         return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
+//     }
+//     console.log("teatid", teatid )
+//     if(chk_status == "รอตรวจสอบ"){
+
+//     }else if (chk_status == "ยืนยันการสั่งชื้อ") {
+
+//         let data = {
+//                 shop_id: req.body._id,
+//                 invoice: getPreproduct[0].invoice,
+//                 employee_name: getPreproduct[0].employee_name,
+//                 product_detail:product_detailproduct_detail,
+//                 timestamps: Date.now()
+
+//               }
+//                const createOrder = new order(data);
+//                const createOrderData = await createOrder.save()
+//     }
+//     console.log(getPreproduct[0].invoice)
+//     return res.status(200).send({message:"Create Data Successfully", data: getID })
+//     }catch(error){
+//         console.log(error)
+//      res.status(500).send("ไม่สามารถเซฟได้")
+//     }
+// }
+
+exports.addProducts = async (req, res) => {
+  var chkOrderID = await order.find();
+  try {
+    var getPreproduct = await PreOrderProducts.find({ _id: req.body._id });
+    console.log(req.body._id);
+    console.log("Status : ", getPreproduct[0].status);
+
+    //  console.log("Status : ", getPreproduct[0].status.length)
+    var indexLast = getPreproduct[0].status.length - 1;
+    var chk_status = getPreproduct[0].status[indexLast].name;
+    console.log(chk_status);
+
+    const teatid = await PreOrderProducts.find({ id: req.body._id });
+    // if(teatid.length > 0) {
+    //     console.log("มีการสร้างไอดีนี้ไปแล้ว")
+    //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
     // }
+    // console.log("teatid", teatid )
+    console.log(chk_status);
+    if (chk_status == "ยืนยันการสั่งซื้อ") {
+      let data = {
+        shop_id: req.body._id,
+        invoice: req.body.invoice,
+        employee_name: req.body.employee_name,
+        product_detail: req.body.product_detail,
+        timestamps: Date.now(),
+      };
+      const createOrder = new order(data);
+      const createOrderData = await createOrder.save();
 
-
-exports.addProducts = async(req,res) =>{
-        var chkOrderID = await order.find()
-            try{
-        var getPreproduct = await PreOrderProducts.find({_id:req.body._id});
-                console.log(req.body._id)
-           console.log("Status : ", getPreproduct[0].status)
-           
-           
-        //  console.log("Status : ", getPreproduct[0].status.length)
-         var indexLast = getPreproduct[0].status.length - 1;
-         var chk_status = getPreproduct[0].status[indexLast].name;
-          console.log(chk_status)
-          
-        const teatid = await PreOrderProducts.find({id: req.body._id})
-        // if(teatid.length > 0) {
-        //     console.log("มีการสร้างไอดีนี้ไปแล้ว")
-        //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
-        // }
-        // console.log("teatid", teatid )
-        console.log(chk_status)
-                if (chk_status == "ยืนยันการสั่งซื้อ") {
-                            
-                            let data = {
-                                    shop_id: req.body._id,
-                                    invoice: req.body.invoice,
-                                    employee_name: req.body.employee_name,
-                                    product_detail:req.body.product_detail,
-                                    timestamps: Date.now()
-                        
-                                  }
-                                   const createOrder = new order(data);
-                                   const createOrderData = await createOrder.save()
-
-                                   return res.status(200).send({message:" สำเร็จ"})
-
-                        }
-                
-                        return res.status(500).send({message:"รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"})
-                //  const createOrder = new order(data);
-                //  const createOrderData = await createOrder.save()
-            }catch (error){
-                console.error(error)
-             res.status(500).send("ไม่สามารถเซฟได้")
-
-            }
-}
-
-
-exports.AddPreorder = async (req,res) =>{
-
-    try{
-        const {
-            shop_id ,
-            invoice,
-            employee_name ,
-            product_name,
-            product_detail,
-            status,
-        } =req.body
-
-        const preorder = await PreOrderProducts.create({
-                shop_id:shop_id,
-                invoice:invoice,
-                employee_name:employee_name,
-                product_name:product_name,
-                product_detail: product_detail ,
-                status:status ,
-        })
-        return res.send(preorder)
-
-
-
-    }catch(error){
-        console.log(error)
-        res.send("เพิ่มพรีออเดอร์สินค้าไม่ผ่าน")
+      return res.status(200).send({ message: " สำเร็จ" });
     }
-}
+
+    return res
+      .status(500)
+      .send({ message: "รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ" });
+    //  const createOrder = new order(data);
+    //  const createOrderData = await createOrder.save()
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("ไม่สามารถเซฟได้");
+  }
+};
+
+exports.AddPreorder = async (req, res) => {
+  try {
+    const {
+      shop_id,
+      invoice,
+      employee_name,
+      product_name,
+      product_detail,
+      status,
+    } = req.body;
+
+    const preorder = await PreOrderProducts.create({
+      shop_id: shop_id,
+      invoice: invoice,
+      employee_name: employee_name,
+      product_name: product_name,
+      product_detail: product_detail,
+      status: status,
+    });
+    return res.send(preorder);
+  } catch (error) {
+    console.log(error);
+    res.send("เพิ่มพรีออเดอร์สินค้าไม่ผ่าน");
+  }
+};
