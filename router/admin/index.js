@@ -5,7 +5,7 @@ const product = require("../../controllers/product/product.shop.controller")
 const productShops = require("../../controllers/product/product.shop.controller")
 const member =require("../../controllers/member/member.controller")
 
-router.post("/create",authAdmin, admins.create);
+router.post("/create", admins.create);
 router.get("/",authAdmin, admins.getAdminAll);
 router.get("/:id",authAdmin, admins.getAdminById);
 router.put("/:id",authAdmin, admins.updateAdmin);
