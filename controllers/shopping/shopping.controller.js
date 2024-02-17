@@ -1,24 +1,24 @@
-const {Shops, validateShop} = require("../../models/shop/shop.model.js");
-const {Cashier, validateCashier} = require("../../models/user/cashier.model");
+const { Shops, validateShop } = require("../../models/shop/shop.model.js");
+const { Cashier, validateCashier } = require("../../models/user/cashier.model");
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
-const {PreOrderProducts} = require("../../models/product/preorder.model");
+const { PreOrderProducts } = require("../../models/product/preorder.model");
 const {
   PreOrderProductShell,
 } = require("../../models/product/preordershell.model");
-const {ProductShall} = require("../../models/product/product.shall.model.js");
+const { ProductShall } = require("../../models/product/product.shall.model.js");
 const {
   preorder_shopping,
 } = require("../../models/ิbuy_product/buyproduct.model.js");
-const {Products} = require("../../models/product/product.model.js")
-const {PromotionFree} =  require("../../models/promotion/promotionbyfree.js")
-const {Promotion} =  require("../../models/promotion/promotion.model.js")
-const {ProductShops} = require("../../models/product/product.shop.model.js")
-const {typeMember} = require("../../models/user/type.model.js")
-const {Member,validatemember} = require("../../models/user/member.model.js")
+const { Products } = require("../../models/product/product.model.js");
+const { PromotionFree } = require("../../models/promotion/promotionbyfree.js");
+const { Promotion } = require("../../models/promotion/promotion.model.js");
+const { ProductShops } = require("../../models/product/product.shop.model.js");
+const { typeMember } = require("../../models/user/type.model.js");
+const { Member, validatemember } = require("../../models/user/member.model.js");
 const fs = require("fs");
 const multer = require("multer");
-const {google} = require("googleapis");
+const { google } = require("googleapis");
 const { array } = require("joi");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
@@ -31,7 +31,7 @@ const oauth2Client = new google.auth.OAuth2(
   REDIRECT_URI
 );
 
-oauth2Client.setCredentials({refresh_token: REFRESH_TOKEN});
+oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 const drive = google.drive({
   version: "v3",
   auth: oauth2Client,
@@ -45,10 +45,10 @@ const storage = multer.diskStorage({
 });
 
 //update image
-async function uploadFileCreate(req, res, {i, reqFiles}) {
+async function uploadFileCreate(req, res, { i, reqFiles }) {
   if (!req[i]) {
     console.error("Invalid value for 'i'");
-    return res.status(400).send({message: "Invalid value for 'i'"});
+    return res.status(400).send({ message: "Invalid value for 'i'" });
   }
   const filePath = req[i].path;
   let fileMetaData = {
@@ -67,7 +67,7 @@ async function uploadFileCreate(req, res, {i, reqFiles}) {
     generatePublicUrl(response.data.id);
     reqFiles.push(response.data.id);
   } catch (error) {
-    res.status(500).send({message: "Internal Server Error"});
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -89,7 +89,7 @@ async function generatePublicUrl(res) {
     console.log(result.data);
   } catch (error) {
     console.log(error);
-    return res.status(500).send({message: "Internal Server Error"});
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -99,14 +99,16 @@ exports.findProductAll = async (req, res) => {
     if (!shop) {
       return res
         .status(404)
-        .send({status: false, message: "ไม่พบข้อมูลช็อปในระบบ"});
+        .send({ status: false, message: "ไม่พบข้อมูลช็อปในระบบ" });
     } else {
       return res
         .status(200)
-        .send({status: true, message: "ดึงข้อมูลสำเร็จ", data: shop});
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: shop });
     }
   } catch (err) {
-    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
 
@@ -117,19 +119,21 @@ exports.deleteProduct = async (req, res) => {
     if (!shop) {
       return res
         .status(404)
-        .send({status: false, message: "ไม่พบข้อมูลสินค้าในระบบ"});
+        .send({ status: false, message: "ไม่พบข้อมูลสินค้าในระบบ" });
     } else {
-      return res.status(200).send({status: true, message: "ลบสินค้าสำเร็จ"});
+      return res.status(200).send({ status: true, message: "ลบสินค้าสำเร็จ" });
     }
   } catch (err) {
-    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
 
 exports.calcelProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await ProductShall.findOne({_id: id});
+    const updateStatus = await ProductShall.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -149,7 +153,9 @@ exports.calcelProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res
+      .status(500)
+      .send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -157,7 +163,7 @@ exports.preorder = async (req, res) => {
   console.log(req.body);
   try {
     const status = {
-      name: "รอตรวจสอบ",
+      name: "สั่งชื้อสินค้าสำเร็จ",
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     };
     let order = [];
@@ -165,13 +171,15 @@ exports.preorder = async (req, res) => {
     let normalTotal = 0;
     let totalDiscount = 0;
     const product_detail = req.body.product_detail;
-    const customer_phone = req.body.customer_phone
+    const customer_phone = req.body.customer_phone;
     const memberphone = await Member.findOne({ member_phone: customer_phone });
-    const memberType =(memberphone)? memberphone.member_type : null;
-    const typemember =(memberType) ? await typeMember.findById(memberType) : null
-    const level =(memberType && typemember ) ? typemember.typeMember : 'level1';
+    const memberType = memberphone ? memberphone.member_type : null;
+    const typemember = memberType
+      ? await typeMember.findById(memberType)
+      : null;
+    const level = memberType && typemember ? typemember.typeMember : "level1";
     for (let item of product_detail) {
-      const result = await calculateProductPrice(item,level);
+      const result = await calculateProductPrice(item, level);
       order.push(result);
       normalTotal += result.normaltotal;
       totalDiscount += result.discountAmountPerItem;
@@ -181,17 +189,17 @@ exports.preorder = async (req, res) => {
         { $inc: { product_amount: -item.ProductAmount } }
       );
     }
-    const totalPricePerProduct = order.map(item => {
+    const totalPricePerProduct = order.map((item) => {
       const totalPrice = item.price_cost * item.amount;
       const totalFromDetail = item.total; // ค่า total ภายใน customer_detail
       const net = totalFromDetail ? totalFromDetail - totalPrice : 0;
       return {
-          product_id: item.product_id,
-          totalPriceCost: totalPrice,
-          totalNet: net, // เพิ่มค่า totalNet ในรายการ
+        product_id: item.product_id,
+        totalPriceCost: totalPrice,
+        totalNet: net, // เพิ่มค่า totalNet ในรายการ
       };
-  });
-    console.log(totalPricePerProduct)
+    });
+    console.log(totalPricePerProduct);
     const customer_total = normalTotal;
     const invoiceshoppingnumber = await invoiceShoppingNumber();
 
@@ -207,6 +215,7 @@ exports.preorder = async (req, res) => {
       net: grandTotal,
       total_price_cost: totalPricePerProduct,
       timestamps: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      status: status,
     }).save();
 
     if (order_product) {
@@ -231,12 +240,12 @@ exports.preorder = async (req, res) => {
   }
 };
 
-
-
 exports.ShowReceiptById = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await preorder_shopping.findOne({invoiceShoppingNumber: id});
+    const preorder_list = await preorder_shopping.findOne({
+      invoiceShoppingNumber: id,
+    });
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -250,7 +259,9 @@ exports.ShowReceiptById = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res
+      .status(500)
+      .send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -271,11 +282,13 @@ exports.ShowReceiptAll = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res
+      .status(500)
+      .send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
-exports.getByBarcode = async (req,res)=>{
+exports.getByBarcode = async (req, res) => {
   try {
     const shop_id = req.params.shop_id;
     const barcode = req.params.barcode;
@@ -284,16 +297,16 @@ exports.getByBarcode = async (req,res)=>{
       barcode: barcode,
     });
     if (product) {
-      return res.status(200).send({status: true, data: product});
+      return res.status(200).send({ status: true, data: product });
     } else {
       return res
         .status(400)
-        .send({status: false, message: "ดึงข้อมูลไม่สำเร็จ"});
+        .send({ status: false, message: "ดึงข้อมูลไม่สำเร็จ" });
     }
   } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด"});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด" });
   }
-}
+};
 
 async function generatePublicUrl(res) {
   try {
@@ -324,7 +337,7 @@ async function invoiceShoppingNumber(date) {
     do {
       num = num + 1;
       data = `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await preorder_shopping.find({invoiceShoppingNumber: data});
+      check = await preorder_shopping.find({ invoiceShoppingNumber: data });
       if (check.length === 0) {
         invoice_sheopping =
           `BUY${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
@@ -338,61 +351,72 @@ async function invoiceShoppingNumber(date) {
 }
 
 // ฟังก์ชันคำนวณราคาสินค้า
-const calculateProductPrice = async (item,level) => {
+const calculateProductPrice = async (item, level) => {
   let total = 0;
-    let discount = 0;
-    let discountdetail = "";
-    let normaltotal = 0;
-    const product = await ProductShall.findOne({ product_id: item.product_id });
-    if (product.ProductAmount < item.product_amount) {
-      console.log("จำนวนสินค้าไม่เพียงพอ");
+  let discount = 0;
+  let discountdetail = "";
+  let normaltotal = 0;
+  const product = await ProductShall.findOne({ product_id: item.product_id });
+  if (product.ProductAmount < item.product_amount) {
+    console.log("จำนวนสินค้าไม่เพียงพอ");
+  } else {
+    // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
+    if (product.promotion !== "") {
+      const normalPrice = calculateNormalPrice(
+        product.retailprice[`${level}`],
+        item.product_amount
+      ); // คำนวณราคาปกติ
+      // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
+      const promotion = await Promotion.findOne({ _id: product.promotion });
+      const price =
+        promotion && promotion.discountPercentage
+          ? calculateDiscountedPrice(
+              product.retailprice[`${level}`],
+              promotion.discountPercentage,
+              item.product_amount
+            )
+          : product.retailprice[`${level}`] * item.product_amount;
+      normaltotal = normalPrice;
+      total += price;
+      discount = promotion.name;
+      discountdetail = promotion.description;
+      // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+      product.ProductAmount -= item.product_amount;
+      await product.save();
     } else {
-      // ตรวจสอบว่าสินค้ามีรหัส promotion หรือไม่
-      if (product.promotion !== "") {
-        const normalPrice = calculateNormalPrice(product.retailprice[`${level}`], item.product_amount); // คำนวณราคาปกติ
-        // ถ้ามีรหัส promotion ให้คำนวณส่วนลด
-        const promotion = await Promotion.findOne({ _id: product.promotion });
-        const price =
-          promotion && promotion.discountPercentage
-            ? calculateDiscountedPrice(product.retailprice[`${level}`], promotion.discountPercentage, item.product_amount)
-            : product.retailprice[`${level}`] * item.product_amount;
-        normaltotal = normalPrice;
-        total += price;
-        discount = promotion.name;
-        discountdetail = promotion.description;
-        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-        product.ProductAmount -= item.product_amount;
-        await product.save();
-      } else {
-        console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
-        // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
-        const price = product.retailprice[`${level}`] * item.product_amount;
-        normaltotal = price;
-        total += price;
-        // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
-        product.ProductAmount -= item.product_amount;
-        await product.save();
-      }
+      console.log("ไม่พบข้อมูลรหัสโปรโมชั่น");
+      // ถ้าไม่มีรหัส promotion ให้คำนวณราคาตามปกติ
+      const price = product.retailprice[`${level}`] * item.product_amount;
+      normaltotal = price;
+      total += price;
+      // ลดจำนวนสินค้าที่ถูกสั่งซื้อออกจากจำนวนทั้งหมดในคลังสินค้า
+      product.ProductAmount -= item.product_amount;
+      await product.save();
     }
-    const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
-    return {
-      product_id: product.product_id,
-      name:product.name,
-      amount: item.product_amount,
-      price_cost:product.price_cost,
-      retailprice:product.retailprice.level1,
-      normaltotal,
-      discountAmountPerItem,
-      total,
-      discount,
-      discountdetail,
-    };
+  }
+  const discountAmountPerItem = normaltotal - total; // คำนวณส่วนลดต่อรายการ
+  return {
+    product_id: product.product_id,
+    name: product.name,
+    amount: item.product_amount,
+    price_cost: product.price_cost,
+    retailprice: product.retailprice.level1,
+    normaltotal,
+    discountAmountPerItem,
+    total,
+    discount,
+    discountdetail,
+  };
 };
 // ฟังก์ชันคำนวณราคาปกติ
 const calculateNormalPrice = (retailprice, quantity) => {
   return retailprice * quantity;
 };
 // ฟังก์ชันคำนวณราคาที่ลดหลังจากส่วนลด
-const calculateDiscountedPrice = (retailprice, discountPercentage, quantity) => {
+const calculateDiscountedPrice = (
+  retailprice,
+  discountPercentage,
+  quantity
+) => {
   return (retailprice - (retailprice * discountPercentage) / 100) * quantity;
 };

@@ -27,21 +27,26 @@ const {
 } = require("../../models/ิbuy_product/buyproduct.model.js");
 const { Shops, validateShop } = require("../../models/shop/shop.model.js");
 const { PciceCost } = require("../../models/report/report.price.cost.model.js");
-const {ProditAndLoss} = require("../../models/report/report.profit_loss.model.js")
+const {
+  ProditAndLoss,
+} = require("../../models/report/report.profit_loss.model.js");
 const dayjs = require("dayjs");
 
 exports.GetPreOrderShopping = async (req, res) => {
   try {
-    const order = await preorder_shopping.find();
-    if (order) {
+    const orders = await preorder_shopping.find({
+      "status.name": "สั่งชื้อสินค้าสำเร็จ",
+    });
+
+    if (orders.length > 0) {
       return res.status(200).send({
         message: "ดึงข้อมูลรายการสั่งชื้อสินค้าสำเร็จ",
         status: true,
-        data: order,
+        data: orders,
       });
     } else {
       return res.status(500).send({
-        message: "ดึงข้อมูลรายการสั่งชื้อสินค้าไม่สำเร็จ",
+        message: "ไม่พบรายการสั่งชื้อสินค้าสำเร็จ",
         status: false,
       });
     }
@@ -53,7 +58,9 @@ exports.GetPreOrderShopping = async (req, res) => {
 };
 exports.ReportPriceCost = async (req, res) => {
   try {
-    const preorders = await preorder_shopping.find();
+    const preorders = await preorder_shopping.find({
+      "status.name": "สั่งชื้อสินค้าสำเร็จ",
+    });
     const reportnumberValue = await reportnumber();
     const flattenedDetails = preorders.flatMap(
       (order) => order.customer_detail
@@ -62,6 +69,7 @@ exports.ReportPriceCost = async (req, res) => {
     flattenedDetails.forEach((detail) => {
       const product_id = detail.product_id;
       const name = detail.name;
+      5;
       const price_cost = detail.price_cost;
       const amount = detail.amount;
 
@@ -76,7 +84,10 @@ exports.ReportPriceCost = async (req, res) => {
       }
     });
     const resultArray = Object.values(productDetails);
-    await PciceCost.create({ reportnumber: reportnumberValue,product_costs: resultArray });
+    await PciceCost.create({
+      reportnumber: reportnumberValue,
+      product_costs: resultArray,
+    });
     return res.status(200).send({
       status: true,
       message: "รายงานราคาทุนสำเร็จ",
@@ -93,7 +104,9 @@ exports.ReportPriceCost = async (req, res) => {
 };
 exports.PeportProFitandLoss = async (req, res) => {
   try {
-    const preorders = await preorder_shopping.find();
+    const preorders = await preorder_shopping.find({
+      "status.name": "สั่งชื้อสินค้าสำเร็จ",
+    });
     const porfitnumbers = await porfitnumber();
     const flattenedDetails = preorders.flatMap(
       (order) => order.customer_detail
@@ -115,10 +128,15 @@ exports.PeportProFitandLoss = async (req, res) => {
       }
       productDetails[product_id].total_price_cost += price_cost * amount;
       productDetails[product_id].total += total;
-      productDetails[product_id].profit_loss = productDetails[product_id].total - productDetails[product_id].total_price_cost;
+      productDetails[product_id].profit_loss =
+        productDetails[product_id].total -
+        productDetails[product_id].total_price_cost;
     });
     const resultArray = Object.values(productDetails);
-    await ProditAndLoss.create({ porfitnumber : porfitnumbers, product_costs: resultArray });
+    await ProditAndLoss.create({
+      porfitnumber: porfitnumbers,
+      product_costs: resultArray,
+    });
     return res.status(200).send({
       status: true,
       message: "รายงานกำไร-ขาดทุนสำเร็จ",
@@ -133,13 +151,11 @@ exports.PeportProFitandLoss = async (req, res) => {
     });
   }
 };
-exports.ClosetheTops = async (req,res) =>{
-  
-};
-exports.GetReportAllPriceCost = async (req, res) =>{
+exports.ClosetheTops = async (req, res) => {};
+exports.GetReportAllPriceCost = async (req, res) => {
   try {
     const manager = await PciceCost.find();
-    console.log("..............test...........")
+    console.log("..............test...........");
     if (manager) {
       return res.status(200).send({
         status: true,
@@ -147,17 +163,19 @@ exports.GetReportAllPriceCost = async (req, res) =>{
         data: manager,
       });
     } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุน", status: false});
+      return res
+        .status(404)
+        .send({ message: "ไม่พบข้อมูลราคาตุนทุน", status: false });
     }
   } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
-}
-exports.GetReportAllPriceCostById = async (req, res) =>{
+};
+exports.GetReportAllPriceCostById = async (req, res) => {
   try {
-    const id = req.params.id
+    const id = req.params.id;
     const manager = await PciceCost.findById(id);
-    console.log("..............test...........")
+    console.log("..............test...........");
     if (manager) {
       return res.status(200).send({
         status: true,
@@ -165,14 +183,16 @@ exports.GetReportAllPriceCostById = async (req, res) =>{
         data: manager,
       });
     } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมด", status: false});
+      return res
+        .status(404)
+        .send({ message: "ไม่พบข้อมูลราคาตุนทุนทั้งหมด", status: false });
     }
   } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
-}
+};
 //ใบเสร็จกำไรขาดทุน
-exports.ProditAndLossAll = async (req, res) =>{
+exports.ProditAndLossAll = async (req, res) => {
   try {
     const manager = await ProditAndLoss.find();
     if (manager) {
@@ -182,15 +202,18 @@ exports.ProditAndLossAll = async (req, res) =>{
         data: manager,
       });
     } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลใบเสร็จกำไรขาดทุนทั้งหมด", status: false});
+      return res.status(404).send({
+        message: "ไม่พบข้อมูลใบเสร็จกำไรขาดทุนทั้งหมด",
+        status: false,
+      });
     }
   } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
-}
-exports.GetProditAndLossById = async (req, res) =>{
+};
+exports.GetProditAndLossById = async (req, res) => {
   try {
-    const id = req.params.id
+    const id = req.params.id;
     const manager = await ProditAndLoss.findById(id);
     if (manager) {
       return res.status(200).send({
@@ -199,12 +222,71 @@ exports.GetProditAndLossById = async (req, res) =>{
         data: manager,
       });
     } else {
-      return res.status(404).send({message: "ไม่พบข้อมูลใบเสร็จกำไรขาดทุนทั้งหมด", status: false});
+      return res.status(404).send({
+        message: "ไม่พบข้อมูลใบเสร็จกำไรขาดทุนทั้งหมด",
+        status: false,
+      });
     }
   } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
-}
+};
+
+exports.CancelOrder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateStatus = await preorder_shopping.findOne({ _id: id });
+
+    if (updateStatus) {
+      updateStatus.status.push({
+        name: "ยกเลิกการสั่งชื้อสินค้า",
+        timestamps: dayjs(Date.now()).format(""),
+      });
+      updateStatus.save();
+      return res.status(200).send({
+        status: true,
+        message: "ยกเลิกการสั่งชื้อสินค้าสำเร็จ",
+        data: updateStatus,
+      });
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+      });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "มีบางอย่างผิดพลาด", status: false });
+  }
+};
+
+//เเสดงออเดอร์ที่มีการยกเลิกสินค้า
+exports.GetPreOrderShoppingCancel = async (req, res) => {
+  try {
+    const orders = await preorder_shopping.find({
+      "status.name": "ยกเลิกการสั่งชื้อสินค้า",
+    });
+
+    if (orders.length > 0) {
+      return res.status(200).send({
+        message: "ดึงข้อมูลรายการยกเลิกการสั่งชื้อสินค้า",
+        status: true,
+        data: orders,
+      });
+    } else {
+      return res.status(500).send({
+        message: "ไม่พบรายการยกเลิกการสั่งชื้อสินค้า",
+        status: false,
+      });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+
 async function reportnumber(date) {
   const order = await PciceCost.find();
   let reportnumber = null;
@@ -215,7 +297,7 @@ async function reportnumber(date) {
     do {
       num = num + 1;
       data = `REPORT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
-      check = await PciceCost.find({reportnumber: data});
+      check = await PciceCost.find({ reportnumber: data });
       if (check.length === 0) {
         reportnumber =
           `REPORT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
@@ -237,7 +319,7 @@ async function porfitnumber(date) {
     do {
       num = num + 1;
       data = `PORFIT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
-      check = await ProditAndLoss.find({porfitnumber: data});
+      check = await ProditAndLoss.find({ porfitnumber: data });
       if (check.length === 0) {
         porfitnumber =
           `PORFIT${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;

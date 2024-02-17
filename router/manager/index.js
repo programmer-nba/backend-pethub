@@ -84,5 +84,9 @@ router.get("/GetReportAllPriceCostBy/:id",authManager,Report.GetReportAllPriceCo
 router.get("/ProditAndLossAll/All",authManager,Report.ProditAndLossAll)//ดึงกำไรขาดทุน
 router.get("/GetProditAndLossById/:id",authManager,Report.GetProditAndLossById)//ดึงกำไรขาดทุน by id
 router.post("/PeportProFitandLoss/all",authManager,Report.PeportProFitandLoss)
+//ยกเลิกออเดอร์
+router.put("/CancelOrder/:id",authManager,Report.CancelOrder)
 
+//รีฟันออเดอร์
+router.get("/GetPreOrderShopping/All/cancel",authManager,Report.GetPreOrderShoppingCancel)//ดึงรายการชื้อขายสินค้า ที่ยกเลิกออเดอร์
 module.exports = router; 

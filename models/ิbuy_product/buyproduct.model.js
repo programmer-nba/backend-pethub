@@ -24,6 +24,7 @@ const PreOrderShoppingSchema = new mongoose.Schema({
   customer_status: { type: Boolean, required: false, default: false },
   timestamp: { type: Date, required: false, default: Date.now() },
   employee: { type: String, required: false, default: "ไม่มี" },
+  status:{ type: Array, required: false, },
 });
 
 const preorder_shopping = mongoose.model("preorder_shopping", PreOrderShoppingSchema);
