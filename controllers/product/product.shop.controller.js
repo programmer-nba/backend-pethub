@@ -8,22 +8,22 @@ const {
   ProductShops,
   validateProduct,
 } = require("../../models/product/product.shop.model");
-const {PackProducts} = require("../../models/product/productpack.model.js");
+const { PackProducts } = require("../../models/product/productpack.model.js");
 const {
   PreOrderProductShell,
 } = require("../../models/product/preordershell.model.js");
-const {PreOrderProducts} = require("../../models/product/preorder.model");
+const { PreOrderProducts } = require("../../models/product/preorder.model");
 const admin = require("../../models/product/product.shop.model");
-const {Promotion} =  require("../../models/promotion/promotion.model.js")
-const {PromotionFree} = require("../../models/promotion/promotionbyfree.js")
-const {Products} = require("../../models/product/product.model");
+const { Promotion } = require("../../models/promotion/promotion.model.js")
+const { PromotionFree } = require("../../models/promotion/promotionbyfree.js")
+const { Products } = require("../../models/product/product.model");
 const dayjs = require("dayjs");
-const {google} = require("googleapis");
-const {Employees} = require("../../models/user/employee.model");
-const {Shops} = require("../../models/shop/shop.model");
+const { google } = require("googleapis");
+const { Employees } = require("../../models/user/employee.model");
+const { Shops } = require("../../models/shop/shop.model");
 const jwt = require("jsonwebtoken");
-const {response} = require("express");
-const {testing} = require("googleapis/build/src/apis/testing/index.js");
+const { response } = require("express");
+const { testing } = require("googleapis/build/src/apis/testing/index.js");
 const CLIENT_ID = process.env.GOOGLE_DRIVE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_DRIVE_REDIRECT_URI;
@@ -34,7 +34,7 @@ const oauth2Client = new google.auth.OAuth2(
   CLIENT_SECRET,
   REDIRECT_URI
 );
-oauth2Client.setCredentials({refresh_token: REFRESH_TOKEN});
+oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 const drive = google.drive({
   version: "v3",
   auth: oauth2Client,
@@ -48,18 +48,18 @@ const storage = multer.diskStorage({
 
 exports.create = async (req, res) => {
   try {
-    let upload = multer({storage: storage}).single("productShop_image");
+    let upload = multer({ storage: storage }).single("productShop_image");
     upload(req, res, async function (err) {
       if (!req.file) {
-        const {error} = validateProduct(req.body);
+        const { error } = validateProduct(req.body);
         if (error)
-          return res.status(400).send({message: error.details[0].message});
+          return res.status(400).send({ message: error.details[0].message });
         const product = await new ProductShops({
           ...req.body,
         }).save();
         res
           .status(201)
-          .send({message: "สร้างรายงานใหม่เเล้ว", status: true, data: product});
+          .send({ message: "สร้างรายงานใหม่เเล้ว", status: true, data: product });
       } else if (err instanceof multer.MulterError) {
         return res.send(err);
       } else if (err) {
@@ -84,20 +84,20 @@ exports.create = async (req, res) => {
         });
         generatePublicUrl(response.data.id);
         console.log(req.body);
-        const {error} = validate(req.body);
+        const { error } = validate(req.body);
         if (error)
-          return res.status(400).send({message: error.details[0].message});
+          return res.status(400).send({ message: error.details[0].message });
         await new ProductShops({
           ...req.body,
           productShop_image: response.data.id,
         }).save();
-        res.status(201).send({message: "สร้างรายงานใหม่เเล้ว", status: true});
+        res.status(201).send({ message: "สร้างรายงานใหม่เเล้ว", status: true });
       } catch (error) {
-        res.status(500).send({message: "Internal Server Error", status: false});
+        res.status(500).send({ message: "Internal Server Error", status: false });
       }
     }
   } catch (error) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -105,7 +105,7 @@ exports.getProductAll = async (req, res) => {
   try {
     ProductShops.find()
       .then(async (data) => {
-        res.status(201).send({data, message: "success", status: true});
+        res.status(201).send({ data, message: "success", status: true });
       })
       .catch((err) => {
         res.status(500).send({
@@ -113,20 +113,20 @@ exports.getProductAll = async (req, res) => {
         });
       });
   } catch (err) {
-    res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
 exports.findByShopId = async (req, res) => {
   try {
     const id = req.params.id;
-    ProductShops.find({productShop_id: id})
+    ProductShops.find({ productShop_id: id })
       .then((data) => {
         if (!data)
           res
             .status(404)
-            .send({message: "ไม่สามารถหารายงานนี้ได้", status: false});
-        else res.send({data, status: true});
+            .send({ message: "ไม่สามารถหารายงานนี้ได้", status: false });
+        else res.send({ data, status: true });
       })
       .catch((err) => {
         res.status(500).send({
@@ -149,7 +149,7 @@ exports.preorderProduct = async (req, res) => {
     const { product_detail } = req.body;
     const { product_id, product_amount } = product_detail[0];
     console.log(product_detail)
-    
+
     // ทำตรวจสอบจำนวนสินค้าที่มีอยู่ โดยใช้ตรวจสอบจากฐานข้อมูลเช่นกัน
     const availableProduct = await Products.findOne({ _id: product_id });
     if (!availableProduct || product_amount > availableProduct.quantity) {
@@ -158,12 +158,12 @@ exports.preorderProduct = async (req, res) => {
         message: "สินค้าไม่พอสำหรับการสั่งชื้อ",
       });
     }
-    
+
     const status = {
       name: "รอตรวจสอบ",
       timestamps: dayjs(Date.now()).format(""),
     };
-    
+
     const invoice = await invoiceNumber();
     const preordernumber = await orderNumber();
 
@@ -174,7 +174,7 @@ exports.preorderProduct = async (req, res) => {
       status: status,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
-    
+
     if (order_product) {
       return res.status(200).send({
         status: true,
@@ -200,7 +200,7 @@ exports.preorderProduct = async (req, res) => {
 
 // หน้าร้าน สั่ง preorder มาที่ร้านค้า shop มารอส่งให้พนักงานตรวจสอบ
 exports.preorderProductShall = async (req, res) => {
- console.log(req.body)
+  console.log(req.body)
   try {
     const { product_detail } = req.body;
     const { product_id, product_amount } = product_detail[0];
@@ -254,10 +254,10 @@ exports.preorderProductShall = async (req, res) => {
 exports.ImportStockShop = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const preorders = await PreOrderProducts.findOne({ordernumber: orderId});
+    const preorders = await PreOrderProducts.findOne({ ordernumber: orderId });
 
     if (!preorders) {
-      return res.send({status: false, message: "ไม่พบรหัสออเดอร์นี้"});
+      return res.send({ status: false, message: "ไม่พบรหัสออเดอร์นี้" });
     }
     if (preorders.processed === "true") {
       return res.send({
@@ -274,23 +274,23 @@ exports.ImportStockShop = async (req, res) => {
           product_id: item.product_id,
           shop_id: preorders.shop_id,
         });
-        const product = await Products.findOne({_id: item.product_id});
-    
+        const product = await Products.findOne({ _id: item.product_id });
+
         if (!product_shop) {
           console.log("สินค้ายังไม่มีในระบบ (เพิ่มสินค้า)");
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
-            logo:product.logo,
+            logo: product.logo,
             name: product.name,
-            category:product.category,
+            category: product.category,
             barcode: product.barcode,
             ProductAmount: item.product_amount,
             price_cost: product.price_cost,
-            retailprice:product.retailprice,
-            wholesaleprice:product.wholesaleprice,
-            memberretailprice:product.memberretailprice,
-            memberwholesaleprice:product.memberwholesaleprice,
+            retailprice: product.retailprice,
+            wholesaleprice: product.wholesaleprice,
+            memberretailprice: product.memberretailprice,
+            memberwholesaleprice: product.memberwholesaleprice,
           };
           await new ProductShops(new_product).save();
           console.log(new_product)
@@ -311,18 +311,18 @@ exports.ImportStockShop = async (req, res) => {
           if (!updatedAmount) {
             return res
               .status(403)
-              .send({status: false, message: "มีบางอย่างผิดพลาด"});
+              .send({ status: false, message: "มีบางอย่างผิดพลาด" });
           }
         }
       }
       await PreOrderProducts.updateOne(
-        {ordernumber: orderId},
-        {processed: true}
+        { ordernumber: orderId },
+        { processed: true }
       );
-      
+
       return res
         .status(200)
-        .send({status: true, message: "บันทึกข้อมูลสำเร็จ"});
+        .send({ status: true, message: "บันทึกข้อมูลสำเร็จ" });
     } else {
       // ถ้าไม่มีคำว่า 'ยืนยันการสั่งซื้อ' ใน status array ให้ return ค่าออกมา
       return res.send({
@@ -331,7 +331,7 @@ exports.ImportStockShop = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).send({message: error.message, status: false});
+    res.status(500).send({ message: error.message, status: false });
   }
 };
 
@@ -378,16 +378,16 @@ exports.PreorderEmpShall = async (req, res) => {
           const new_product = {
             product_id: item.product_id,
             shop_id: preorders.shop_id,
-            logo:item.product_logo,
+            logo: item.product_logo,
             name: item.product_name,
-            category:category,
+            category: category,
             barcode: item.barcode,
             ProductAmount: amount,
             price_cost: productInfo.price_cost,
-            retailprice:productInfo.retailprice,
-            wholesaleprice:productInfo.wholesaleprice,
-            memberretailprice:productInfo.memberretailprice,
-            memberwholesaleprice:productInfo.memberwholesaleprice,
+            retailprice: productInfo.retailprice,
+            wholesaleprice: productInfo.wholesaleprice,
+            memberretailprice: productInfo.memberretailprice,
+            memberwholesaleprice: productInfo.memberwholesaleprice,
           };
 
           await new ProductShall(new_product).save();
@@ -439,10 +439,10 @@ exports.PreorderEmpShall = async (req, res) => {
 exports.checkProductShall = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShall.find({_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShall.find({ _id: id }); //{shop_id:id} เอาใส่ไว้ใน() findOne
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -451,11 +451,11 @@ exports.getStockShall = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const mystock = await ProductShall.find({shop_id:id}); // เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShall.find({ shop_id: id }); // เอาใส่ไว้ใน() findOne
 
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -469,7 +469,7 @@ exports.getDetailsStock = async (req, res) => {
 
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -481,7 +481,7 @@ exports.getStock = async (req, res) => {
 
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -495,7 +495,7 @@ exports.getStock = async (req, res) => {
 
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -503,10 +503,10 @@ exports.getStock = async (req, res) => {
 exports.checkEmpStock = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShops.find({shop_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShops.find({ shop_id: id }); //{shop_id:id} เอาใส่ไว้ใน() findOne
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -514,10 +514,10 @@ exports.checkEmpStock = async (req, res) => {
 exports.checkEmpStockAdmin = async (req, res) => {
   try {
     const id = req.params.id;
-    const mystock = await ProductShops.find({shop_id: id}); //{shop_id:id} เอาใส่ไว้ใน() findOne
+    const mystock = await ProductShops.find({ shop_id: id }); //{shop_id:id} เอาใส่ไว้ใน() findOne
     return res.send(mystock);
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -525,14 +525,14 @@ exports.checkEmpStockAdmin = async (req, res) => {
 exports.addProducts = async (req, res) => {
   var chkOrderID = await order.find();
   try {
-    var getPreproduct = await PreOrderProducts.find({_id: req.body._id}); //ส่งค่ามาจากด้าน front end โดยใช้id
+    var getPreproduct = await PreOrderProducts.find({ _id: req.body._id }); //ส่งค่ามาจากด้าน front end โดยใช้id
 
     console.log("Status : ", getPreproduct[0].status);
     //  console.log("Status : ", getPreproduct[0].status.length)
     var indexLast = getPreproduct[0].status.length - 1;
     var chk_status = getPreproduct[0].status[indexLast].name;
     console.log(chk_status);
-    const teatid = await PreOrderProducts.find({id: req.body._id});
+    const teatid = await PreOrderProducts.find({ id: req.body._id });
     // if(teatid.length > 0) {
     //     console.log("มีการสร้างไอดีนี้ไปแล้ว")
     //     return res.status(200).send({message: "มีการสร้างไอดีนี้ไปแล้ว"})
@@ -550,12 +550,12 @@ exports.addProducts = async (req, res) => {
       const createOrder = new order(data);
       const createOrderData = await createOrder.save().populate("shop_id");
 
-      return res.status(200).send({message: " สำเร็จ", data: createOrderData});
+      return res.status(200).send({ message: " สำเร็จ", data: createOrderData });
     }
 
     return res
       .status(500)
-      .send({message: "รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"});
+      .send({ message: "รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ" });
 
     //  const createOrder = new order(data);
     //  const createOrderData = await createOrder.save()
@@ -569,14 +569,14 @@ exports.addProducts = async (req, res) => {
 exports.addProductsShall = async (req, res) => {
   var chkOrderID = await order.find();
   try {
-    var getPreproduct = await PreOrderProductShell.find({_id: req.body._id}); //ส่งค่ามาจากด้าน front end โดยใช้id
+    var getPreproduct = await PreOrderProductShell.find({ _id: req.body._id }); //ส่งค่ามาจากด้าน front end โดยใช้id
 
     console.log("Status : ", getPreproduct[0].status);
     //  console.log("Status : ", getPreproduct[0].status.length)
     var indexLast = getPreproduct[0].status.length - 1;
     var chk_status = getPreproduct[0].status[indexLast].name;
     console.log(chk_status);
-    const teatid = await PreOrderProductShell.find({id: req.body._id});
+    const teatid = await PreOrderProductShell.find({ id: req.body._id });
     console.log(chk_status);
     if (chk_status == "ยืนยันการสั่งซื้อ") {
       let data = {
@@ -589,12 +589,12 @@ exports.addProductsShall = async (req, res) => {
       const createOrder = new order(data);
       const createOrderData = await createOrder.save().populate("shop_id");
 
-      return res.status(200).send({message: " สำเร็จ", data: createOrderData});
+      return res.status(200).send({ message: " สำเร็จ", data: createOrderData });
     }
 
     return res
       .status(500)
-      .send({message: "รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ"});
+      .send({ message: "รายการนี้ยังไม่ได้ยืนยันการสั่งซื้อ" });
 
     //  const createOrder = new order(data);
     //  const createOrderData = await createOrder.save()
@@ -620,7 +620,7 @@ exports.getPreorderAll = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -641,7 +641,7 @@ exports.getPreorderShallAll = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -649,7 +649,7 @@ exports.getPreorderShallAll = async (req, res) => {
 exports.getPreorderAdminById = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProductShell.findOne({_id: id});
+    const preorder_list = await PreOrderProductShell.findOne({ _id: id });
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -663,7 +663,7 @@ exports.getPreorderAdminById = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -671,7 +671,7 @@ exports.getPreorderAdminById = async (req, res) => {
 exports.getPreorderStoreAId = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProductShell.find({shop_id: id});
+    const preorder_list = await PreOrderProductShell.find({ shop_id: id });
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -685,13 +685,13 @@ exports.getPreorderStoreAId = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 //เเสดงออเดอร์สินค้าทั้งหมดจาก store
 exports.getPreorderStoreAll = async (req, res) => {
   try {
-    const shop_id = req.params.id; 
+    const shop_id = req.params.id;
 
     if (!shop_id) {
       return res.status(400).send({
@@ -772,28 +772,28 @@ exports.getPreorderEmpById = async (req, res) => {
   }
 }
 
-exports.updateProduct = async (req,res) =>{
+exports.updateProduct = async (req, res) => {
   try {
     const product = await ProductShops.findByIdAndUpdate(req.params.id, req.body);
     if (product) {
       return res
         .status(200)
-        .send({message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true});
+        .send({ message: "แก้ไขข้อมูลสินค้าสำเร็จ", status: true });
     } else {
       return res
         .status(500)
-        .send({message: "แก้ไขข้อมูลสินค้าไม่สำเร็จ", status: false});
+        .send({ message: "แก้ไขข้อมูลสินค้าไม่สำเร็จ", status: false });
     }
   } catch (err) {
 
-    return res.status(500).send({status: false, message: "มีบางอย่างผิดพลาด"});
+    return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 }
 
 exports.getPreorderById = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProducts.findOne({_id: id});
+    const preorder_list = await PreOrderProducts.findOne({ _id: id });
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -807,14 +807,14 @@ exports.getPreorderById = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
 exports.getPreorderByShopId = async (req, res) => {
   try {
     const id = req.params.id;
-    const preorder_list = await PreOrderProducts.findOne({shop_id: id});
+    const preorder_list = await PreOrderProducts.findOne({ shop_id: id });
     if (preorder_list) {
       return res.status(200).send({
         status: true,
@@ -828,14 +828,14 @@ exports.getPreorderByShopId = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
 exports.confirmPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    const updateStatus = await PreOrderProducts.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -855,14 +855,14 @@ exports.confirmPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
 exports.candelPreorderEmyee = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    const updateStatus = await PreOrderProducts.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -882,14 +882,14 @@ exports.candelPreorderEmyee = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
 exports.cancelPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    const updateStatus = await PreOrderProducts.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -909,7 +909,7 @@ exports.cancelPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -917,7 +917,7 @@ exports.cancelPreorder = async (req, res) => {
 exports.statusaddPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({ordernumbe: id});
+    const updateStatus = await PreOrderProducts.findOne({ ordernumbe: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -937,14 +937,14 @@ exports.statusaddPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
 exports.statusPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProducts.findOne({_id: id});
+    const updateStatus = await PreOrderProducts.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -964,7 +964,7 @@ exports.statusPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -972,7 +972,7 @@ exports.statusPreorder = async (req, res) => {
 exports.confirmShallPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProductShell.findOne({_id: id});
+    const updateStatus = await PreOrderProductShell.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -992,14 +992,14 @@ exports.confirmShallPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 //ยกเลิกการสั่งชื้อ shall
 exports.cancelShallPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProductShell.findOne({_id: id});
+    const updateStatus = await PreOrderProductShell.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -1019,14 +1019,14 @@ exports.cancelShallPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 //กำลังจัดส่ง shall
 exports.statusshall = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProductShell.findOne({_id: id});
+    const updateStatus = await PreOrderProductShell.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -1046,7 +1046,7 @@ exports.statusshall = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 
@@ -1061,7 +1061,7 @@ async function orderNumberShell(date) {
     do {
       num = num + 1;
       data = `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(11, "0") + num;
-      check = await PreOrderProductShell.find({ordernumbershell: data});
+      check = await PreOrderProductShell.find({ ordernumbershell: data });
       if (check.length === 0) {
         store_number =
           `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(11, "0") + num;
@@ -1084,7 +1084,7 @@ async function invoiceShellNumber(date) {
     do {
       num = num + 1;
       data = `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(14, "0") + num;
-      check = await PreOrderProductShell.find({invoice: data});
+      check = await PreOrderProductShell.find({ invoice: data });
       if (check.length === 0) {
         invoice_shell =
           `STORE${dayjs(date).format("YYYYMMDD")}`.padEnd(14, "0") + num;
@@ -1108,7 +1108,7 @@ async function invoiceNumber(date) {
     do {
       num = num + 1;
       data = `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await PreOrderProducts.find({invoice: data});
+      check = await PreOrderProducts.find({ invoice: data });
       if (check.length === 0) {
         invoice_number =
           `PETHUB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
@@ -1131,7 +1131,7 @@ async function orderNumber(date) {
     do {
       num = num + 1;
       data = `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
-      check = await PreOrderProducts.find({ordernumber: data});
+      check = await PreOrderProducts.find({ ordernumber: data });
       if (check.length === 0) {
         order_number =
           `ORDER${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
@@ -1147,7 +1147,7 @@ async function orderNumber(date) {
 exports.postPreorders = async (req, res) => {
   try {
     const preorders = await PreOrderProducts.find({
-      status: {$elemMatch: {name: "ยืนยันการสั่งซื้อ"}},
+      status: { $elemMatch: { name: "ยืนยันการสั่งซื้อ" } },
     });
     if (!preorders) {
       res.send("ไม่เจอ");
@@ -1163,11 +1163,11 @@ exports.postPreorders = async (req, res) => {
 exports.updatePrice = async (req, res) => {
   try {
     const id = req.params.id;
-    const update_price = await ProductShall.findOne({_id: id});
+    const update_price = await ProductShall.findOne({ _id: id });
     console.log(update_price)
     update_price.price = req.body.price;
     update_price.save();
-    return res.status(200).send({status: true, message: "เพิ่มราคาสำเร็จ"});
+    return res.status(200).send({ status: true, message: "เพิ่มราคาสำเร็จ" });
   } catch (error) {
     console.log(error);
     res.status(500).send("ไม่สามารถเซฟได้");
@@ -1178,11 +1178,11 @@ exports.updatePrice = async (req, res) => {
 exports.updatePromotion = async (req, res) => {
   try {
     const id = req.params.id;
-    const update_promotion = await ProductShall.findOne({_id: id});
+    const update_promotion = await ProductShall.findOne({ _id: id });
     console.log(update_promotion)
     update_promotion.promotion = req.body._id;
     update_promotion.save();
-    return res.status(200).send({status: true, message: "เพิ่มส่วนลดสำเร็จ"});
+    return res.status(200).send({ status: true, message: "เพิ่มส่วนลดสำเร็จ" });
   } catch (error) {
     console.log(error);
     res.status(500).send("ไม่สามารถเซฟได้");
@@ -1192,7 +1192,7 @@ exports.updatePromotion = async (req, res) => {
 exports.ShallCancelPreorder = async (req, res) => {
   try {
     const id = req.params.id;
-    const updateStatus = await PreOrderProductShell.findOne({_id: id});
+    const updateStatus = await PreOrderProductShell.findOne({ _id: id });
     console.log(updateStatus);
     if (updateStatus) {
       updateStatus.status.push({
@@ -1212,7 +1212,7 @@ exports.ShallCancelPreorder = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({message: "มีบางอย่างผิดพลาด", status: false});
+    return res.status(500).send({ message: "มีบางอย่างผิดพลาด", status: false });
   }
 };
 //14/12/2566

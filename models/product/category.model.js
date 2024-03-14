@@ -2,8 +2,8 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const CategorySchema = new mongoose.Schema({
-  name: {type: String, required: true , default :"ไม่มีประเภทสินค้า"}, //ชื่อประเภทสินค้า
-  
+  name: { type: String, required: true, default: "ไม่มีประเภทสินค้า" }, //ชื่อประเภทสินค้า
+
 });
 
 const Categorys = mongoose.model("category", CategorySchema);
@@ -15,4 +15,4 @@ const validatecategory = (data) => {
   return schema.validate(data);
 };
 
-module.exports = {Categorys, validatecategory};
+module.exports = { Categorys, validatecategory };
